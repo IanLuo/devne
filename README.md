@@ -1,5 +1,5 @@
 # Client commands 
-  [CLI](cli.md)
+  [CLI](cli/cli.md)
 
 # Env configure sharing
 - Choose and apply env 

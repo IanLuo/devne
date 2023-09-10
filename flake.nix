@@ -6,37 +6,42 @@
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
-  outputs = { self, nixpkgs, flake-utils }:
+  inputs.devne-template.url = "git+file:///Users/ianluo/Documents/apps/templates";
+  inputs.devne-template.inputs.nixpkgs.follows = "nixpkgs";
+
+  outputs = { self, nixpkgs, flake-utils, devne-template }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
+        native = devne-template.native.${system};
 
-        pythonInUse = pkgs.python38;
-
-        pythonWebPkgs = pythonInUse.withPackages (ps: with ps; [
-          flask
-        ]);
-
-        pythonCliPkgs = pythonInUse.withPackages (ps: with ps; [
-          typer
-        ]);
+        pythonCliApp = native.python {
+          pythonVersion = "python38";
+          src = ./.;
+        };
+        version = "0.0.1";
+        name = "cli";
       in
       {
         devShells = with pkgs; {
           default = mkShell {
+            name = name;
+            version = version;
             buildInputs = [
-              pythonWebPkgs
+              pythonCliApp
             ];
-          };
-          cli = mkShell {
-            buildInputs = [
-              pythonCliPkgs
-            ];
-          };
+
+            shellHook = ''
+              pythonCliApp.python --version
+            '';
+            };
         };
 
         packages = {
-          default = pkgs.writeText "hello.txt" "Hello, world!";
+          default = pkgs.poetry2nix.mkPoetryApplication {
+            projectDir = ./.;
+          };
         };
+
       });
 }
