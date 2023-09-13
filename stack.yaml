@@ -1,0 +1,6 @@
+language: python 
+version: 3.8
+test: pytest
+supported-platforms:
+  - macos
+  - linux

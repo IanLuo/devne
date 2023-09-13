@@ -13,6 +13,7 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
+
         native = devne-template.native.${system};
 
         pythonCliApp = native.python {
@@ -38,9 +39,6 @@
         };
 
         packages = {
-          default = pkgs.poetry2nix.mkPoetryApplication {
-            projectDir = ./.;
-          };
         };
 
       });

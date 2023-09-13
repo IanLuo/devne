@@ -1,2 +1,2 @@
-def parse(configure):
+def parse(yaml_file):
   pass
