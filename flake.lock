@@ -1,23 +1,5 @@
 {
   "nodes": {
-    "devne-template": {
-      "inputs": {
-        "flake-utils": "flake-utils",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1694619193,
-        "narHash": "sha256-fQDX08YGSH44wsdxHbUQ2s+bmRcURAeixpbdJW9BRN8=",
-        "type": "git",
-        "url": "file:///Users/ianluo/Documents/apps/templates"
-      },
-      "original": {
-        "type": "git",
-        "url": "file:///Users/ianluo/Documents/apps/templates"
-      }
-    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -72,9 +54,27 @@
     },
     "root": {
       "inputs": {
-        "devne-template": "devne-template",
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs",
+        "sstemplate": "sstemplate"
+      }
+    },
+    "sstemplate": {
+      "inputs": {
         "flake-utils": "flake-utils_2",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1696413439,
+        "narHash": "sha256-+C3wK7NfzUElskIIxL7LigYNF4s7xoaNwHxpxeJssuM=",
+        "type": "git",
+        "url": "file:///Users/ianluo/Documents/apps/templates"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:///Users/ianluo/Documents/apps/templates"
       }
     },
     "systems": {

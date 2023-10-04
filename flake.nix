@@ -6,10 +6,10 @@
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
-  inputs.devne-template.url = "git+file:///Users/ianluo/Documents/apps/templates";
-  inputs.devne-template.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.sstemplate.url = "git+file:///Users/ianluo/Documents/apps/templates";
+  inputs.sstemplate.inputs.nixpkgs.follows = "nixpkgs";
 
-  outputs = { self, nixpkgs, flake-utils, devne-template }:
+  outputs = { self, nixpkgs, flake-utils, sstemplate }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
@@ -17,26 +17,7 @@
         version = "0.0.1";
         name = "ss-cli";
 
-        native = devne-template.native.${system};
-        powers = devne-template.powers.${system};
-
-
-        pythonCliApp = native.python {
-          pythonVersion = "python38";
-          name = name;
-          version = version;
-          buildInputs = ps: with ps; [ typer ];
-        };
-
-        postgres = powers.db.postgres {
-          database = "ss_cli";
-          folder = "postgres";        
-        };
-
-        units = [
-          pythonCliApp
-          postgres
-        ];
+        units = pkgs.callPackage ./units.nix { inherit sstemplate name version system; };
 
         update-template = pkgs.writeScriptBin "update_template" ''
           nix flake lock --update-input devne-template
@@ -47,19 +28,16 @@
           default = mkShell {
             name = name;
             version = version;
-            buildInputs = [
+            buildInputs = units.all ++ [
               update-template
-            ] ++ units;
+            ]; 
 
             shellHook = ''
-              python --version
-
-              ${builtins.concatStringsSep "\n" (map (unit: unit.script) units)}
+              ${units.scripts}
             '';
           };
         };
 
-        packages.default = pythonCliApp.buildapp {};
-
+        packages = units.packages;
       });
 }
