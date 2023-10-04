@@ -1,0 +1,9 @@
+# Ignore Python compile files
+*.pyc
+**/__pycache__/
+.direnv/
+.coverage
+test_output/
+result
+.pytest_cache/
+

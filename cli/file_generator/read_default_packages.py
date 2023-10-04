@@ -1,0 +1,2 @@
+def readDefaultPackages(pu):
+    pass

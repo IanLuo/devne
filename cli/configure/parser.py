@@ -1,2 +1,2 @@
-def parse(yaml_file):
+def parse(yamlFile):
   pass

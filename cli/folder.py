@@ -1,0 +1,4 @@
+ROOT_FOLDER = 'ss/'
+CONFIG_FILE = ROOT_FOLDER + 'ss.yaml'
+FLAKE_FILE = ROOT_FOLDER + '/flake.nix'
+DATA_FOLDER = ROOT_FOLDER + '/data/'

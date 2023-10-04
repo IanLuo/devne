@@ -14,14 +14,32 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
+        version = "0.0.1";
+        name = "ss-cli";
+
         native = devne-template.native.${system};
+        powers = devne-template.powers.${system};
+
 
         pythonCliApp = native.python {
           pythonVersion = "python38";
-          src = ./.;
+          name = name;
+          version = version;
         };
-        version = "0.0.1";
-        name = "cli";
+
+        postgres = powers.db.postgres {
+          database = "ss_cli";
+          folder = "postgres";        
+        };
+
+        units = [
+          pythonCliApp
+          postgres
+        ];
+
+        update-template = pkgs.writeScriptBin "update_template" ''
+          nix flake lock --update-input devne-template
+        '';
       in
       {
         devShells = with pkgs; {
@@ -29,17 +47,18 @@
             name = name;
             version = version;
             buildInputs = [
-              pythonCliApp
-            ];
+              update-template
+            ] ++ units;
 
             shellHook = ''
-              pythonCliApp.python --version
+              python --version
+
+              ${builtins.concatStringsSep "\n" (map (unit: unit.script) units)}
             '';
-            };
+          };
         };
 
-        packages = {
-        };
+        packages.default = pythonCliApp.buildapp {};
 
       });
 }

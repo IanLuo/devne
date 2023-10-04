@@ -1,6 +1,16 @@
-language: python 
-version: 3.8
-test: pytest
-supported-platforms:
+python: 3.8
+
+dependencies:
+  default:
+    - django
+  development:
+    - pytest
+
+services:
+  - postgres
+  - redis
+  - nginx
+
+platforms:
   - macos
   - linux
