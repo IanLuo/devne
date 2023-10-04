@@ -4,10 +4,10 @@ project management etc.
 
 Advanced users and manually update this file as long as they don't modify the parts maitained by devne cli.
 
-[ ] How to organize the base `flake.nix` and components?
+[x] How to organize the base `flake.nix` and components?
     - User `overlays`?
     - Or just `callPackage`?
-
+use callPackage directly
 
 
 ```

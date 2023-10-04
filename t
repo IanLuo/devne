@@ -11,9 +11,11 @@
 
 <2023-10-4>
 [x] add Typer and basic usage
+
+<backlog>
+[ ] generate supporting file for units: manage path and folders, generated files
 [ ] folder structure and path manage for units
 [ ] postgres database function
-
 [ ] commnads structure
 [ ] unit documentations
 [ ] command auto completion
