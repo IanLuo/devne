@@ -20,7 +20,7 @@
         units = pkgs.callPackage ./units.nix { inherit sstemplate name version system; };
 
         update-template = pkgs.writeScriptBin "update_template" ''
-          nix flake lock --update-input devne-template
+          nix flake lock --update-input sstemplate
         '';
       in
       {
