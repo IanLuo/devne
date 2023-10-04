@@ -23,5 +23,5 @@ in {
                   (x: x.name) 
                   (lib.lists.filter (x: lib.attrsets.hasAttrByPath ["buildapp"] x && x.buildapp != null) all)) 
                (name: 
-                  pkgs.callPackage (lib.lists.findFirst (x: x.name == name) null all).buildapp {});
+                (lib.lists.findFirst (x: x.name == name) null all).buildapp {}) ;
 }
