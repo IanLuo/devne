@@ -25,6 +25,7 @@
           pythonVersion = "python38";
           name = name;
           version = version;
+          buildInputs = ps: with ps; [ typer ];
         };
 
         postgres = powers.db.postgres {

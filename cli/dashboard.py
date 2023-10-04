@@ -11,5 +11,3 @@ class Dashboard:
 if __name__ == '__main__':
     d = Dashboard(os.environ)
     print(d.listUnits())
-
-
