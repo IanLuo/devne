@@ -19,6 +19,8 @@
 
         units = pkgs.callPackage ./units.nix { inherit sstemplate name version system; };
 
+        deps = pkgs.callPackage ./deps.nix { };
+
         update-template = pkgs.writeScriptBin "update_template" ''
           nix flake lock --update-input sstemplate
         '';
@@ -28,7 +30,7 @@
           default = mkShell {
             name = name;
             version = version;
-            buildInputs = units.all ++ [
+            buildInputs = units.all ++ deps ++ [
               update-template
             ]; 
 

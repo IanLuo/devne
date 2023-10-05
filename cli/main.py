@@ -6,7 +6,7 @@ def main(action: str):
   2. configure
   3. clock
     '''
-    print("SS up")
+    print(f"{action}")
 
 if __name__ == "__main__":
     typer.run(main)
