@@ -19,3 +19,4 @@
 [ ] commnads structure
 [ ] unit documentations
 [ ] command auto completion
+[ ] check github flows for inspiration

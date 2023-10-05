@@ -1,6 +1,6 @@
 from cli.folder import Folder, DATA_FOLDER
 
 class TestFolder:
-    def testGetFolder(self):
+    def test_get_folder(self):
         name = "testUnit"
-        assert Folder.getDataPath(name) == DATA_FOLDER + "/" + name
+        assert Folder.get_data_path(name) == DATA_FOLDER + "/" + name

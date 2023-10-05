@@ -11,13 +11,16 @@ let
 
   postgres = powers.db.postgres {
     database = name;
-    folder = "postgres";        
+    folder = "postgres";
   };
 
   all = [ python postgres ];
+  startScript = ''
+    export SS_PROJECT_BASE=$PWD
+  '';
 in {
   inherit all;
-  scripts = builtins.concatStringsSep "\n" (map (unit: unit.script) all);
+  scripts = builtins.concatStringsSep "\n" ([ startScript ] ++ map (unit: unit.script) all);
   packages = lib.attrsets.genAttrs 
                (map 
                   (x: x.name) 
