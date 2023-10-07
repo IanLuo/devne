@@ -1,4 +1,10 @@
-python: 3.8
+sdk:
+  python: 3.8
+  packages:
+    default:
+      - typer
+    development:
+      - pynvim
 
 dependencies:
   default:
@@ -6,11 +12,8 @@ dependencies:
   development:
     - pytest
 
-services:
+units:
   - postgres
-  - redis
-  - nginx
 
-platforms:
-  - macos
-  - linux
+# this is the official nixpkgs ref
+ref: xxxxx
