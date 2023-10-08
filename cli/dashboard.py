@@ -6,8 +6,8 @@ class Dashboard:
         self.env = env
 
     def list_units(self) -> List[str]:
-        return [ unit for unit in self.env.get('SS_UNITS').split(':') if unit != '' ]
+        return [ unit for unit in self.env['SS_UNITS'].split(':') if unit != '' ]
 
 if __name__ == '__main__':
-    d = Dashboard(os.environ)
-    print(d.listUnits())
+    d = Dashboard(dict(os.environ))
+    print(d.list_units())

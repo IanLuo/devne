@@ -1,5 +1,6 @@
 sdk:
-  python: 3.8
+  languase: python 
+  version: 3.8
   packages:
     default:
       - typer

@@ -14,11 +14,6 @@ class TestConfigure:
   1. Enable dev environment (with nix)
   2. Triger dashboard 
   '''
-  def test_begin(self, config):
-    pass
-  
-  def test_finish(self, config):
-    pass
 
   def test_get_language(self, config):
     config = Configure(config)

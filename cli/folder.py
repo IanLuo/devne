@@ -10,6 +10,6 @@ class Folder:
     def get_data_path(name, create = False) -> str:
         path = f"{DATA_FOLDER}/{name}"
         if exists(path) == False and create:
-            mkdirs(path)
+            makedirs(path)
 
         return path 

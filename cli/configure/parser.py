@@ -1,2 +1,2 @@
-def parse(yamlFile):
+def parse(yamlFile) -> dict:
   pass

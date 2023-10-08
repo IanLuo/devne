@@ -3,10 +3,10 @@ let
   native = sstemplate.native.${system};
   powers = sstemplate.powers.${system};
   python = native.python {
-    pythonVersion = "python38";
+    pythonVersion = "python310";
     name = name;
     version = version;
-    buildInputs = ps: with ps; [ typer pynvim ];
+    buildInputs = ps: with ps; [ typer pynvim  ];
   };
 
   postgres = powers.db.postgres {
