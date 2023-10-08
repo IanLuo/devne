@@ -7,6 +7,7 @@ from os.path import exists
 from os import makedirs
 
 class Folder:
+    @staticmethod
     def get_data_path(name, create = False) -> str:
         path = f"{DATA_FOLDER}/{name}"
         if exists(path) == False and create:

@@ -1,6 +1,6 @@
 sdk:
-  languase: python 
-  version: 3.8
+  language: python 
+  version: "3.8"
   packages:
     default:
       - typer
@@ -11,10 +11,15 @@ dependencies:
   default:
     - django
   development:
-    - pytest
+    - black
 
 units:
-  - postgres
+  - postgres:
+      username: "test_user"
+      password: "test_password"
+      database: "test_database"
+      host: ""
+      folder: ""
 
 # this is the official nixpkgs ref
-ref: xxxxx
+rev: xxxxx

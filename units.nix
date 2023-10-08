@@ -6,7 +6,7 @@ let
     pythonVersion = "python310";
     name = name;
     version = version;
-    buildInputs = ps: with ps; [ typer pynvim  ];
+    buildInputs = ps: with ps; [ typer pynvim pyyaml ];
   };
 
   postgres = powers.db.postgres {
