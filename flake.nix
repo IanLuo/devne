@@ -1,5 +1,5 @@
 {
-  description = "A very basic flake";
+  description = "ss";
 
   inputs.nixpkgs = {
     url = "github:NixOS/nixpkgs?rev=945559664c1dc5836173ee12896ba421d9b37181";
