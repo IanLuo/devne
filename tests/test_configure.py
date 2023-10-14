@@ -1,5 +1,5 @@
 from cli.configure.configure import Configure
-from cli.file_generator.unit import Unit
+from cli.configure.unit import Unit
 import pytest
 
 @pytest.fixture

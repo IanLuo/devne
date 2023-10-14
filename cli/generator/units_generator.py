@@ -1,9 +1,9 @@
 from typing import List
-from configure.unit import Unit
-from configure.configure import Configure
-from flake_generator import FileGenerator
+from ..configure.unit import Unit
+from ..configure.configure import Configure
+from .file_generator import FileGenerator
 
-TEMPLATE_FILE = 'units.nix.template'
+_TEMPLATE_FILE = 'units.nix.template'
 
 class UnitsGenerator(FileGenerator):
     def __init__(self, configure: Configure):

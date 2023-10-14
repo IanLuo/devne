@@ -1,12 +1,9 @@
-from abc import ABC, abstractmethod
 from ..configure.configure import Configure
-from deps_generator import DepsGenerator
-from units_generator import UnitsGenerator
+from .deps_generator import DepsGenerator
+from .units_generator import UnitsGenerator
+from .file_generator import FileGenerator
 
-class FileGenerator(ABC):
-    @abstractmethod
-    def generate(self) -> str:
-        pass
+_TEMPLATE_FILE = 'flake.template'
 
 class FlakeGenerator(FileGenerator):
     def __init__(self, configure: Configure):
