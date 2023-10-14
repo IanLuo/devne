@@ -1,11 +1,13 @@
 from typing import List
-from .unit import Unit
+from configure.unit import Unit
+from configure.configure import Configure
+from flake_generator import FileGenerator
 
 TEMPLATE_FILE = 'units.nix.template'
 
-class UnitsGenerator:
-    def __init__(self, units: List[Unit]):
-        self.units = units
+class UnitsGenerator(FileGenerator):
+    def __init__(self, configure: Configure):
+        self.configure = configure
 
     def read_template(self, template_file: str):
         self.template = open(template_file, 'r').read() 

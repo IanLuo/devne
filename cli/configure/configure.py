@@ -1,5 +1,5 @@
 from .parser import parse 
-from ..file_generator.unit import Unit
+from .unit import Unit
 from typing import Optional
 
 class Configure:
@@ -25,7 +25,6 @@ class Configure:
     @property
     def dependenciesDefault(self) -> list[str]:
         return self._config["dependencies"]["default"]
-
 
     @property
     def dependenciesDev(self) -> list[str]:
