@@ -1,36 +1,6 @@
 from cli.configure.configure import Configure
 from cli.configure.unit import Unit
-import pytest
-
-@pytest.fixture
-def config():
-    return '''
-        sdk:
-          language: python 
-          version: "3.8"
-          packages:
-            default:
-              - typer
-            development:
-              - pynvim
-        
-        dependencies:
-          default:
-            - django
-          development:
-            - black
-        
-        units:
-          - postgres:
-              username: "test_user"
-              password: "test_password"
-              database: "test_database"
-              host: ""
-              folder: ""
-        
-        # this is the official nixpkgs ref
-        rev: xxxxx
-    ''' 
+from .fixtures import config 
 
 class TestConfigure:
     def test_get_sdk_language(self, config):

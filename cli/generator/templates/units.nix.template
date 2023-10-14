@@ -3,19 +3,11 @@ let
   native = sstemplate.native.${system};
   powers = sstemplate.powers.${system};
 
-  python = native.python {
-    pythonVersion = "python310";
-    name = name;
-    version = version;
-    buildInputs = ps: with ps; [ typer pynvim pyyaml ];
-  };
+  #SDK#
 
-  postgres = powers.db.postgres {
-    database = name;
-    folder = "postgres";
-  };
+  #UNITS#
 
-  all = [ python postgres ];
+  all = #UNITS_REF#
   startScript = ''
     export SS_PROJECT_BASE=$PWD
   '';

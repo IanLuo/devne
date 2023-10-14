@@ -3,7 +3,7 @@ from .deps_generator import DepsGenerator
 from .units_generator import UnitsGenerator
 from .file_generator import FileGenerator
 
-_TEMPLATE_FILE = 'flake.template'
+_TEMPLATE_FILE = 'templates/flake.nix.template'
 
 class FlakeGenerator(FileGenerator):
     def __init__(self, configure: Configure):
