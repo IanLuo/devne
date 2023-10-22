@@ -20,10 +20,10 @@ def config():
             - black
 
         units:
-          - postgres:
-              username: "test_user"
-              password: "test_password"
-              database: "test_database"
+          - powers.db.postgres:
+              username: "test_user" 
+              password: "test_password" 
+              database: "test_database" 
               host: ""
               folder: ""
         rev: xxxxx
