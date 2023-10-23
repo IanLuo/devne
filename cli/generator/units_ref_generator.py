@@ -1,5 +1,5 @@
-from file_generator import FileGenerator
-from configure.configure import Configure
+from .file_generator import FileGenerator
+from ..configure.configure import Configure
 from functools import reduce
 
 class UnitsRefGenerator(FileGenerator):
