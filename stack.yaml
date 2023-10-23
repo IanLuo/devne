@@ -1,3 +1,6 @@
+name: "sscli"
+version: "0.0.1"
+description: ""
 sdk:
   language: python 
   version: "3.8"
@@ -22,4 +25,4 @@ units:
       folder: ""
 
 # this is the official nixpkgs ref
-rev: xxxxx
+nixpkgsrev: xxxxx

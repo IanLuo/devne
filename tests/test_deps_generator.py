@@ -4,7 +4,7 @@ from cli.configure.configure import Configure
 
 class TestDepsGenerator:
     def test_deps_generate(self, config):
-        assert DepsGenerator(Configure(config)).generate().replace("\n", "").replace(" ", "") == ''' 
+        assert DepsGenerator(Configure(config)).generate()['#DEPS#'].replace("\n", "").replace(" ", "") == ''' 
           django
           black
         '''.replace("\n", "").replace(" ", "")

@@ -4,6 +4,9 @@ from cli.configure.configure import Configure
 @pytest.fixture
 def config():
     return '''
+        name: test project 
+        version: 1.0.0
+        description: this is a project for unit test 
         sdk:
           language: python 
           version: "3.8"
@@ -26,7 +29,7 @@ def config():
               database: "test_database" 
               host: ""
               folder: ""
-        rev: xxxxx
+        nixpkgsrev: xxxxx
     '''
 
 

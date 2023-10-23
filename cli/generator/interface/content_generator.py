@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-class FileGenerator(ABC):
+class ContentGenerator(ABC):
     @abstractmethod
-    def generate(self) -> str:
+    def generate(self) -> dict:
         pass
 

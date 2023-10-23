@@ -1,8 +1,8 @@
 {
-  description = "#{short_description}";
+  description = "#description#";
 
   inputs.nixpkgs = {
-    url = "github:NixOS/nixpkgs?rev=#{revision}";
+    url = "github:NixOS/nixpkgs?rev=#NIXPKGSREV#";
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
@@ -16,8 +16,8 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        version = "#{version}";
-        name = "#{name}";
+        version = "#VERSION#";
+        name = "#NAME#";
 
         units = pkgs.callPackage ./units.nix { inherit sstemplate name version system; };
         deps = pkgs.callPackage ./deps.nix { };

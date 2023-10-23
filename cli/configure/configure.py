@@ -7,27 +7,27 @@ class Configure:
         self._config = parse(configStr)
 
     @property
-    def language(self) -> str:
+    def sdk_language(self) -> str:
         return self._config["sdk"]["language"]
 
     @property
-    def version(self) -> str:
+    def sdk_version(self) -> str:
         return self._config["sdk"]["version"]
 
     @property
-    def sdkPackagesDefault(self) -> list[str]:
+    def sdk_packages_default(self) -> list[str]:
         return self._config["sdk"]["packages"]["default"]
 
     @property
-    def sdkPackagesDev(self) -> list[str]:
+    def sdk_packages_dev(self) -> list[str]:
         return self._config["sdk"]["packages"]["development"]
 
     @property
-    def dependenciesDefault(self) -> list[str]:
+    def dependencies_default(self) -> list[str]:
         return self._config["dependencies"]["default"]
 
     @property
-    def dependenciesDev(self) -> list[str]:
+    def dependencies_dev(self) -> list[str]:
         return self._config["dependencies"]["development"]
 
     @property
@@ -46,3 +46,14 @@ class Configure:
     def ref(self) -> str:
         return self._config["rev"]
 
+    @property
+    def name(self) -> str:
+        return self._config["name"]
+
+    @property
+    def version(self) -> str:
+        return self._config["version"]
+
+    @property
+    def description(self) -> str:
+        return self._config["description"]
