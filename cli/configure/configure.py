@@ -1,10 +1,15 @@
 from .parser import parse 
 from .unit import Unit
 from typing import Optional
+from os.path import dirname
 
 class Configure:
-    def __init__(self, configStr):
-        self._config = parse(configStr)
+    def __init__(self, config_path):
+        self.root = dirname(config_path)
+
+        with open(config_path, 'r') as f:
+            yaml = f.read()
+            self._config = parse(yaml)
 
     @property
     def sdk_language(self) -> str:

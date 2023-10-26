@@ -20,6 +20,10 @@ class UnitsGenerator(ContentGenerator, FileExporter):
             _MARK_UNITS_REF: self._render_units_ref()
         } 
 
+    def export(self) -> str:
+        return self._generate_units_file_content()
+
+
     def _render_all_units(self) -> str:
         return reduce(lambda result, next: f'{result}\n{next}', map(self._render_unit, self.configure.units))
 

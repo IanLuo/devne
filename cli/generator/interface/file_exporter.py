@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class FileExporter:
+class FileExporter(ABC):
     @abstractmethod
     def export(self):
         pass

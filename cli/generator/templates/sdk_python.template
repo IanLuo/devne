@@ -1,7 +1,7 @@
 python = native.python {
-  pythonVersion = "python310";
+  pythonVersion = "python#VERSION#";
   name = name;
   version = version;
-  buildInputs = ps: with ps; [ typer pynvim pyyaml ];
+  buildInputs = ps: with ps; [ #PACKAGES# ];
 };
 
