@@ -17,7 +17,7 @@ class TestConfigure:
 
     def test_get_sdk_dev_packages(self, config):
         config = Configure(config)
-        assert config.sdk_packages_dev == ["pynvim"]
+        assert config.sdk_packages_dev == ["pynvim", "pillow"]
 
     def test_get_dependencies_default(self, config):
         config = Configure(config)

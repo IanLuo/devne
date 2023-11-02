@@ -1,9 +1,11 @@
 from cli.generator.sdk_generator import SdkGenerator
 from cli.configure.configure import Configure
+from .fixtures import config
 
 class TestSdkGenerator:
-    def __init__(self, configure: Configure):
-        self.generator = SdkGenerator(configure)
-
-    def test_generate_sdk_python(self):
-        pass
+    def test_generate_sdk_python(self, config):
+        self.generator = SdkGenerator(Configure(config))
+        assert self.generator.generate()['#LANGUAGE#'] == 'python'
+        assert self.generator.generate()['#VERSION#'] == '3.8'
+        assert self.generator.generate()['#PACKAGES#'] == ''' pynvim
+pillow '''.replace(" ", "")
