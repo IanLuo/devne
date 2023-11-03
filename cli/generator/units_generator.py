@@ -3,21 +3,25 @@ from ..configure.configure import Configure
 from .interface.content_generator import ContentGenerator
 from .interface.file_exporter import FileExporter
 from functools import reduce
+from .sdk_generator import SdkGenerator
 import os
 
 _UNITS_TEMPLATE_FILE = 'templates/units.nix.template'
 
 _MARK_UNITS = '#UNITS#'
+_MARK_SDK = '#SDK#'
 _MARK_UNITS_REF = '#UNITS_REF#'
 
 class UnitsGenerator(ContentGenerator, FileExporter):
     def __init__(self, configure: Configure):
         self.configure = configure
+        self.sdk_generator = SdkGenerator(configure) 
 
     def generate(self) -> dict:
         return {
             _MARK_UNITS: self._render_all_units(),
-            _MARK_UNITS_REF: self._render_units_ref()
+            _MARK_UNITS_REF: self._render_units_ref(),
+            _MARK_SDK: self._render_sdk()
         } 
 
     def export(self) -> str:
@@ -25,7 +29,7 @@ class UnitsGenerator(ContentGenerator, FileExporter):
 
 
     def _render_all_units(self) -> str:
-        return reduce(lambda result, next: f'{result}\n{next}', map(self._render_unit, self.configure.units))
+        return '\n'.join(map(self._render_unit, self.configure.units))
 
     def _render_unit(self, unit: Unit) -> str:
         kvs = [f'{key} = "{value}"' for key, value in unit.attrs.items()]
@@ -36,6 +40,9 @@ class UnitsGenerator(ContentGenerator, FileExporter):
                 {make_units(kvs)}
             }};
         '''
+
+    def _render_sdk(self) -> dict:
+        return self.sdk_generator.generate()
 
     def _render_units_ref(self) -> str:
         all_units = reduce(lambda last, next: f'{last} {next}', map(lambda unit: unit.name, self.configure.units))

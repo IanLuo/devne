@@ -1,8 +1,8 @@
 from ..configure.configure import Configure
 from .interface.content_generator import ContentGenerator
 from .interface.file_exporter import FileExporter
-from functools import reduce
 import os
+
 
 _DEPS_TEMPLATE_FILE = './templates/deps.nix.template'
 _MARK_DEPS = '#DEPS#'
@@ -29,4 +29,4 @@ class DepsGenerator(ContentGenerator, FileExporter):
 
     def _render_deps(self):
         all = self.configure.dependencies_default + self.configure.dependencies_dev
-        return reduce(lambda last, next: f'{last}\n{next}' ,all)
+        return '\n'.join(all)
