@@ -14,11 +14,11 @@ class FlakeGenerator(ContentGenerator, FileExporter):
         self.configure = configure
 
     def generate(self) -> dict:
-        return {
+        return { k: v for k, v in { 
             _MARK_NAME: self.configure.name,           
             _MARK_VERSION: self.configure.version,
             _MARK_DESCRIPTION: self.configure.description
-        }
+        }.items() if v is not None }
 
     def export(self) -> str:
         return self._generate_flake_file_content()
@@ -31,7 +31,7 @@ class FlakeGenerator(ContentGenerator, FileExporter):
 
         with open(path, 'r') as f:
             str = f.read()
-            for key, value in self.generate.items():
+            for key, value in self.generate().items():
                 str = str.replace(key, value)
 
             return str

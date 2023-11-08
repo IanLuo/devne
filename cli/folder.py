@@ -33,27 +33,27 @@ class Folder:
         self.root = root
 
     def init_data_path(self) -> str:
-        return self._create_folder(self.data_folder_path)
+        return self.create_folder(self.data_folder_path)
 
     def init_config_file(self):
-        return self._make_empty_file(self.config_path)
+        return self.make_empty_file(self.config_path)
 
     def init_flake_file(self):
-        return self._make_empty_file(self.flake_path)
+        return self.make_empty_file(self.flake_path)
 
     def init_unit_file(self):
-        return self._make_empty_file(self.unit_path)
+        return self.make_empty_file(self.unit_path)
 
     def init_deps_file(self):
-        return self._make_empty_file(self.deps_path)
+        return self.make_empty_file(self.deps_path)
 
-    def _create_folder(self, path):
+    def create_folder(self, path):
         if exists(path) == False:
             makedirs(path)
 
         return path 
 
-    def _make_empty_file(self, path):
+    def make_empty_file(self, path):
         dir = dirname(path)
 
         if exists(dir) == False:

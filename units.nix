@@ -6,7 +6,7 @@ let
     pythonVersion = "python310";
     name = name;
     version = version;
-    buildInputs = ps: with ps; [ typer pynvim pyyaml ];
+    buildInputs = ps: with ps; [ typer pynvim pyyaml rich jsonpath-ng ];
   };
 
   postgres = powers.db.postgres {

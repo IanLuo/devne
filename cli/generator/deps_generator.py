@@ -3,7 +3,6 @@ from .interface.content_generator import ContentGenerator
 from .interface.file_exporter import FileExporter
 import os
 
-
 _DEPS_TEMPLATE_FILE = './templates/deps.nix.template'
 _MARK_DEPS = '#DEPS#'
 
@@ -22,7 +21,7 @@ class DepsGenerator(ContentGenerator, FileExporter):
 
         with open(path, 'r') as f:
             deps_str = f.read()
-            for key, value in self.generate.items():
+            for key, value in self.generate().items():
                 deps_str = deps_str.replace(key, value)
 
             return deps_str

@@ -21,5 +21,5 @@ class TestUnitsGenerator:
         '''.replace("\n", "").replace(" ", "")
 
     def test_sdk(self, config):
-        assert UnitsGenerator(Configure(config)).generate()['#SDK#'] == SdkGenerator(Configure(config)).generate()
+        assert UnitsGenerator(Configure(config)).generate()['#SDK#'] == SdkGenerator(Configure(config)).export()
 

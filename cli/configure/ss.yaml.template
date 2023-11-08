@@ -1,0 +1,22 @@
+name: "#NAME#"
+version: "0.0.1"
+description: ""
+sdk:
+  language: python 
+  version: "3.8"
+  packages:
+    default:
+    development:
+
+dependencies:
+  default:
+  development:
+
+units:
+  - postgres:
+      username: "test_user"
+      password: "test_password"
+      database: "test_database"
+
+# this is the official nixpkgs ref
+nixpkgsrev:#PKGSREV# 

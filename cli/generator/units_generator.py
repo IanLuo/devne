@@ -6,7 +6,7 @@ from functools import reduce
 from .sdk_generator import SdkGenerator
 import os
 
-_UNITS_TEMPLATE_FILE = 'templates/units.nix.template'
+_UNITS_TEMPLATE_FILE = './templates/units.nix.template'
 
 _MARK_UNITS = '#UNITS#'
 _MARK_SDK = '#SDK#'
@@ -18,22 +18,21 @@ class UnitsGenerator(ContentGenerator, FileExporter):
         self.sdk_generator = SdkGenerator(configure) 
 
     def generate(self) -> dict:
-        return {
+        return { k: v for k, v in {
             _MARK_UNITS: self._render_all_units(),
             _MARK_UNITS_REF: self._render_units_ref(),
             _MARK_SDK: self._render_sdk()
-        } 
+        }.items() if v is not None }
 
     def export(self) -> str:
         return self._generate_units_file_content()
-
 
     def _render_all_units(self) -> str:
         return '\n'.join(map(self._render_unit, self.configure.units))
 
     def _render_unit(self, unit: Unit) -> str:
         kvs = [f'{key} = "{value}"' for key, value in unit.attrs.items()]
-        make_units = lambda kvs: reduce(lambda result, next: f'{result}\n{next}', kvs)
+        make_units = lambda kvs: '\n'.join(kvs)
 
         return f'''
             {unit.name} = {{
@@ -41,11 +40,18 @@ class UnitsGenerator(ContentGenerator, FileExporter):
             }};
         '''
 
-    def _render_sdk(self) -> dict:
-        return self.sdk_generator.generate()
+    def _render_sdk(self) -> str:
+        if self.configure.sdk_language == 'python':
+            return self.sdk_generator.export_python()
+        else: 
+            return ''
 
     def _render_units_ref(self) -> str:
-        all_units = reduce(lambda last, next: f'{last} {next}', map(lambda unit: unit.name, self.configure.units))
+        all_units = ' '.join(map(lambda unit: unit.name, self.configure.units))
+
+        if len(all_units) == 0:
+            return '[]' 
+
         return f'[ {all_units} ]'
 
     def _generate_units_file_content(self) -> str:
@@ -57,7 +63,7 @@ class UnitsGenerator(ContentGenerator, FileExporter):
         with open(path, 'r') as f:
             template = f.read()
 
-            for key, value in self.generate.items():
+            for key, value in self.generate().items():
                 template = template.replace(key, value)
 
             return template
