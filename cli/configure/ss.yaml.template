@@ -2,8 +2,8 @@ name: "#NAME#"
 version: "0.0.1"
 description: ""
 sdk:
-  language: python 
-  version: "3.8"
+  language: #SDK_LANGUAGE# 
+  version: "#SDK_VERSION#"
   packages:
     default:
     development:

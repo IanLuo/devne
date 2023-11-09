@@ -16,9 +16,13 @@
 [x] generate supporting file for units: manage path and folders, generated files
 [x] folder structure and path manage for units
 
+<2023-11-09>
+[x] user input wizard
+
 <backlog>
-[ ] postgres database function
-[ ] commnads structure
-[ ] unit documentations
-[ ] command auto completion
-[ ] check github flows for inspiration
+[] remote global configure 
+[] postgres database function
+[] commnads structure
+[] unit documentations
+[] command auto completion
+[] check github flows for inspiration
