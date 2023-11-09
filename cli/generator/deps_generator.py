@@ -27,5 +27,4 @@ class DepsGenerator(ContentGenerator, FileExporter):
             return deps_str
 
     def _render_deps(self):
-        all = self.configure.dependencies_default + self.configure.dependencies_dev
-        return '\n'.join(all)
+        return '\n'.join(self.configure.tools)

@@ -1,5 +1,5 @@
 from cli.generator.deps_generator import DepsGenerator
-from .fixtures import config
+from .fixtures import * 
 from cli.configure.configure import Configure
 
 class TestDepsGenerator:

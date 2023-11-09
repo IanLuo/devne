@@ -36,16 +36,16 @@ class Folder:
         return self.create_folder(self.data_folder_path)
 
     def init_config_file(self):
-        return self.make_empty_file(self.config_path)
+        return self.make_file(self.config_path)
 
     def init_flake_file(self):
-        return self.make_empty_file(self.flake_path)
+        return self.make_file(self.flake_path)
 
     def init_unit_file(self):
-        return self.make_empty_file(self.unit_path)
+        return self.make_file(self.unit_path)
 
     def init_deps_file(self):
-        return self.make_empty_file(self.deps_path)
+        return self.make_file(self.deps_path)
 
     def create_folder(self, path):
         if exists(path) == False:
@@ -53,14 +53,14 @@ class Folder:
 
         return path 
 
-    def make_empty_file(self, path):
+    def make_file(self, path, content = ''):
         dir = dirname(path)
 
         if exists(dir) == False:
             makedirs(dir)
 
         with open(path, 'w') as f:
-            f.write('')
+            f.write(content)
 
         return path 
 

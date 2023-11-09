@@ -20,6 +20,7 @@
 [x] user input wizard
 
 <backlog>
+[] read pkgsrev from sslib
 [] remote global configure 
 [] postgres database function
 [] commnads structure

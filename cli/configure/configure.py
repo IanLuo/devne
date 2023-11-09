@@ -6,6 +6,7 @@ from ..folder import Folder
 from jsonpath_ng import parser
 from typing import TypeVar
 from ..user_interactive.user_input_wizard import UserInputWizard, InputItem 
+from ..resources.remote.global_configure import GlobalConfigure 
 
 T = TypeVar('T')
 
@@ -21,21 +22,38 @@ class Configure:
             self._config = parse(yaml)
 
     @staticmethod
-    def init_empty_config(config_path: str):
+    def init_default_config(config_path: str):
         config_wizard = UserInputWizard([
             InputItem('name', False),
-            InputItem('version', True),
+            InputItem('version', False),
             InputItem('language', False),
             InputItem('version of language', False),
+            InputItem('description', False),
         ])
 
         config = config_wizard.run()
-        print(config)
-        return
+        name = config['name']
+        version = config['version']
+        language = config['language']
+        version_of_language = config['version of language']
+        description = config['description']
+        nixpkgs_rev = GlobalConfigure.fetch_nixpkgs_rev()
 
         folder = Folder(dirname(config_path))
         if not exists(folder.config_path):
-            folder.make_empty_file(folder.init_config_file())
+            current_directory = dirname(__file__)
+            path = f'{current_directory}/ss.yaml.template'
+            with open(path, 'r') as f:
+                content = f.read()
+                content = content.replace('#NAME#', name)
+                content = content.replace('#DESCRIPTION#', description)
+                content = content.replace('#VERSION#', version)
+                content = content.replace('#SDK_LANGUAGE#', language)
+                content = content.replace('#SDK_VERSION#', version_of_language)
+                content = content.replace('#NIXPKGSREV#', nixpkgs_rev)
+                folder.make_file(folder.config_path, content)
+
+            folder.make_file(folder.init_config_file(), content)
         else:
             print('config file already exists')
 
@@ -67,12 +85,8 @@ class Configure:
         return self._find_value("$.sdk.packages.development", [])
 
     @property
-    def dependencies_default(self) -> list[str]:
-        return self._find_value("$.dependencies.default",[]) 
-
-    @property
-    def dependencies_dev(self) -> list[str]:
-        return self._find_value("$.dependencies.development", [])
+    def tools(self) -> list[str]:
+        return self._find_value("$.tools",[]) 
 
     @property
     def units(self) -> list[Unit]:

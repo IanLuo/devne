@@ -11,11 +11,9 @@ sdk:
        - pynvim
        - pillow
 
-dependencies:
-  default:
-    - django
-  development:
-    - black
+tools:
+  - django
+  - black
 
 units:
   - powers.db.postgres:

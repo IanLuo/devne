@@ -19,13 +19,9 @@ class TestConfigure:
         config = Configure(config)
         assert config.sdk_packages_dev == ["pynvim", "pillow"]
 
-    def test_get_dependencies_default(self, config):
+    def test_get_tools(self, config):
         config = Configure(config)
-        assert config.dependencies_default == ["django"]
-
-    def test_get_dependencies_dev(self, config):
-        config = Configure(config)
-        assert config.dependencies_dev == ["black"]
+        assert config.tools == ["django", "black"]
 
     def test_name(self, config):
         config = Configure(config)

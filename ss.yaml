@@ -1,9 +1,9 @@
-name: "#NAME#"
-version: #VERSION# 
-description: #DESCRIPTION# 
+name: "ss"
+version: 1 
+description:  
 sdk:
-  language: #SDK_LANGUAGE# 
-  version: "#SDK_VERSION#"
+  language: python 
+  version: "3.10"
   packages:
     default:
       # add your python packages for app running here
@@ -20,4 +20,5 @@ units:
   #   database: "test_database"
 
 # this is the official nixpkgs ref
-nixpkgsrev: #NIXPKGSREV# 
+nixpkgsrev: f895a4ef0f01f9d2af2370533829c4f03ec408f4
+ 

@@ -9,7 +9,7 @@ std_console = Console()
 
 def main(action: str, config: str = f'{os.getcwd()}/ss.yaml'):
     if action == 'init_config':
-        Configure.init_empty_config(config)
+        Configure.init_default_config(config)
     elif action == 'help':
        std_console.print('''
     Actions
