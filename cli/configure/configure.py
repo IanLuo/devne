@@ -3,8 +3,9 @@ from .unit import Unit
 from typing import Optional
 from os.path import dirname, exists
 from ..folder import Folder
-from jsonpath_ng import jsonpath, parser
+from jsonpath_ng import parser
 from typing import TypeVar
+from ..user_interactive.user_input_wizard import UserInputWizard, InputItem 
 
 T = TypeVar('T')
 
@@ -21,6 +22,17 @@ class Configure:
 
     @staticmethod
     def init_empty_config(config_path: str):
+        config_wizard = UserInputWizard([
+            InputItem('name', False),
+            InputItem('version', True),
+            InputItem('language', False),
+            InputItem('version of language', False),
+        ])
+
+        config = config_wizard.run()
+        print(config)
+        return
+
         folder = Folder(dirname(config_path))
         if not exists(folder.config_path):
             folder.make_empty_file(folder.init_config_file())
