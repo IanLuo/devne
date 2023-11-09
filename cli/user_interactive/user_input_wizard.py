@@ -1,4 +1,7 @@
 from typing import Optional
+from rich import print
+import typer
+from typing_extensions import Annotated
 
 class InputItem:
     def __init__(self, title: str, is_optional: bool):
@@ -28,27 +31,34 @@ class UserInputWizard:
 
     def run(self) -> dict:
         print("Please enter the following values:")
-        for item in self._input_items:
-            if item.is_optional:
-                item.value = input(f'{item.title} (optional): ')
-            else:
-                item.value = input(f'{item.title}: ')
+        step = 0
+        while step < len(self._input_items):
+            item = self._input_items[step]
+            label = f'{item.title}{": (optional)" if item.is_optional else ""}'
+            value = typer.prompt(f'{label}')
 
-        if not self.confirm():
+            if self._validate(value):
+                item.value = value
+                step += 1
+            else:
+                print(f'please enter a valid value for \'{item.title}\'')
+
+        if not self._confirm():
             self.run()
 
         return { item.title: item.value for item in self._input_items }
 
-    def validate(self, value) -> bool:
-        if value == None:
+    def _validate(self, value) -> bool:
+        if value == '':
             return False
 
         return True
 
-    def confirm(self):
-        print("Please confirm the following values:")
+    def _confirm(self):
+        print("---------")
+
         for item in self._input_items:
-            print(f'{item.title}: {item.value}')
+            print(f'{item.title}: [bold]{item.value}[/bold]')
 
         return input('Confirm? (y/n): ') == 'y'
 

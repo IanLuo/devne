@@ -23,24 +23,25 @@ class Configure:
 
     @staticmethod
     def init_default_config(config_path: str):
-        config_wizard = UserInputWizard([
-            InputItem('name', False),
-            InputItem('version', False),
-            InputItem('language', False),
-            InputItem('version of language', False),
-            InputItem('description', False),
-        ])
-
-        config = config_wizard.run()
-        name = config['name']
-        version = config['version']
-        language = config['language']
-        version_of_language = config['version of language']
-        description = config['description']
-        nixpkgs_rev = GlobalConfigure.fetch_nixpkgs_rev()
-
         folder = Folder(dirname(config_path))
+
         if not exists(folder.config_path):
+            config_wizard = UserInputWizard([
+                InputItem('name', False),
+                InputItem('version', False),
+                InputItem('language', False),
+                InputItem('version of language', False),
+                InputItem('description', False),
+            ])
+
+            config = config_wizard.run()
+            name = config['name']
+            version = config['version']
+            language = config['language']
+            version_of_language = config['version of language']
+            description = config['description']
+            nixpkgs_rev = GlobalConfigure.fetch_nixpkgs_rev()
+
             current_directory = dirname(__file__)
             path = f'{current_directory}/ss.yaml.template'
             with open(path, 'r') as f:
@@ -55,7 +56,7 @@ class Configure:
 
             folder.make_file(folder.init_config_file(), content)
         else:
-            print('config file already exists')
+            raise Exception('config file already exists')
 
     def _find_value(self, key_path: str, default: T) -> T: 
         jsonpath_expr = parser.parse(key_path)
