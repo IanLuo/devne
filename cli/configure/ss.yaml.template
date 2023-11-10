@@ -7,11 +7,14 @@ sdk:
   packages:
     default:
       # add your python packages for app running here
+      # - package
     development:
       # add your python packages for development here
+      # - package
 
 tools:
   # add other softwares when working on this project 
+  # - tool
 
 units:
   # - postgres:

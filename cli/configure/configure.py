@@ -58,36 +58,30 @@ class Configure:
         else:
             raise Exception('config file already exists')
 
-    def _find_value(self, key_path: str, default: T) -> T: 
+    def _find_value(self, key_path: str): 
         jsonpath_expr = parser.parse(key_path)
         result = jsonpath_expr.find(self._config)
-        if len(result) > 0:
-            value = result[0].value
-
-            if type(value) == type(default):
-                return value 
-
-        return default
+        return str(result[0].value)
 
     @property
     def sdk_language(self) -> str:
-         return self._find_value("$.sdk.language", '')
+         return self._find_value("$.sdk.language")
 
     @property
     def sdk_version(self) -> str:
-        return self._find_value("$.sdk.version", '')
+        return self._find_value("$.sdk.version")
 
     @property
     def sdk_packages_default(self) -> list[str]:
-        return self._find_value("$.sdk.packages.default", [])
+        return self._find_value("$.sdk.packages.default")
 
     @property
     def sdk_packages_dev(self) -> list[str]:
-        return self._find_value("$.sdk.packages.development", [])
+        return self._find_value("$.sdk.packages.development")
 
     @property
     def tools(self) -> list[str]:
-        return self._find_value("$.tools",[]) 
+        return self._find_value("$.tools") 
 
     @property
     def units(self) -> list[Unit]:
@@ -99,22 +93,22 @@ class Configure:
             else:
                 return None
 
-        units = self._find_value('$.units', [])
+        units = self._find_value('$.units')
 
         return [ value for value in map(lambda unit: _get_unit(unit), units) if value is not None ]
 
     @property
-    def ref(self) -> str:
-        return self._find_value("$.pkgsrev", '')
+    def nixpkgsrev(self) -> str:
+        return self._find_value("$.nixpkgsrev")
 
     @property
     def name(self) -> str:
-        return self._find_value("$.name", '')
+        return self._find_value("$.name")
 
     @property
     def version(self) -> str:
-        return self._find_value("$.version", '')
+        return self._find_value("$.version")
 
     @property
     def description(self) -> str:
-        return self._find_value("$.description", '')
+        return self._find_value("$.description")

@@ -31,7 +31,7 @@ class UnitsGenerator(ContentGenerator, FileExporter):
         return '\n'.join(map(self._render_unit, self.configure.units))
 
     def _render_unit(self, unit: Unit) -> str:
-        kvs = [f'{key} = "{value}"' for key, value in unit.attrs.items()]
+        kvs = [f'{key} = "{value}";' for key, value in unit.attrs.items()]
         make_units = lambda kvs: '\n'.join(kvs)
 
         return f'''
