@@ -11,7 +11,7 @@ def run(command):
     stdout, stderr = process.communicate()
 
     if stdout != None:
-        print(f"[yellow]{stdout}[/yellow]") 
+        print(f"[green]{stdout}[/green]") 
 
     if stderr != None:
-      print(f"[bold red]{stderr}[/bold red]")
+      print(f"[bold orange]{stderr}[/bold orange]")

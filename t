@@ -25,9 +25,14 @@
 [x] make file generator work correctly, and use the generated flake.nix for development
 [x] remote global configure 
 [x] commnads structure
+[x] postgres database function
 
 <backlog>
-[] postgres database function
 [] unit documentations
 [] command auto completion
 [] check github flows for inspiration
+[] welcome information
+[] package search function
+[] ss.yaml validation
+[] ss.yaml helper 
+[] units guide
