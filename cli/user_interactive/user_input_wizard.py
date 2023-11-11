@@ -1,7 +1,6 @@
 from typing import Optional
 from rich import print
 import typer
-from typing_extensions import Annotated
 
 class InputItem:
     def __init__(self, title: str, is_optional: bool):

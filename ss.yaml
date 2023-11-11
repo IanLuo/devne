@@ -1,26 +1,28 @@
 name: "super start"
 version: 1.0 
-description: ss 
+description: devlopment environment with 1 command 
 sdk:
-  language: python 
-  version: "3.10"
+  language: python
+  version: 310 
   packages:
     default:
-      # add your python packages for app running here
-      # - package
+      - typer 
+      - pynvim 
+      - pyyaml 
+      - rich 
+      - jsonpath-ng 
+      - requests
+      - black
     development:
-      # add your python packages for development here
-      # - package
 
 tools:
-  # add other softwares when working on this project 
-  # - tool
+  - nodePackages.pyright
 
 units:
-  # - postgres:
-  #    username: "test_user"
-  #   password: "test_password"
-  #   database: "test_database"
+  - powers.db.postgres:
+      username: "test_user"
+      password: "test_password"
+      database: "test_database"
 
 # this is the official nixpkgs ref
 nixpkgsrev: f895a4ef0f01f9d2af2370533829c4f03ec408f4

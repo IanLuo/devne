@@ -1,7 +1,7 @@
-ROOT_FOLDER = '.ss'
+ROOT_FOLDER = 'ss_conf'
 CONFIG_FILE = "ss.yaml"
 FLAKE_FILE = f'{ROOT_FOLDER}/flake.nix'
-UNIT_FILE = f'{ROOT_FOLDER}/unit.nix'
+UNIT_FILE = f'{ROOT_FOLDER}/units.nix'
 DEPS_FILE = f'{ROOT_FOLDER}/deps.nix'
 DATA_FOLDER = f'{ROOT_FOLDER}/data'
 
@@ -34,9 +34,6 @@ class Folder:
 
     def init_data_path(self) -> str:
         return self.create_folder(self.data_folder_path)
-
-    def init_config_file(self):
-        return self.make_file(self.config_path)
 
     def init_flake_file(self):
         return self.make_file(self.flake_path)

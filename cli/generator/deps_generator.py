@@ -27,4 +27,4 @@ class DepsGenerator(ContentGenerator, FileExporter):
             return deps_str
 
     def _render_deps(self):
-        return '\n'.join(self.configure.tools)
+        return '\n'.join(self.configure.tools or [])

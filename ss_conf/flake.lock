@@ -5,11 +5,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1689068808,
-        "narHash": "sha256-6ixXo3wt24N/melDWjq70UuHQLxGV8jZvooRanIHXw0=",
+        "lastModified": 1694529238,
+        "narHash": "sha256-zsNZZGTGnMOf9YpHKJqMSsa0dXbfmxeoJ7xHlrt+xmY=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "919d646de7be200f3bf08cb76ae1f09402b6f9b4",
+        "rev": "ff7b65b44d01cf9ba6a71320833626af21126384",
         "type": "github"
       },
       "original": {
@@ -38,17 +38,17 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1696693680,
-        "narHash": "sha256-PH0HQTkqyj7DmdPKPwrrXwVURLBqzZs4nqnDw9q8mhg=",
+        "lastModified": 1699530325,
+        "narHash": "sha256-bbKQHAJffBe0zBIA73SulvDxo2GeHD4woJWwmrOzWz4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "945559664c1dc5836173ee12896ba421d9b37181",
+        "rev": "f895a4ef0f01f9d2af2370533829c4f03ec408f4",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "945559664c1dc5836173ee12896ba421d9b37181",
+        "rev": "f895a4ef0f01f9d2af2370533829c4f03ec408f4",
         "type": "github"
       }
     },
@@ -67,8 +67,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1696757496,
-        "narHash": "sha256-9yNx+ya+uSyEJIlQagpZc75vXZuGEYn7p1XUwbzFDy4=",
+        "lastModified": 1699692694,
+        "narHash": "sha256-s+YwTBHM33aGX3nr1I/z6NEowxQA5yOudbcJN9C3NTE=",
         "type": "git",
         "url": "file:///Users/ianluo/Documents/apps/templates"
       },

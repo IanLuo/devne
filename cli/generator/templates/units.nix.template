@@ -3,9 +3,9 @@ let
   native = sstemplate.native.${system};
   powers = sstemplate.powers.${system};
 
-  #SDK#
+#SDK#
 
-  #UNITS#
+#UNITS#
 
   all = #UNITS_REF#;
 

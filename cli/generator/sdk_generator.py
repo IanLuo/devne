@@ -15,7 +15,7 @@ class SdkGenerator(ContentGenerator, FileExporter):
 
     def generate(self) -> dict[str, str]:
         return { k: v for k, v in {
-            _MARK_VERSION: self.configure.sdk_version,
+            _MARK_VERSION: str(self.configure.sdk_version),
             _MARK_PACKAGES: self._render_packages(self.configure),
             _MARK_LANGUAGE: self.configure.sdk_language
 
@@ -38,4 +38,5 @@ class SdkGenerator(ContentGenerator, FileExporter):
             return template 
 
     def _render_packages(self, configure: Configure):
-        return '\n'.join(configure.sdk_packages_dev)
+        all_packages = (configure.sdk_packages_default or []) + (configure.sdk_packages_dev or [])
+        return ' '.join(all_packages)

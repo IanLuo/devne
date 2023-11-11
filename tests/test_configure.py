@@ -37,7 +37,8 @@ class TestConfigure:
 
     def test_get_units(self, config):
         config = Configure(config)
-        assert len(config.units) == 1
+        units = config.units or []
+        assert len(units or []) == 1
 
         unit = Unit({
             "powers.db.postgres": {
@@ -49,9 +50,9 @@ class TestConfigure:
             }
         })
 
-        assert config.units[0].attrs == unit.attrs
-        assert config.units[0].name == "powers.db.postgres"
-        assert config.units[0].attrs == {
+        assert units[0].attrs == unit.attrs
+        assert units[0].name == "powers.db.postgres"
+        assert units[0].attrs == {
             "username": "test_user",
             "password": "test_password",
             "database": "test_database",

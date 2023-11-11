@@ -52,39 +52,42 @@ class Configure:
                 content = content.replace('#SDK_LANGUAGE#', language)
                 content = content.replace('#SDK_VERSION#', version_of_language)
                 content = content.replace('#NIXPKGSREV#', nixpkgs_rev)
-                folder.make_file(folder.config_path, content)
 
-            folder.make_file(folder.init_config_file(), content)
+                folder.make_file(folder.config_path, content)
         else:
             raise Exception('config file already exists')
 
     def _find_value(self, key_path: str): 
         jsonpath_expr = parser.parse(key_path)
         result = jsonpath_expr.find(self._config)
-        return str(result[0].value)
+
+        if len(result) > 0:
+            return result[0].value
+        else:
+            return None
 
     @property
-    def sdk_language(self) -> str:
+    def sdk_language(self) -> Optional[str]:
          return self._find_value("$.sdk.language")
 
     @property
-    def sdk_version(self) -> str:
+    def sdk_version(self) -> Optional[str]:
         return self._find_value("$.sdk.version")
 
     @property
-    def sdk_packages_default(self) -> list[str]:
+    def sdk_packages_default(self) -> Optional[list[str]]:
         return self._find_value("$.sdk.packages.default")
 
     @property
-    def sdk_packages_dev(self) -> list[str]:
+    def sdk_packages_dev(self) -> Optional[list[str]]:
         return self._find_value("$.sdk.packages.development")
 
     @property
-    def tools(self) -> list[str]:
+    def tools(self) -> Optional[list[str]]:
         return self._find_value("$.tools") 
 
     @property
-    def units(self) -> list[Unit]:
+    def units(self) -> Optional[list[Unit]]:
         def _get_unit(unit) -> Optional[Unit]:
             if type(unit) is str:
                 return Unit(name=unit)
@@ -93,22 +96,22 @@ class Configure:
             else:
                 return None
 
-        units = self._find_value('$.units')
+        units = self._find_value('$.units') or []
 
         return [ value for value in map(lambda unit: _get_unit(unit), units) if value is not None ]
 
     @property
-    def nixpkgsrev(self) -> str:
+    def nixpkgsrev(self) -> Optional[str]:
         return self._find_value("$.nixpkgsrev")
 
     @property
-    def name(self) -> str:
+    def name(self) -> Optional[str]:
         return self._find_value("$.name")
 
     @property
-    def version(self) -> str:
+    def version(self) -> Optional[str]:
         return self._find_value("$.version")
 
     @property
-    def description(self) -> str:
+    def description(self) -> Optional[str]:
         return self._find_value("$.description")

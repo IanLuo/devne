@@ -3,5 +3,5 @@ pkgs
 }:
 
 with pkgs; [
-#DEPS#
+nodePackages.pyright
 ]

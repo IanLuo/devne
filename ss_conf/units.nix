@@ -2,19 +2,25 @@
 let 
   native = sstemplate.native.${system};
   powers = sstemplate.powers.${system};
+
   python = native.python {
     pythonVersion = "python310";
     name = name;
     version = version;
-    buildInputs = ps: with ps; [ typer pynvim pyyaml rich jsonpath-ng requests ];
+    buildInputs = ps: with ps; [ typer pynvim pyyaml rich jsonpath-ng requests black ];
   };
 
-  postgres = powers.db.postgres {
-    database = name;
-    folder = "postgres";
-  };
 
-  all = [ python postgres ];
+
+  powers_db_postgres = powers.db.postgres {
+    username = "test_user";
+    password = "test_password";
+    database = "test_database";
+  };
+        
+
+  all = [ powers_db_postgres python ];
+
   startScript = ''
     export SS_PROJECT_BASE=$PWD
   '';

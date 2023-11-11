@@ -30,7 +30,7 @@ class Unit:
     @property
     def name(self) -> str:
         '''Return the name of the Unit'''
-        return self.__dict__['unit']
+        return self.__dict__[_KEY_NAME]
 
     def __eq__(self, other):
         return self.attrs == other.attrs

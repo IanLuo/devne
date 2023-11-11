@@ -4,11 +4,20 @@ from cli.configure.configure import Configure
 from rich.console import Console
 import os 
 from typing_extensions import Annotated
+from cli.run_command import run
 
 err_console = Console(stderr=True)
 std_console = Console()
 
 app = typer.Typer()
+
+@app.command()
+def up():
+    run('./up')
+
+@app.command()
+def update():
+    run('./update')
 
 @app.command()
 def init_config(config: str = f'{os.getcwd()}/ss.yaml'):

@@ -1,8 +1,8 @@
 {
-  description = "ss";
+  description = "devlopment environment with 1 command";
 
   inputs.nixpkgs = {
-    url = "github:NixOS/nixpkgs?rev=945559664c1dc5836173ee12896ba421d9b37181";
+    url = "github:NixOS/nixpkgs?rev=f895a4ef0f01f9d2af2370533829c4f03ec408f4";
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
@@ -16,25 +16,18 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        version = "0.0.1";
-        name = "ss-cli";
+        version = "1.0";
+        name = "super start";
 
         units = pkgs.callPackage ./units.nix { inherit sstemplate name version system; };
-
         deps = pkgs.callPackage ./deps.nix { };
-
-        update-template = pkgs.writeScriptBin "update_template" ''
-          nix flake lock --update-input sstemplate
-        '';
       in
       {
         devShells = with pkgs; {
           default = mkShell {
             name = name;
             version = version;
-            buildInputs = units.all ++ deps ++ [
-              update-template
-            ]; 
+            buildInputs = units.all ++ deps; 
 
             shellHook = ''
               ${units.scripts}
@@ -45,4 +38,3 @@
         packages = units.packages;
       });
 }
-
