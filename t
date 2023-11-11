@@ -19,11 +19,15 @@
 <2023-11-09>
 [x] user input wizard
 
+<2023-11-11>
+[x] read pkgsrev from remote conf 
+[x] command in app to start to env
+[x] make file generator work correctly, and use the generated flake.nix for development
+[x] remote global configure 
+[x] commnads structure
+
 <backlog>
-[] read pkgsrev from sslib
-[] remote global configure 
 [] postgres database function
-[] commnads structure
 [] unit documentations
 [] command auto completion
 [] check github flows for inspiration
