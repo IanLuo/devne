@@ -3,16 +3,21 @@ from .interface.file_exporter import FileExporter
 from .interface.content_generator import ContentGenerator
 import os
 
-_FLAKE_TEMPLATE_FILE = 'templates/flake.nix.template'
+_FLAKE_METADATA_TEMPLATE_FILE = 'templates/metadata.nix.template'
+
+_MARK_NAME = '#NAME#'
+_MARK_VERSION = '#VERSION#'
 _MARK_DESCRIPTION = '#DESCRIPTION#'
 _MARK_NIXPKGSREV = '#NIXPKGSREV#'
 
-class FlakeGenerator(ContentGenerator, FileExporter):
+class FlakeMetadataGenerator(ContentGenerator, FileExporter):
     def __init__(self, configure: Configure):
         self.configure = configure
 
     def generate(self) -> dict[str, str]:
-        return { k: v for k, v in {
+        return { k: v for k, v in { 
+            _MARK_NAME: self.configure.name,           
+            _MARK_VERSION: self.configure.version,
             _MARK_DESCRIPTION: self.configure.description,
             _MARK_NIXPKGSREV: self.configure.nixpkgsrev
         }.items() if v is not None }
@@ -24,7 +29,7 @@ class FlakeGenerator(ContentGenerator, FileExporter):
         '''Generate flake.nix file content'''
 
         current_directory = os.path.dirname(os.path.abspath(__file__))
-        metadata_path = os.path.join(current_directory, _FLAKE_TEMPLATE_FILE)
+        metadata_path = os.path.join(current_directory, _FLAKE_METADATA_TEMPLATE_FILE)
 
         with open(metadata_path, 'r') as f:
             string = f.read()

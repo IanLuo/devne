@@ -67,14 +67,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1699709070,
+        "lastModified": 1699789384,
         "narHash": "sha256-I/oCJUVRNZNORoLrsvYhnPOCbKbWzpszKpml/u90u5M=",
-        "type": "git",
-        "url": "file:///Users/ianluo/Documents/apps/templates"
+        "owner": "ianluo",
+        "repo": "ss-templates",
+        "rev": "be4b3e70b54d59d43a82b250da47b6b3ef4f6a62",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:///Users/ianluo/Documents/apps/templates"
+        "owner": "ianluo",
+        "repo": "ss-templates",
+        "type": "github"
       }
     },
     "systems": {

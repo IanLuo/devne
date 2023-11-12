@@ -8,7 +8,7 @@
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
-  inputs.sstemplate.url = "git+file:///Users/ianluo/Documents/apps/templates";
+  inputs.sstemplate.url = "github:ianluo/ss-templates";
   inputs.sstemplate.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs = { self, nixpkgs, flake-utils, sstemplate }:
@@ -16,8 +16,9 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        version = "1.0";
-        name = "super start";
+        metadata = import ./flake_metadata.nix;
+        version = metadata.version;
+        name = metadata.name;
 
         units = pkgs.callPackage ./units.nix { inherit sstemplate name version system; };
         deps = pkgs.callPackage ./deps.nix { };
@@ -35,6 +36,6 @@
           };
         };
 
-        packages = builtins.trace "packages:${builtins.toJSON (units.packages)}" units.packages;
+        packages = units.packages;
       });
 }

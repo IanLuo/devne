@@ -27,6 +27,10 @@ def build(config: str = f'{os.getcwd()}/ss.yaml'):
     run(f'./build "./ss_conf#{name}-{version}"')
 
 @app.command()
+def info():
+    run('./info')
+
+@app.command()
 def init_config(config: str = f'{os.getcwd()}/ss.yaml'):
     '''Run configure wizard to create a config file for your project'''
     Configure.init_default_config(config)

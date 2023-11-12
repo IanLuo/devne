@@ -2,6 +2,7 @@ ROOT_FOLDER = 'ss_conf'
 CONFIG_FILE = "ss.yaml"
 FLAKE_FILE = f'{ROOT_FOLDER}/flake.nix'
 UNIT_FILE = f'{ROOT_FOLDER}/units.nix'
+FLAKE_METADATA_FILE = f'{ROOT_FOLDER}/flake_metadata.nix'
 DEPS_FILE = f'{ROOT_FOLDER}/deps.nix'
 DATA_FOLDER = f'{ROOT_FOLDER}/data'
 
@@ -16,6 +17,10 @@ class Folder:
     @property
     def unit_path(self):
         return f'{self.root}/{UNIT_FILE}'
+
+    @property
+    def flake_metadata_path(self):
+        return f'{self.root}/{FLAKE_METADATA_FILE}'
 
     @property
     def deps_path(self):
@@ -40,6 +45,9 @@ class Folder:
 
     def init_unit_file(self):
         return self.make_file(self.unit_path)
+
+    def init_flake_metadata_file(self):
+        return self.make_file(self.flake_metadata_path)
 
     def init_deps_file(self):
         return self.make_file(self.deps_path)

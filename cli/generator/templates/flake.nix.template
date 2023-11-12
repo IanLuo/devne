@@ -16,8 +16,9 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        version = "#VERSION#";
-        name = "#NAME#";
+        metadata = import ./flake_metadata.nix;
+        version = metadata.version;
+        name = metadata.name;
 
         units = pkgs.callPackage ./units.nix { inherit sstemplate name version system; };
         deps = pkgs.callPackage ./deps.nix { };
@@ -27,9 +28,7 @@
           default = mkShell {
             name = name;
             version = version;
-            buildInputs = units.all ++ deps ++ [
-              update-template
-            ]; 
+            buildInputs = units.all ++ deps; 
 
             shellHook = ''
               ${units.scripts}

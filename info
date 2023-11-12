@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+nix flake show ./ss_conf
