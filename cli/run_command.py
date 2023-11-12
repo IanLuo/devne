@@ -1,7 +1,8 @@
 import subprocess
 from rich import print
+from typing import Tuple
 
-def run(command): 
+def run(command: str) -> Tuple[str, str]: 
     process = subprocess.Popen(command, 
       shell=True, 
       stdout=subprocess.PIPE, 
@@ -15,3 +16,5 @@ def run(command):
 
     if stderr != None:
       print(f"[bold orange]{stderr}[/bold orange]")
+
+    return stdout, stderr

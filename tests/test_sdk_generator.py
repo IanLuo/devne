@@ -7,5 +7,4 @@ class TestSdkGenerator:
         self.generator = SdkGenerator(Configure(config))
         assert self.generator.generate()['#LANGUAGE#'] == 'python'
         assert self.generator.generate()['#VERSION#'] == '3.8'
-        assert self.generator.generate()['#PACKAGES#'] == ''' pynvim
-pillow '''.replace(" ", "")
+        assert self.generator.generate()['#PACKAGES#'] == 'typer pynvim pillow'

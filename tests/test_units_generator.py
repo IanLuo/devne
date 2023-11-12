@@ -6,18 +6,18 @@ from cli.generator.sdk_generator import SdkGenerator
 class TestUnitsGenerator:
     def test_units(self, config):
        assert UnitsGenerator(Configure(config)).generate()['#UNITS#'].replace("\n", "").replace(" ", "") == '''
-       powers.db.postgres =  {
-           username = "test_user"
-           password = "test_password"
-           database = "test_database"
-           host = ""
-           folder = ""
+       powers_db_postgres = powers.db.postgres {
+           username = "test_user";
+           password = "test_password";
+           database = "test_database";
+           host = "";
+           folder = "";
          };
      '''.replace("\n", "").replace(" ", "")
 
     def test_units_ref(self, config):
         assert UnitsGenerator(Configure(config)).generate()['#UNITS_REF#'].replace("\n", "").replace(" ", "") == '''
-        [ powers.db.postgres ]
+        [ powers_db_postgres python ]
         '''.replace("\n", "").replace(" ", "")
 
     def test_sdk(self, config):

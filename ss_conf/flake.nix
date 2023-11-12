@@ -17,7 +17,7 @@
         pkgs = import nixpkgs { inherit system; };
 
         version = "1.0";
-        name = "super_start";
+        name = "super start";
 
         units = pkgs.callPackage ./units.nix { inherit sstemplate name version system; };
         deps = pkgs.callPackage ./deps.nix { };
@@ -35,6 +35,6 @@
           };
         };
 
-        packages = units.packages;
+        packages = builtins.trace "packages:${builtins.toJSON (units.packages)}" units.packages;
       });
 }

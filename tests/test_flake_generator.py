@@ -7,4 +7,5 @@ class TestFlakeGenerator:
         generator = FlakeGenerator(Configure(config))
         assert generator.generate() == {
             '#DESCRIPTION#': 'this is a project for unit test', '#NAME#': 'test project', '#VERSION#': '1.0.0'
+, '#NIXPKGSREV#': 'xxxxx'
         }

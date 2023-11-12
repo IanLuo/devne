@@ -29,8 +29,8 @@ in {
   scripts = builtins.concatStringsSep "\n" ([ startScript ] ++ map (unit: unit.script) all);
   packages = lib.attrsets.genAttrs 
                (map 
-                  (x: x.name) 
+                  (x: x.buildapp.name) 
                   (lib.lists.filter (x: lib.attrsets.hasAttrByPath ["buildapp"] x && x.buildapp != null) all)) 
                (name: 
-                (lib.lists.findFirst (x: x.name == name) null all).buildapp {}) ;
+                (lib.lists.findFirst (x: x.buildapp != null && x.buildapp.name == name) null all).buildapp) ;
 }
