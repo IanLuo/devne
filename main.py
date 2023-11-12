@@ -20,6 +20,12 @@ def update():
     run('./update')
 
 @app.command()
+def build(config: str = f'{os.getcwd()}/ss.yaml'):
+    name = (Configure(config).name or '').replace(' ', '-')
+    version = Configure(config).version or ''
+    run(f'./build "./ss_conf#{name}-{version}"')
+
+@app.command()
 def init_config(config: str = f'{os.getcwd()}/ss.yaml'):
     '''Run configure wizard to create a config file for your project'''
     Configure.init_default_config(config)

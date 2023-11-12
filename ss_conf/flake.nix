@@ -17,7 +17,7 @@
         pkgs = import nixpkgs { inherit system; };
 
         version = "1.0";
-        name = "super start";
+        name = "super_start";
 
         units = pkgs.callPackage ./units.nix { inherit sstemplate name version system; };
         deps = pkgs.callPackage ./deps.nix { };
