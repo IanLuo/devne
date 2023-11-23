@@ -6,10 +6,14 @@ FLAKE_METADATA_FILE = f'{ROOT_FOLDER}/flake_metadata.nix'
 DEPS_FILE = f'{ROOT_FOLDER}/deps.nix'
 DATA_FOLDER = f'{ROOT_FOLDER}/data'
 
-from os.path import exists, dirname
-from os import makedirs
+from os.path import exists, dirname, join, abspath
+from os import makedirs, path 
 
 class Folder:
+    @staticmethod
+    def at_current_location(path: str):
+        return join(dirname(abspath(__file__)), path)
+
     @property
     def flake_path(self):
         return f'{self.root}/{FLAKE_FILE}'

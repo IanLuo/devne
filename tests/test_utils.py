@@ -1,9 +1,9 @@
 from os.path import exists 
 from shutil import rmtree
 from os import chmod, remove
-from cli.folder import ROOT_FOLDER, CONFIG_FILE
+from ss.folder import ROOT_FOLDER, CONFIG_FILE
 import stat
-from cli.configure.configure import Configure
+from ss.configure.configure import Configure
 
 class TestUtils:
     @staticmethod

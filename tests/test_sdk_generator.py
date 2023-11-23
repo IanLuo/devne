@@ -1,5 +1,5 @@
-from cli.generator.sdk_generator import SdkGenerator
-from cli.configure.configure import Configure
+from ss.generator.sdk_generator import SdkGenerator
+from ss.configure.configure import Configure
 from .fixtures import config
 
 class TestSdkGenerator:

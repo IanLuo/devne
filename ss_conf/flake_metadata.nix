@@ -1,4 +1,4 @@
 {
-version = "1.0";
-name = "super start";
+version = "0.0.1";
+name = "ss";
 }

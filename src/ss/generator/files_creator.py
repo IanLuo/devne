@@ -2,8 +2,8 @@ from .deps_generator import DepsGenerator
 from .flake_generator import FlakeGenerator
 from .flake_metadata_generator import FlakeMetadataGenerator
 from .units_generator import UnitsGenerator
-from cli.configure.configure import Configure
-from cli.folder import Folder
+from ..configure.configure import Configure
+from ..folder import Folder
 from os.path import exists
 
 class FilesCreator:

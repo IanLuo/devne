@@ -1,5 +1,5 @@
-from cli.generator.files_creator import FilesCreator
-from cli.configure.configure import Configure
+from ss.generator.files_creator import FilesCreator
+from ss.configure.configure import Configure
 from .fixtures import *
 from .test_utils import TestUtils 
 

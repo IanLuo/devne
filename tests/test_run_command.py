@@ -1,4 +1,4 @@
-from cli.run_command import run
+from ss.run_command import run
 
 class TestRunner:
     def test_run_good(self):

@@ -1,34 +1,33 @@
 import typer
-from cli.generator.files_creator import FilesCreator
-from cli.configure.configure import Configure
-from rich.console import Console
 import os 
 from typing_extensions import Annotated
-from cli.run_command import run
 
-err_console = Console(stderr=True)
-std_console = Console()
+from ss.configure.configure import Configure
+from ss.generator.files_creator import FilesCreator
+from ss.run_command import run
+from ss.folder import Folder
 
 app = typer.Typer()
 
 @app.command()
 def up():
-    run('./up')
+    file = Folder.at_current_location('scripts/up')
+    os.system(f'bash {file}')
 
 @app.command()
 def update():
-    run('./update')
+    run(Folder.at_current_location('scripts/update'))
 
 @app.command()
 def build(config: str = f'{os.getcwd()}/ss.yaml'):
     '''build the app based on the ss.yaml'''
-    name = (Configure(config).name or '').replace(' ', '-')
-    version = Configure(config).version or ''
-    run(f'./build "./ss_conf#{name}-{version}"')
+    name = (Configure(config).name or '')
+    script = Folder.at_current_location('scripts/build') 
+    run(f'{script} "./ss_conf#{name}"')
 
 @app.command()
 def info():
-    run('./info')
+    run(Folder.at_current_location('scripts/info'))
 
 @app.command()
 def init_config(config: str = f'{os.getcwd()}/ss.yaml'):

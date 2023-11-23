@@ -1,5 +1,5 @@
-name: "super start"
-version: 1.0 
+name: "ss"
+version: 0.0.1 
 description: devlopment environment with 1 command 
 sdk:
   language: python

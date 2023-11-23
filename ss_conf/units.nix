@@ -6,6 +6,7 @@ let
   python = native.python {
     pythonVersion = "python310";
     name = name;
+    src = ../.;
     version = version;
     buildInputs = ps: with ps; [ typer pynvim pyyaml rich jsonpath-ng requests black ];
   };
@@ -29,8 +30,8 @@ in {
   scripts = builtins.concatStringsSep "\n" ([ startScript ] ++ map (unit: unit.script) all);
   packages = lib.attrsets.genAttrs 
                (map 
-                  (x: x.buildapp.name) 
+                  (x: x.buildapp.pname) 
                   (lib.lists.filter (x: lib.attrsets.hasAttrByPath ["buildapp"] x && x.buildapp != null) all)) 
                (name: 
-                (lib.lists.findFirst (x: x.buildapp != null && x.buildapp.name == name) null all).buildapp) ;
+                (lib.lists.findFirst (x: x.buildapp != null && x.buildapp.pname == name) null all).buildapp) ;
 }

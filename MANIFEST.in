@@ -1,0 +1,3 @@
+include src/ss/scripts/*
+include src/ss/configure/*.template
+include src/ss/generator/templates/*.template

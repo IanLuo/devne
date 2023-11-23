@@ -1,0 +1,12 @@
+[project]
+license = {file = "LICENSE.txt"}
+name = "ss"
+version = "0.0.1"
+
+[project.scripts]  # Optional
+ss = "main:app"
+
+[build-system]
+requires = ["setuptools>=43.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+

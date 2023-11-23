@@ -17,10 +17,11 @@
 [x] postgres database function
 
 <WIP>
+[x] move ss.yaml metadata into another reloadable nix file, instead of put inside flake.nix, so ss.yaml reload will take effect always
 [] package native python application
 
 <backlog>
-[] move ss.yaml metadata into another reloadable nix file, instead of put inside flake.nix, so ss.yaml reload will take effect always
+[] update flake description and nixpkgsrev when flake.nix exists
 [] make write unit simple
 [] support outside unit
 [] unit documentations
@@ -31,3 +32,4 @@
 [] ss.yaml validation
 [] ss.yaml helper 
 [] units guide
+[] ss.yaml package rev option

@@ -1,4 +1,4 @@
-from cli.configure.parser import parse 
+from ss.configure.parser import parse 
 import pytest
 
 @pytest.fixture

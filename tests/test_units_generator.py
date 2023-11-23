@@ -1,7 +1,7 @@
-from cli.configure.configure import Configure
-from cli.generator.units_generator import UnitsGenerator
+from ss.configure.configure import Configure
+from ss.generator.units_generator import UnitsGenerator
 from .fixtures import * 
-from cli.generator.sdk_generator import SdkGenerator
+from ss.generator.sdk_generator import SdkGenerator
 
 class TestUnitsGenerator:
     def test_units(self, config):

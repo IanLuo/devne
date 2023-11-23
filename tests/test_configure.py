@@ -1,5 +1,5 @@
-from cli.configure.configure import Configure
-from cli.configure.unit import Unit
+from ss.configure.configure import Configure
+from ss.configure.unit import Unit
 from .fixtures import config 
 
 class TestConfigure:

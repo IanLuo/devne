@@ -7,8 +7,6 @@ _FLAKE_METADATA_TEMPLATE_FILE = 'templates/metadata.nix.template'
 
 _MARK_NAME = '#NAME#'
 _MARK_VERSION = '#VERSION#'
-_MARK_DESCRIPTION = '#DESCRIPTION#'
-_MARK_NIXPKGSREV = '#NIXPKGSREV#'
 
 class FlakeMetadataGenerator(ContentGenerator, FileExporter):
     def __init__(self, configure: Configure):
@@ -18,8 +16,6 @@ class FlakeMetadataGenerator(ContentGenerator, FileExporter):
         return { k: v for k, v in { 
             _MARK_NAME: self.configure.name,           
             _MARK_VERSION: self.configure.version,
-            _MARK_DESCRIPTION: self.configure.description,
-            _MARK_NIXPKGSREV: self.configure.nixpkgsrev
         }.items() if v is not None }
 
     def export(self) -> str:
