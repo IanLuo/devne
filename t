@@ -1,3 +1,25 @@
+<WIP>
+[]<H> binary package for python
+[]<H> ruby env and package
+[]<H> python web env and package
+[]<H> AI project env and package
+
+<BACKLOG>
+[]<L> update flake description and nixpkgsrev when flake.nix exists
+[]<M> make write unit simple
+[]<M> support outside unit
+[]<L> unit documentations
+[]<L> command auto completion
+[]<L> check github flows for inspiration
+[]<L> welcome information
+[]<M> package search function
+[]<L> ss.yaml validation
+[]<L> ss.yaml helper, used in website
+[]<L> units guide
+[]<L> ss.yaml package rev option
+[]<L> todo list operator
+
+<ARCHIVE>
 [x] setup env and packagage: default, test, docker (add more if needed)
 [x] setup cli project structure, including src and tests
 [x] setup tests
@@ -15,21 +37,5 @@
 [x] remote global configure 
 [x] commnads structure
 [x] postgres database function
-
-<WIP>
 [x] move ss.yaml metadata into another reloadable nix file, instead of put inside flake.nix, so ss.yaml reload will take effect always
-[] package native python application
-
-<backlog>
-[] update flake description and nixpkgsrev when flake.nix exists
-[] make write unit simple
-[] support outside unit
-[] unit documentations
-[] command auto completion
-[] check github flows for inspiration
-[] welcome information
-[] package search function
-[] ss.yaml validation
-[] ss.yaml helper 
-[] units guide
-[] ss.yaml package rev option
+[x] package native python application
