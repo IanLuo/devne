@@ -1,6 +1,7 @@
   python = native.python {
     pythonVersion = "python#VERSION#";
     name = name;
+    src = #SRC#;
     version = version;
     buildInputs = ps: with ps; [ #PACKAGES# ];
   };

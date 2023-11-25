@@ -75,6 +75,10 @@ class Configure:
         return self._find_value("$.sdk.version")
 
     @property
+    def sdk_src(self) -> Optional[str]:
+        return self._find_value("$.sdk.src")
+
+    @property
     def sdk_packages_default(self) -> Optional[list[str]]:
         return self._find_value("$.sdk.packages.default")
 

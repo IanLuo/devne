@@ -13,6 +13,7 @@ sdk:
       - jsonpath-ng 
       - requests
       - black
+      - flit
     development:
 
 tools:

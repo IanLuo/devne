@@ -1,11 +1,13 @@
 [project]
-license = {file = "LICENSE.txt"}
 name = "ss"
 version = "0.0.1"
+description = ""
 
 [project.scripts]  # Optional
 ss = "main:app"
 
 [build-system]
-requires = ["setuptools>=43.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+# requires = ["setuptools>=43.0.0", "wheel"]
+# build-backend = "setuptools.build_meta"

@@ -8,6 +8,7 @@ _TEMPLATE_FILE_PYTHON = './templates/sdk_python.template'
 _MARK_VERSION = '#VERSION#'
 _MARK_PACKAGES = '#PACKAGES#'
 _MARK_LANGUAGE = '#LANGUAGE#'
+_MARK_SRC = '#SRC#'
 
 class SdkGenerator(ContentGenerator, FileExporter):
     def __init__(self, configure: Configure):
@@ -17,7 +18,8 @@ class SdkGenerator(ContentGenerator, FileExporter):
         return { k: v for k, v in {
             _MARK_VERSION: str(self.configure.sdk_version),
             _MARK_PACKAGES: self._render_packages(self.configure),
-            _MARK_LANGUAGE: self.configure.sdk_language
+            _MARK_LANGUAGE: self.configure.sdk_language,
+            _MARK_SRC: '../{}'.format(self.configure.sdk_src or '.')
 
         }.items() if v is not None }
 
@@ -34,6 +36,7 @@ class SdkGenerator(ContentGenerator, FileExporter):
             template = f.read()
             template = template.replace(_MARK_VERSION, generated[_MARK_VERSION])
             template = template.replace(_MARK_PACKAGES, generated[_MARK_PACKAGES])
+            template = template.replace(_MARK_SRC, generated[_MARK_SRC])
 
             return template 
 
