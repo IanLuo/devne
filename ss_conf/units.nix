@@ -6,7 +6,6 @@ let
   python = native.python {
     pythonVersion = "python310";
     name = name;
-    src = ../.;
     version = version;
     buildInputs = ps: with ps; [ typer pynvim pyyaml rich jsonpath-ng requests black ];
   };

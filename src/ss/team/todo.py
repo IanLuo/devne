@@ -11,8 +11,6 @@ class TodoCategory(Enum):
     WIP = "wip"
 
 class TodoItem:
-
-
     def __init__(self, title: str,
                  is_checked: bool = False,
                  prioerity: TodoPriority = TodoPriority.LOW,
