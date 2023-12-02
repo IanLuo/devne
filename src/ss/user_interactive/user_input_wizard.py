@@ -1,28 +1,13 @@
 from typing import Optional
 from rich import print
 import typer
+from dataclasses import dataclass
 
+@dataclass
 class InputItem:
-    def __init__(self, title: str, is_optional: bool):
-        self._title = title
-        self._value = None
-        self._is_optional = is_optional
-
-    @property
-    def is_optional(self) -> bool:
-        return self._is_optional
-
-    @property
-    def title(self) -> str:
-        return self._title
-
-    @property
-    def value(self) -> Optional[str]:
-        return self._value
-
-    @value.setter
-    def value(self, value: str):
-        self._value = value
+    is_optional: bool
+    title: str
+    value: Optional[str]
 
 class UserInputWizard:
     def __init__(self, input_items: list[InputItem]):

@@ -1,4 +1,4 @@
-  python = native.python {
+  python = language.python {
     pythonVersion = "python#VERSION#";
     name = name;
     src = #SRC#;

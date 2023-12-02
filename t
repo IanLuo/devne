@@ -1,13 +1,14 @@
 <WIP>
-[]<H> binary package for python
-[]<H> ruby env and package
-[]<H> python web env and package
-[]<H> AI project env and package
+[]<H> make unit recursive
+[]<H> support outside unit
+[]<H> make write unit simple
 
 <BACKLOG>
+[]<M> binary package
+[]<M> ruby env and package
+[]<M> python web env and package
+[]<M> AI project env and package
 []<L> update flake description and nixpkgsrev when flake.nix exists
-[]<M> make write unit simple
-[]<M> support outside unit
 []<L> unit documentations
 []<L> command auto completion
 []<L> check github flows for inspiration

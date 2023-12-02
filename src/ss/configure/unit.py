@@ -1,6 +1,7 @@
 from typing import Optional
 
 _KEY_NAME = 'unit'
+PASSTHUS = 'passthus'
 
 class Unit:
     def __init__(self, json: Optional[dict] = None, name: Optional[str]  = None) :
@@ -31,6 +32,16 @@ class Unit:
     def name(self) -> str:
         '''Return the name of the Unit'''
         return self.__dict__[_KEY_NAME]
+
+    @property
+    def passthrus(self) -> str:
+        '''anything that needs to pass thur this unit'''
+        return self.__dict__[PASSTHUS]
+
+    @property
+    def test(self) -> dict:
+        '''the unit used for testing for this sdk'''
+        return self.__dict__['test']
 
     def __eq__(self, other):
         return self.attrs == other.attrs

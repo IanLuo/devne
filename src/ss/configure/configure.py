@@ -8,8 +8,6 @@ from typing import TypeVar
 from ..user_interactive.user_input_wizard import UserInputWizard, InputItem 
 from ..resources.remote.global_configure import GlobalConfigure 
 
-T = TypeVar('T')
-
 class Configure:
     def __init__(self, config_path):
         self.root = dirname(config_path)

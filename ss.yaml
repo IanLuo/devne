@@ -15,15 +15,19 @@ sdk:
       - black
       - flit
     development:
+  test: 
+    python.pytest:
+  package:
+    python.package:
 
 tools:
   - nodePackages.pyright
 
 units:
   - powers.db.postgres:
-      username: "test_user"
-      password: "test_password"
-      database: "test_database"
+      username: "ss_db"
+      password: "admin"
+      database: "password"
 
 # this is the official nixpkgs ref
 nixpkgsrev: f895a4ef0f01f9d2af2370533829c4f03ec408f4

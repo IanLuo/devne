@@ -1,9 +1,9 @@
 { sstemplate, system, name, version, lib, pkgs }:
 let 
-  native = sstemplate.native.${system};
+  language = sstemplate.language.${system};
   powers = sstemplate.powers.${system};
 
-  python = native.python {
+  python = language.python {
     pythonVersion = "python310";
     name = name;
     src = ../.;
@@ -14,9 +14,9 @@ let
 
 
   powers_db_postgres = powers.db.postgres {
-    username = "test_user";
-    password = "test_password";
-    database = "test_database";
+    username = "ss_db";
+    password = "admin";
+    database = "password";
   };
         
 
@@ -30,8 +30,8 @@ in {
   scripts = builtins.concatStringsSep "\n" ([ startScript ] ++ map (unit: unit.script) all);
   packages = lib.attrsets.genAttrs 
                (map 
-                  (x: x.buildapp.pname) 
-                  (lib.lists.filter (x: lib.attrsets.hasAttrByPath ["buildapp"] x && x.buildapp != null) all)) 
+                  (x: x.package.pname) 
+                  (lib.lists.filter (x: lib.attrsets.hasAttrByPath ["package"] x && x.package != null) all)) 
                (name: 
-                (lib.lists.findFirst (x: x.buildapp != null && x.buildapp.pname == name) null all).buildapp) ;
+                (lib.lists.findFirst (x: x.package != null && x.package.pname == name) null all).package) ;
 }
