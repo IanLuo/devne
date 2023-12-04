@@ -3,5 +3,5 @@
     name = name;
     src = #SRC#;
     version = version;
-    buildInputs = ps: with ps; [ #PACKAGES# ];
+    buildInputs = [ #PACKAGES# ];
   };

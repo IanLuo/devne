@@ -42,4 +42,4 @@ class SdkGenerator(ContentGenerator, FileExporter):
 
     def _render_packages(self, configure: Configure):
         all_packages = (configure.sdk_packages_default or []) + (configure.sdk_packages_dev or [])
-        return ' '.join(all_packages)
+        return ' '.join(map(lambda p: f'"{p}"', all_packages))

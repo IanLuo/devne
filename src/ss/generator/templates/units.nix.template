@@ -1,7 +1,8 @@
 { sstemplate, system, name, version, lib, pkgs }:
 let 
-  language = sstemplate.language.${system};
-  powers = sstemplate.powers.${system};
+  template = import sstemplate { inherit system pkgs; };
+  language = template.language;
+  powers = template.powers;
 
 #SDK#
 

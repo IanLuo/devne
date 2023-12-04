@@ -1,14 +1,15 @@
 { sstemplate, system, name, version, lib, pkgs }:
 let 
-  language = sstemplate.language.${system};
-  powers = sstemplate.powers.${system};
+  template = import sstemplate { inherit system pkgs; };
+  language = template.language;
+  powers = template.powers;
 
   python = language.python {
     pythonVersion = "python310";
     name = name;
     src = ../.;
     version = version;
-    buildInputs = ps: with ps; [ typer pynvim pyyaml rich jsonpath-ng requests black flit ];
+    buildInputs = [ "typer" "pynvim" "pyyaml" "rich" "jsonpath-ng" "requests" "black" "flit" ];
   };
 
 

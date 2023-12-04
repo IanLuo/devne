@@ -20,7 +20,7 @@
         version = metadata.version;
         name = metadata.name;
 
-        units = pkgs.callPackage ./units.nix { inherit sstemplate name version system; };
+        units = pkgs.callPackage ./units.nix { inherit sstemplate name version system pkgs; };
         deps = pkgs.callPackage ./deps.nix { };
       in
       {

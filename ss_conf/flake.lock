@@ -67,8 +67,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1701447077,
-        "narHash": "sha256-SKaZcKBcJ0daNNthu1Fta/edNKxLjP39nwqPLdc4dmc=",
+        "lastModified": 1701576154,
+        "narHash": "sha256-XVa/6cG55/KjgtlOTKoBg5iFAroDBwzHyUcDZELPwU8=",
         "type": "git",
         "url": "file:///Users/ianluo/Documents/apps/templates"
       },
