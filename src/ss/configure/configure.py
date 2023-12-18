@@ -1,14 +1,23 @@
+from dataclasses import dataclass
 from .parser import parse 
 from .unit import Unit
-from typing import Optional
 from os.path import dirname, exists
 from ..folder import Folder
 from jsonpath_ng import parser
-from typing import TypeVar
 from ..user_interactive.user_input_wizard import UserInputWizard, InputItem 
 from ..resources.remote.global_configure import GlobalConfigure 
+import re
 
+@dataclass
 class Configure:
+    name: str
+    version: str
+    description: str
+    tools: list[str]
+    units: list[Unit]
+    nixpkgsrev: str
+    root: str
+
     def __init__(self, config_path):
         self.root = dirname(config_path)
 
@@ -17,7 +26,50 @@ class Configure:
 
         with open(config_path, 'r') as f:
             yaml = f.read()
-            self._config = parse(yaml)
+            resolved_yaml = self._resolve_vars(yaml, parse(yaml))
+            self._config = parse(resolved_yaml)
+
+        self._read_config()
+
+    def _read_config(self):
+        # read metadata
+        self.name = self._find_value('$.metadata.name', self._config) or ''
+        self.version = self._find_value('$.metadata.version', self._config) or ''
+        self.description = self._find_value('$.metadata.description', self._config) or ''
+        # read units 
+        self.units = self._find_units(self._find_value('$.units', self._config) or []) or []
+        # read tools
+        self.tools = self._find_value('$.tools', self._config) or []
+        # read nixpkgsrev
+        self.nixpkgsrev = self._find_value('$.nixpkgsrev', self._config) or ''
+
+
+    def _resolve_vars(self, config: str, parsed_config: dict):
+        pattern = r'\$\{(.*)\}'
+        first_match = re.search(pattern, config)
+
+        if first_match is None:
+            return config
+        else:
+            var_name = first_match.group(1) or ''
+            var_value = self._find_value(f'$.{var_name}', parsed_config)
+            new_config = config.replace(f'${{{var_name}}}', var_value)
+            return self._resolve_vars(new_config, parsed_config)
+
+
+    def _find_value(self, key_path: str, config: dict): 
+        jsonpath_expr = parser.parse(key_path)
+        result = jsonpath_expr.find(config)
+
+        if len(result) > 0:
+            return result[0].value
+        else:
+            return None
+
+    def _find_units(self, units: list) -> list[Unit]:
+        units_in_json = [Unit(json=unit) for unit in units if isinstance(unit, dict) ]
+        units_in_str = [Unit(name=unit) for unit in units if isinstance(unit, str) ]
+        return units_in_json + units_in_str
 
     @staticmethod
     def init_default_config(config_path: str):
@@ -25,11 +77,11 @@ class Configure:
 
         if not exists(folder.config_path):
             config_wizard = UserInputWizard([
-                InputItem('name', False),
-                InputItem('version', False),
-                InputItem('language', False),
-                InputItem('version of language', False),
-                InputItem('description', False),
+                InputItem(False, 'name'),
+                InputItem(False, 'version'),
+                InputItem(False, 'language'),
+                InputItem(False, 'version of language' ),
+                InputItem(False, 'description'),
             ])
 
             config = config_wizard.run()
@@ -54,66 +106,3 @@ class Configure:
                 folder.make_file(folder.config_path, content)
         else:
             raise Exception('config file already exists')
-
-    def _find_value(self, key_path: str): 
-        jsonpath_expr = parser.parse(key_path)
-        result = jsonpath_expr.find(self._config)
-
-        if len(result) > 0:
-            return result[0].value
-        else:
-            return None
-
-    @property
-    def sdk_language(self) -> Optional[str]:
-         return self._find_value("$.sdk.language")
-
-    @property
-    def sdk_version(self) -> Optional[str]:
-        return self._find_value("$.sdk.version")
-
-    @property
-    def sdk_src(self) -> Optional[str]:
-        return self._find_value("$.sdk.src")
-
-    @property
-    def sdk_packages_default(self) -> Optional[list[str]]:
-        return self._find_value("$.sdk.packages.default")
-
-    @property
-    def sdk_packages_dev(self) -> Optional[list[str]]:
-        return self._find_value("$.sdk.packages.development")
-
-    @property
-    def tools(self) -> Optional[list[str]]:
-        return self._find_value("$.tools") 
-
-    @property
-    def units(self) -> Optional[list[Unit]]:
-        def _get_unit(unit) -> Optional[Unit]:
-            if type(unit) is str:
-                return Unit(name=unit)
-            elif type(unit) is dict:
-                return Unit(json=unit)
-            else:
-                return None
-
-        units = self._find_value('$.units') or []
-
-        return [ value for value in map(lambda unit: _get_unit(unit), units) if value is not None ]
-
-    @property
-    def nixpkgsrev(self) -> Optional[str]:
-        return self._find_value("$.nixpkgsrev")
-
-    @property
-    def name(self) -> Optional[str]:
-        return self._find_value("$.name")
-
-    @property
-    def version(self) -> Optional[str]:
-        return self._find_value("$.version")
-
-    @property
-    def description(self) -> Optional[str]:
-        return self._find_value("$.description")

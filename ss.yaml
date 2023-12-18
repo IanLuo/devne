@@ -1,34 +1,33 @@
-name: "ss"
-version: 0.0.1 
-description: devlopment environment with 1 command 
-sdk:
-  language: python
-  version: 310 
-  packages:
-    default:
-      - typer 
-      - pynvim 
-      - pyyaml 
-      - rich 
-      - jsonpath-ng 
-      - requests
-      - black
-      - flit
-    development:
-  test: 
-    python.pytest:
-  package:
-    python.package:
-
-tools:
-  - nodePackages.pyright
+metadata:
+  name: ss
+  version: 0.0.1 
+  description: devlopment environment with 1 command 
 
 units:
-  - powers.db.postgres:
+  - db.postgres:
       username: "ss_db"
       password: "admin"
       database: "password"
 
+  - language.python:
+      name: ${metadata.name} 
+      version: ${metadata.version} 
+      src: ../.
+      buildFormat: pyproject
+      pythonVersion: "python310"
+      libs-default:
+        - typer 
+        - pynvim 
+        - pyyaml 
+        - rich 
+        - jsonpath-ng 
+        - requests
+        - black
+        - flit
+      test: python.pytest
+
+tools:
+  - nodePackages.pyright
+
 # this is the official nixpkgs ref
 nixpkgsrev: f895a4ef0f01f9d2af2370533829c4f03ec408f4
- 

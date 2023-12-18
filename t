@@ -1,6 +1,7 @@
 <WIP>
-[]<H> support outside unit
+[]<H> simplify ss.yaml
 []<H> make write unit simple
+[]<H> support outside unit
 
 <BACKLOG>
 []<M> binary package
@@ -13,6 +14,7 @@
 []<L> check github flows for inspiration
 []<L> welcome information
 []<M> package search function
+[]<M> unit search function
 []<L> ss.yaml validation
 []<L> ss.yaml helper, used in website
 []<L> units guide

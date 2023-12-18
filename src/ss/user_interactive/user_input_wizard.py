@@ -7,7 +7,7 @@ from dataclasses import dataclass
 class InputItem:
     is_optional: bool
     title: str
-    value: Optional[str]
+    value: Optional[str] = None
 
 class UserInputWizard:
     def __init__(self, input_items: list[InputItem]):

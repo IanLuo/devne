@@ -1,26 +1,26 @@
-name: test project 
-version: 1.0.0
-description: this is a project for unit test 
-sdk:
-   language: python 
-   version: "3.8"
-   packages:
-     default:
-       - typer
-     development:
-       - pynvim
-       - pillow
-
-tools:
-  - django
-  - black
+metadata:
+  name: test_project
+  version: 0.0.1 
+  description: description for test project
 
 units:
-  - powers.db.postgres:
-      username: "test_user" 
-      password: "test_password" 
-      database: "test_database" 
-      host: ""
-      folder: ""
-nixpkgsrev: xxxxx
+  db.postgres:
+    username: "ss_db"
+    password: "admin"
+    database: "password"
 
+  language.python:
+    version: 310 
+    libs:
+      default:
+        - typer 
+        - black
+      development:
+    test: python.pytest
+
+tools:
+  - black
+  - django
+
+# this is the official nixpkgs ref
+nixpkgsrev: xxx

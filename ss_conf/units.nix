@@ -2,26 +2,28 @@
 let 
   template = import sstemplate { inherit system pkgs; };
   language = template.language;
-  powers = template.powers;
-
-  python = language.python {
-    pythonVersion = "python310";
-    name = name;
-    src = ../.;
-    version = version;
-    buildInputs = [ "typer" "pynvim" "pyyaml" "rich" "jsonpath-ng" "requests" "black" "flit" ];
-  };
+  db = template.db;
 
 
-
-  powers_db_postgres = powers.db.postgres {
+  db_postgres = db.postgres {
     username = "ss_db";
     password = "admin";
     database = "password";
   };
         
 
-  all = [ powers_db_postgres python ];
+  language_python = language.python {
+    name = "ss";
+    version = "0.0.1";
+    src = ../.;
+    buildFormat = "pyproject";
+    pythonVersion = "python310";
+    libs-default = [ "typer" "pynvim" "pyyaml" "rich" "jsonpath-ng" "requests" "black" "flit" ];
+    test = "python.pytest";
+  };
+        
+
+  all = [ db_postgres language_python ];
 
   startScript = ''
     export SS_PROJECT_BASE=$PWD
@@ -34,5 +36,5 @@ in {
                   (x: x.package.pname) 
                   (lib.lists.filter (x: lib.attrsets.hasAttrByPath ["package"] x && x.package != null) all)) 
                (name: 
-                (lib.lists.findFirst (x: x.package != null && x.package.pname == name) null all).package) ;
+                (lib.lists.findFirst (x: lib.attrsets.hasAttrByPath ["package"] x &&  x.package != null && x.package.pname == name) null all).package) ;
 }
