@@ -24,7 +24,8 @@ units:
         - requests
         - black
         - flit
-      test: python.pytest
+  - language.pytest:
+      python: $language.python
 
 tools:
   - nodePackages.pyright

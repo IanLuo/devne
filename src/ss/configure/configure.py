@@ -43,7 +43,6 @@ class Configure:
         # read nixpkgsrev
         self.nixpkgsrev = self._find_value('$.nixpkgsrev', self._config) or ''
 
-
     def _resolve_vars(self, config: str, parsed_config: dict):
         pattern = r'\$\{(.*)\}'
         first_match = re.search(pattern, config)
@@ -67,9 +66,15 @@ class Configure:
             return None
 
     def _find_units(self, units: list) -> list[Unit]:
-        units_in_json = [Unit(json=unit) for unit in units if isinstance(unit, dict) ]
-        units_in_str = [Unit(name=unit) for unit in units if isinstance(unit, str) ]
-        return units_in_json + units_in_str
+        units_in_json = [ Unit(json=unit) for unit in units if isinstance(unit, dict) ]
+        units_in_str = [ Unit(name=unit) for unit in units if isinstance(unit, str) ]
+
+        def flatten_list(nested_list):
+            return [item for sublist in nested_list for item in (flatten_list(sublist) if isinstance(sublist, list) else [sublist])]
+
+        nested_units = flatten_list([ [ value for _, value in unit.attrs.items() if isinstance(value, Unit)] for unit in units_in_json ])
+
+        return units_in_json + units_in_str + nested_units
 
     @staticmethod
     def init_default_config(config_path: str):

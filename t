@@ -1,6 +1,5 @@
 <WIP>
-[]<H> simplify ss.yaml
-[]<H> make write unit simple
+[]<H> ss.yaml unit ref
 []<H> support outside unit
 
 <BACKLOG>
@@ -22,6 +21,8 @@
 []<L> todo list operator
 
 <ARCHIVE>
+[x]<H> make write unit simple
+[x]<H> simplify ss.yaml
 [x] setup env and packagage: default, test, docker (add more if needed)
 [x] setup cli project structure, including src and tests
 [x] setup tests

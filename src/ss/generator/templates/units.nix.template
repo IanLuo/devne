@@ -19,5 +19,5 @@ in {
                   (x: x.package.pname) 
                   (lib.lists.filter (x: lib.attrsets.hasAttrByPath ["package"] x && x.package != null) all)) 
                (name: 
-                (lib.lists.findFirst (x: lib.attrsets.hasAttrByPath ["package"] x &&  x.package != null && x.package.pname == name) null all).package) ;
+                (lib.lists.findFirst (x: lib.attrsets.hasAttrByPath ["package"] x &&  x.package != null && x.package.pname == name) null all).package);
 }

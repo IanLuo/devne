@@ -26,7 +26,9 @@ class UnitsGenerator(ContentGenerator, FileExporter):
         return '\n'.join(map(self._render_unit, self.configure.units or []))
 
     def _render_unit(self, unit: Unit) -> str:
-        def dig_value(value):
+        result = '' 
+        _render_unit_name = lambda unit: unit.name.replace('.', '_')
+        def _dig_value(value):
             def _is_path(value):
                 if not isinstance(value, str):
                     return False
@@ -35,8 +37,18 @@ class UnitsGenerator(ContentGenerator, FileExporter):
 
                 return False
 
-            if _is_path(value):
+            def _is_unit(value):
+                return isinstance(value, Unit)
+
+            def _is_unit_ref(value):
+                return isinstance(value, str) and value.startswith('$')
+
+            if _is_unit(value):
+                return _render_unit_name(value)
+            elif _is_path(value):
                 return value;
+            elif _is_unit_ref(value):
+                return value.replace('$', '').replace('.', '_') + '.value'
             elif isinstance(value, str):
                 return f'"{value}"'
             elif isinstance(value, list):
@@ -48,14 +60,17 @@ class UnitsGenerator(ContentGenerator, FileExporter):
                 return value
 
         # put 4 spaces before each line
-        kvs = [f'    {key} = {dig_value(value)};' for key, value in unit.attrs.items()]
+        kvs = [f'    {key} = {_dig_value(value)};' for key, value in unit.attrs.items()]
         make_units = lambda kvs: '\n'.join(kvs)
 
-        return f'''
-  {unit.name.replace(".", "_")} = {unit.name} {{
+        result = f'''
+{result}
+  {_render_unit_name(unit)} = {unit.name} {{
 {make_units(kvs)}
   }};
         '''
+
+        return result
 
     def _render_units_ref(self) -> str:
         all_units = ' '.join(map(lambda unit: unit.name.replace(".", "_"), self.configure.units or []))
