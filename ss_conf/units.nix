@@ -26,7 +26,7 @@ let
 
 
   language_pytest = language.pytest {
-    python = language_python.value;
+    python = if language_python.value == null then language_python else language_python.value;
   };
         
 

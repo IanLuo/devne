@@ -48,7 +48,8 @@ class UnitsGenerator(ContentGenerator, FileExporter):
             elif _is_path(value):
                 return value;
             elif _is_unit_ref(value):
-                return value.replace('$', '').replace('.', '_') + '.value'
+                unit_ref_name = value.replace('$', '').replace('.', '_')
+                return f'if {unit_ref_name}.value == null then {unit_ref_name} else {unit_ref_name}.value'
             elif isinstance(value, str):
                 return f'"{value}"'
             elif isinstance(value, list):
