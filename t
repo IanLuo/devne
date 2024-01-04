@@ -1,7 +1,6 @@
 <WIP>
 []<H> install and use in another project
 []<H> support outside unit
-[]<H> put inputs to passthrus so other units can reuse 
 
 <BACKLOG>
 []<M> binary package
@@ -21,6 +20,7 @@
 []<L> ss.yaml package rev option
 
 <ARCHIVE>
+[x]<H> put inputs to passthrus so other units can reuse 
 [x]<H> ss.yaml unit ref
 [x]<H> make write unit simple
 [x]<H> simplify ss.yaml

@@ -37,7 +37,7 @@ let
   };
         
 
-  all = [ db_postgres language_python language_pytest language_pythonRunnablePackage ];
+  all = lib.lists.filter (x: x.isUnit) [ db_postgres language_python language_pytest language_pythonRunnablePackage ];
 
   startScript = ''
     export SS_PROJECT_BASE=$PWD
@@ -48,7 +48,8 @@ in {
   packages = lib.attrsets.genAttrs 
                (map 
                   (x: x.value.pname) 
-                  (lib.lists.filter (x: x.isPackage) all)) 
+                  (lib.lists.filter (x: x.isPackage) all))
+
                (name: 
                 (lib.lists.findFirst (x: x.isPackage && x.value.pname == name) null all).value);
 }
