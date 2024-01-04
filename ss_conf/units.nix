@@ -15,10 +15,6 @@ let
 
 
   language_python = language.python {
-    name = "ss";
-    version = "0.0.1";
-    src = ../.;
-    buildFormat = "pyproject";
     pythonVersion = "python310";
     libs-default = [ "typer" "pynvim" "pyyaml" "rich" "jsonpath-ng" "requests" "black" "flit" ];
   };
@@ -30,7 +26,18 @@ let
   };
         
 
-  all = [ db_postgres language_python language_pytest ];
+
+  language_pythonRunnablePackage = language.pythonRunnablePackage {
+    name = "ss";
+    version = "0.0.1";
+    src = ../.;
+    format = "pyproject";
+    python = if language_python.value == null then language_python else language_python.value;
+    buildInputs = language_python.libs-default;
+  };
+        
+
+  all = [ db_postgres language_python language_pytest language_pythonRunnablePackage ];
 
   startScript = ''
     export SS_PROJECT_BASE=$PWD
@@ -40,8 +47,8 @@ in {
   scripts = builtins.concatStringsSep "\n" ([ startScript ] ++ map (unit: unit.script) all);
   packages = lib.attrsets.genAttrs 
                (map 
-                  (x: x.package.pname) 
-                  (lib.lists.filter (x: lib.attrsets.hasAttrByPath ["package"] x && x.package != null) all)) 
+                  (x: x.value.pname) 
+                  (lib.lists.filter (x: x.isPackage) all)) 
                (name: 
-                (lib.lists.findFirst (x: lib.attrsets.hasAttrByPath ["package"] x &&  x.package != null && x.package.pname == name) null all).package);
+                (lib.lists.findFirst (x: x.isPackage && x.value.pname == name) null all).value);
 }

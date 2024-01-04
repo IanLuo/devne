@@ -10,10 +10,6 @@ units:
       database: "password"
 
   - language.python:
-      name: ${metadata.name} 
-      version: ${metadata.version} 
-      src: ../.
-      buildFormat: pyproject
       pythonVersion: "python310"
       libs-default:
         - typer 
@@ -26,6 +22,14 @@ units:
         - flit
   - language.pytest:
       python: $language.python
+
+  - language.pythonRunnablePackage:
+      name: ${metadata.name} 
+      version: ${metadata.version} 
+      src: ../.
+      format: pyproject
+      python: $language.python
+      buildInputs: $language.python>libs-default
 
 tools:
   - nodePackages.pyright

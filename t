@@ -1,6 +1,7 @@
 <WIP>
-[]<H> ss.yaml unit ref
+[]<H> install and use in another project
 []<H> support outside unit
+[]<H> put inputs to passthrus so other units can reuse 
 
 <BACKLOG>
 []<M> binary package
@@ -18,9 +19,9 @@
 []<L> ss.yaml helper, used in website
 []<L> units guide
 []<L> ss.yaml package rev option
-[]<L> todo list operator
 
 <ARCHIVE>
+[x]<H> ss.yaml unit ref
 [x]<H> make write unit simple
 [x]<H> simplify ss.yaml
 [x] setup env and packagage: default, test, docker (add more if needed)
