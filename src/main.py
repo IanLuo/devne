@@ -6,8 +6,29 @@ from ss.configure.configure import Configure
 from ss.generator.files_creator import FilesCreator
 from ss.run_command import run
 from ss.folder import Folder
+from typing import Optional
 
 app = typer.Typer()
+
+def version(value: bool):
+    if value:
+        import importlib.metadata
+
+        distribution_name = "ss"  # Replace with the actual distribution name
+
+        try:
+            version = importlib.metadata.version(distribution_name)
+            typer.echo(f"Version: {version}")
+        except importlib.metadata.PackageNotFoundError:
+            typer.echo(f"Package not found: {distribution_name}")
+        finally:
+            raise typer.Exit()
+
+@app.callback()
+def main(version: Annotated[
+         Optional[bool], typer.Option("--version", "-v", callback=version)
+         ] = None):
+    pass
 
 @app.command()
 def up():
