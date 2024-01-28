@@ -1,6 +1,7 @@
 from typing import Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass 
 import re
+import json as j
 
 @dataclass
 class Unit:
@@ -27,7 +28,7 @@ class Unit:
                     else: 
                         return (key, value)
                 elif isinstance(value, dict):
-                    if len(value.keys()) == 1 and re.search(unit_pattern, value) != None:
+                    if len(value.keys()) == 1 and re.search(unit_pattern, j.dumps(value)) != None:
                         return (key, Unit(json=value))
                     else:
                         return (key, value)

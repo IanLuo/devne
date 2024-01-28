@@ -6,6 +6,8 @@ from ..folder import Folder
 from jsonpath_ng import parser
 from ..user_interactive.user_input_wizard import UserInputWizard, InputItem 
 from ..resources.remote.global_configure import GlobalConfigure 
+from .git_repo import GitRepo
+from typing import Optional
 import re
 
 @dataclass
@@ -51,7 +53,7 @@ class Configure:
             return config
         else:
             var_name = first_match.group(1) or ''
-            var_value = self._find_value(f'$.{var_name}', parsed_config)
+            var_value = self._find_value(f'$.{var_name}', parsed_config) or ''
             new_config = config.replace(f'${{{var_name}}}', var_value)
             return self._resolve_vars(new_config, parsed_config)
 

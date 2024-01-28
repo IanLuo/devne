@@ -25,44 +25,47 @@ class UnitsGenerator(ContentGenerator, FileExporter):
     def _render_all_units(self) -> str:
         return '\n'.join(map(self._render_unit, self.configure.units or []))
 
+    def _render_unit_name(self, unit) -> str:
+        return unit.name.replace('.', '_')
+
+    def _dig_value(self, value):
+
+        def _is_path(value):
+            if not isinstance(value, str):
+                return False
+            elif value.startswith('./') or value.startswith('../'):
+                return True
+
+            return False
+
+        def _is_unit(value):
+            return isinstance(value, Unit)
+
+        def _is_unit_ref(value):
+            return isinstance(value, str) and value.startswith('$')
+
+        if _is_unit(value):
+            return _render_unit_name(value)
+        elif _is_path(value):
+            return value;
+        elif _is_unit_ref(value):
+            unit_ref_name = value.replace('$', '').replace('.', '_')
+            if unit_ref_name.find('>') != -1:
+                return unit_ref_name.replace('>', '.')
+            else:
+                return f'if {unit_ref_name}.value == null then {unit_ref_name} else {unit_ref_name}.value'
+        elif isinstance(value, str):
+            return f'"{value}"'
+        elif isinstance(value, list):
+            inner =  " ".join([f'"{v}"' for v in value])
+            return f'[ {inner} ]'
+        elif value == None:
+            return "null"
+        else:
+            return value
+
     def _render_unit(self, unit: Unit) -> str:
         result = '' 
-        _render_unit_name = lambda unit: unit.name.replace('.', '_')
-        def _dig_value(value):
-            def _is_path(value):
-                if not isinstance(value, str):
-                    return False
-                elif value.startswith('./') or value.startswith('../'):
-                    return True
-
-                return False
-
-            def _is_unit(value):
-                return isinstance(value, Unit)
-
-            def _is_unit_ref(value):
-                return isinstance(value, str) and value.startswith('$')
-
-            if _is_unit(value):
-                return _render_unit_name(value)
-            elif _is_path(value):
-                return value;
-            elif _is_unit_ref(value):
-                unit_ref_name = value.replace('$', '').replace('.', '_')
-                if unit_ref_name.find('>') != -1:
-                    return unit_ref_name.replace('>', '.')
-                else:
-                    return f'if {unit_ref_name}.value == null then {unit_ref_name} else {unit_ref_name}.value'
-            elif isinstance(value, str):
-                return f'"{value}"'
-            elif isinstance(value, list):
-                inner =  " ".join([f'"{v}"' for v in value])
-                return f'[ {inner} ]'
-            elif value == None:
-                return "null"
-            else:
-                return value
-
         # put 4 spaces before each line
         kvs = [f'    {key} = {_dig_value(value)};' for key, value in unit.attrs.items()]
         make_units = lambda kvs: '\n'.join(kvs)

@@ -1,8 +1,8 @@
 <WIP>
-[]<H> install and use in another project
 []<H> support outside unit
 
 <BACKLOG>
+[]<H> install and use in another project
 []<M> binary package
 []<M> ruby env and package
 []<M> python web env and package
@@ -20,6 +20,7 @@
 []<L> ss.yaml package rev option
 
 <ARCHIVE>
+[x]<M> option to show version number
 [x]<H> put inputs to passthrus so other units can reuse 
 [x]<H> ss.yaml unit ref
 [x]<H> make write unit simple
