@@ -5,7 +5,6 @@ import os
 
 _FLAKE_TEMPLATE_FILE = 'templates/flake.nix.template'
 _MARK_DESCRIPTION = '#DESCRIPTION#'
-_MARK_NIXPKGSREV = '#NIXPKGSREV#'
 
 class FlakeGenerator(ContentGenerator, FileExporter):
     def __init__(self, configure: Configure):
@@ -13,8 +12,7 @@ class FlakeGenerator(ContentGenerator, FileExporter):
 
     def generate(self) -> dict[str, str]:
         return { k: v for k, v in {
-            _MARK_DESCRIPTION: self.configure.description,
-            _MARK_NIXPKGSREV: self.configure.nixpkgsrev
+            _MARK_DESCRIPTION: self.configure.metadata.description,
         }.items() if v is not None }
 
     def export(self) -> str:

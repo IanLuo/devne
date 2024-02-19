@@ -1,26 +1,22 @@
+source:
+  units: latest
+  pkgs: the_rev_of_pkgs 
+  other: "github" 
+
 metadata:
-  name: test_project
+  name: test project 
   version: 0.0.1 
-  description: description for test project
+  description: project description
 
 units:
-  db.postgres:
-    username: "ss_db"
-    password: "admin"
-    database: "password"
+  - db_postgres:
+      username: "test"
+      password: "password"
+      database: "database"
+  - another:
+      db: $units>db_postgres
 
-  language.python:
-    version: 310 
-    libs:
-      default:
-        - typer 
-        - black
-      development:
-    test: python.pytest
+pkgs:
+  - nodePackages.pyright
 
-tools:
-  - black
-  - django
-
-# this is the official nixpkgs ref
-nixpkgsrev: xxx
+other:

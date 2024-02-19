@@ -67,12 +67,12 @@ class UnitsGenerator(ContentGenerator, FileExporter):
     def _render_unit(self, unit: Unit) -> str:
         result = '' 
         # put 4 spaces before each line
-        kvs = [f'    {key} = {_dig_value(value)};' for key, value in unit.attrs.items()]
+        kvs = [f'    {key} = {self._dig_value(value)};' for key, value in unit.attrs.items()]
         make_units = lambda kvs: '\n'.join(kvs)
 
         result = f'''
 {result}
-  {_render_unit_name(unit)} = {unit.name} {{
+  {self._render_unit_name(unit)} = {unit.name} {{
 {make_units(kvs)}
   }};
         '''

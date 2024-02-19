@@ -1,4 +1,4 @@
-from ss.dashboard import Dashboard
+from src.ss.dashboard import Dashboard
 
 class TestDashboard:
     def test_list_units(self):

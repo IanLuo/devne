@@ -1,5 +1,5 @@
-from ss.configure.configure import Configure
-from ss.folder import DATA_FOLDER, FLAKE_FILE, UNIT_FILE, Folder 
+from src.ss.configure.configure import Configure
+from src.ss.folder import DATA_FOLDER, FLAKE_FILE, UNIT_FILE, Folder 
 from os.path import exists
 from .fixtures import *
 from .test_utils import TestUtils 

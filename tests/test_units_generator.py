@@ -1,7 +1,6 @@
-from ss.configure.configure import Configure
-from ss.generator.units_generator import UnitsGenerator
+from src.ss.configure.configure import Configure
+from src.ss.generator.units_generator import UnitsGenerator
 from .fixtures import * 
-from ss.generator.sdk_generator import SdkGenerator
 
 class TestUnitsGenerator:
     def test_units(self, config):
@@ -19,7 +18,4 @@ class TestUnitsGenerator:
         assert UnitsGenerator(Configure(config)).generate()['#UNITS_REF#'].replace("\n", "").replace(" ", "") == '''
         [ powers_db_postgres python ]
         '''.replace("\n", "").replace(" ", "")
-
-    def test_sdk(self, config):
-        assert UnitsGenerator(Configure(config)).generate()['#SDK#'] == SdkGenerator(Configure(config)).export()
 

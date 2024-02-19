@@ -1,10 +1,19 @@
+# there are two source of 'units'
+# 1. defiend in templates
+# 2. refed from nixpkgs, and wrapped by template function: with same interface with other 'units'
+
+source:
+  units: latest
+  pkgs: f895a4ef0f01f9d2af2370533829c4f03ec408f4
+  other: "github://" 
+
 metadata:
   name: ss
   version: 0.0.1 
   description: devlopment environment with 1 command 
 
 units:
-  - db.postgres:
+  - db_postgres:
       username: "ss_db"
       password: "admin"
       database: "password"
@@ -19,20 +28,24 @@ units:
         - jsonpath-ng 
         - requests
         - black
-        - flit
+        - flit: 
+            /gitrepo:
+              url: "https://www.github.com/xxxxx" 
+              rev: "xxxxx"
+
   - language.pytest:
-      python: $language.python
+      python: $language_python
 
   - language.pythonRunnablePackage:
-      name: ${metadata.name} 
-      version: ${metadata.version} 
+      name: $metadata>name 
+      version: $metadata>version
       src: ../.
       format: pyproject
-      python: $language.python
-      buildInputs: $language.python>libs-default
+      python: $language_python
+      buildInputs: $language_python~>libs-default
 
-tools:
+pkgs:
   - nodePackages.pyright
 
-# this is the official nixpkgs ref
-nixpkgsrev: f895a4ef0f01f9d2af2370533829c4f03ec408f4
+other:
+

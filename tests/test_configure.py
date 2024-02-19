@@ -1,23 +1,18 @@
-from ss.configure.configure import Configure
-from ss.configure.unit import Unit
+from src.ss.configure.configure import Configure
+from src.ss.configure.unit import Unit
 from .fixtures import config 
 
 class TestConfigure:
-    def test_get_tools(self, config):
+    def test_source(self, config):
         config = Configure(config)
-        assert config.tools == ["django", "black"]
-
-    def test_name(self, config):
+        assert config.sources['units'].name == 'units'
+        assert config.sources['units'].value == 'latest'
+    
+    def test_metadata(self, config):
         config = Configure(config)
-        assert config.name == "test project"
-
-    def test_verion(self, config):
-        config = Configure(config)
-        assert config.version == "0.0.1"
-
-    def test_description(self, config):
-        config = Configure(config)
-        assert config.description == "description for test project"
+        assert config.metadata.name == 'test project'
+        assert config.metadata.version == '0.0.1'
+        assert config.metadata.description == 'project description'
 
     def test_get_units(self, config):
        pass 

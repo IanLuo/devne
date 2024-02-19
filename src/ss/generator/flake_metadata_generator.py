@@ -14,8 +14,8 @@ class FlakeMetadataGenerator(ContentGenerator, FileExporter):
 
     def generate(self) -> dict[str, str]:
         return { k: v for k, v in { 
-            _MARK_NAME: self.configure.name,           
-            _MARK_VERSION: self.configure.version,
+            _MARK_NAME: self.configure.metadata.name,           
+            _MARK_VERSION: self.configure.metadata.version,
         }.items() if v is not None }
 
     def export(self) -> str:
