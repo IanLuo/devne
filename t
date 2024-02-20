@@ -1,30 +1,33 @@
-<WIP>
-[]<H> support outside unit
+WIP:
+[]!! support outside unit
+  []resolve vars
+  []resolve funcitons
+  []collect units
 
-<BACKLOG>
-[]<H> install and use in another project
-[]<M> binary package
-[]<M> ruby env and package
-[]<M> python web env and package
-[]<M> AI project env and package
-[]<L> update flake description and nixpkgsrev when flake.nix exists
-[]<L> unit documentations
-[]<L> command auto completion
-[]<L> check github flows for inspiration
-[]<L> welcome information
-[]<M> package search function
-[]<M> unit search function
-[]<L> ss.yaml validation
-[]<L> ss.yaml helper, used in website
-[]<L> units guide
-[]<L> ss.yaml package rev option
+BACKLOG:
+[]!! install and use in another project
+[]!! binary package
+[]!! ruby env and package
+[]! python web env and package
+[]! AI project env and package
+[] update flake description and nixpkgsrev when flake.nix exists
+[] unit documentations
+[] command auto completion
+[] check github flows for inspiration
+[] welcome information
+[]! package search function
+[]! unit search function
+[] ss.yaml validation
+[] ss.yaml helper, used in website
+[] units guide
+[] ss.yaml package rev option
 
 <ARCHIVE>
-[x]<M> option to show version number
-[x]<H> put inputs to passthrus so other units can reuse 
-[x]<H> ss.yaml unit ref
-[x]<H> make write unit simple
-[x]<H> simplify ss.yaml
+[x]! option to show version number
+[x]!! put inputs to passthrus so other units can reuse
+[x]!! ss.yaml unit ref
+[x]!! make write unit simple
+[x]!! simplify ss.yaml
 [x] setup env and packagage: default, test, docker (add more if needed)
 [x] setup cli project structure, including src and tests
 [x] setup tests
@@ -36,10 +39,10 @@
 [x] generate supporting file for units: manage path and folders, generated files
 [x] folder structure and path manage for units
 [x] user input wizard
-[x] read pkgsrev from remote conf 
+[x] read pkgsrev from remote conf
 [x] command in app to start to env
 [x] make file generator work correctly, and use the generated flake.nix for development
-[x] remote global configure 
+[x] remote global configure
 [x] commnads structure
 [x] postgres database function
 [x] move ss.yaml metadata into another reloadable nix file, instead of put inside flake.nix, so ss.yaml reload will take effect always
