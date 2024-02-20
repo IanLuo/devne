@@ -1,20 +1,23 @@
 source:
   units: latest
-  pkgs: the_rev_of_pkgs 
-  other: "github" 
+  pkgs: the_rev_of_pkgs
+  other: "github"
 
 metadata:
-  name: test project 
-  version: 0.0.1 
+  name: test project
+  version: 0.0.1
   description: project description
 
 units:
-  - db_postgres:
-      username: "test"
-      password: "password"
-      database: "database"
-  - another:
-      db: $units>db_postgres
+  db_postgres:
+    username: "test"
+    password: "password"
+    database: "database"
+  another:
+    db: $units>db_postgres
+  source_from_git:
+    ^git:
+      url: some_url
 
 pkgs:
   - nodePackages.pyright

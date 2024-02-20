@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from .parser import parse 
+from .parser import parse
 from .unit import Unit
 from os.path import dirname, exists
 from jsonpath_ng import parser
@@ -37,14 +37,20 @@ class Configure:
 
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self.metadata.name
 
-    def version(self):
+    @property
+    def version(self) -> str:
         return self.metadata.version
 
-    def description(self):
+    @property
+    def description(self) -> str:
         return self.metadata.description
+
+    @property
+    def dict(self) -> Dict[str, Any]:
+        return self._config
 
     '''
     Private methods
@@ -61,13 +67,15 @@ class Configure:
 
             self.sources = self._read_source(temp_config)
             # read metadata
-            self.metadata = self._read_metadata(temp_config) 
+            self.metadata = self._read_metadata(temp_config)
 
         # reparse the yaml after all vars are resolved
-        self._config = parse(self._resolve_vars(config_str=yaml))
+        temp_config = parse(self._resolve_vars(config_str=yaml))
 
-        # read units 
-        # self.units = self._find_units(self._find_value(key_path='$.units', config=self._config)) 
+        self._config = self._resolve_functions(temp_config)
+
+        # read units
+        # self.units = self._find_units(self._find_value(key_path='$.units', config=self._config))
 
     def _read_source(self, config: Dict[str, Any]) -> Dict[str, Source]:
         sources = config['source']
@@ -95,21 +103,34 @@ class Configure:
             new_config = config_str.replace(var_name, str(var_value))
             return self._resolve_vars(new_config)
 
-    def _resolve_functions(self, config: dict):
+    def _resolve_functions(self, config: Dict[str, Any]) -> dict:
         '''Functions are resolved by each function provider, then will be generated into nix function as a result'''
-        pattern = r'\\\{(.*)\}'
-        pass
+        pattern = r'\^(\w+)'
 
+        def walk_dict(d, parent_dict=None, parent_key=None):
+            for key, value in d.items():
+                match = re.search(pattern, key)
+                if match is not None:
+                    function_name = match.group(1)
+                    parent_dict[parent_key] = self._resolve_function_by_name(function_name, value)
+                elif isinstance(value, dict):
+                    walk_dict(value, parent_dict=d, parent_key=key)
 
-    def _find_value(self, key_path: str, config: dict) -> Optional[Any]: 
+        walk_dict(config)
+
+        return config;
+
+    def _resolve_function_by_name(self, function_name: str, value: dict):
+        return {'type': 'function', 'name': function_name, 'value': value}
+
+    def _find_value(self, key_path: str, config: dict) -> Optional[Any]:
         jsonpath_expr = parser.parse(key_path)
         result = jsonpath_expr.find(config)
 
         if len(result) == 0:
             return None
-        value = result[0]
-        
-        return value
+
+        return result[0].value
 
     def _find_units(self, data) -> list[Unit]:
         units_in_json = [ Unit(json=unit) for unit in data if isinstance(unit, dict) ]
