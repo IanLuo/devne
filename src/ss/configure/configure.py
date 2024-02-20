@@ -5,6 +5,7 @@ from os.path import dirname, exists
 from jsonpath_ng import parser
 import re
 from typing import Any, Dict, Optional, List
+from .functions.git_repo import GitRepo
 
 @dataclass
 class Source:
@@ -105,14 +106,14 @@ class Configure:
 
     def _resolve_functions(self, config: Dict[str, Any]) -> dict:
         '''Functions are resolved by each function provider, then will be generated into nix function as a result'''
-        pattern = r'\^(\w+)'
+        pattern = r'(\^\w+)'
 
         def walk_dict(d, parent_dict=None, parent_key=None):
             for key, value in d.items():
                 match = re.search(pattern, key)
                 if match is not None:
                     function_name = match.group(1)
-                    parent_dict[parent_key] = self._resolve_function_by_name(function_name, value)
+                    parent_dict[parent_key] = self._resolve_function_by_name(parent_dict[parent_key])
                 elif isinstance(value, dict):
                     walk_dict(value, parent_dict=d, parent_key=key)
 
@@ -120,8 +121,10 @@ class Configure:
 
         return config;
 
-    def _resolve_function_by_name(self, function_name: str, value: dict):
-        return {'type': 'function', 'name': function_name, 'value': value}
+    def _resolve_function_by_name(self, value: dict):
+        if GitRepo.is_git_repo(value):
+            return GitRepo(value)
+        else: value
 
     def _find_value(self, key_path: str, config: dict) -> Optional[Any]:
         jsonpath_expr = parser.parse(key_path)

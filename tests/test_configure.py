@@ -1,6 +1,7 @@
 from src.ss.configure.configure import Configure
 from src.ss.configure.unit import Unit
 from .fixtures import config
+from src.ss.configure.functions.git_repo import GitRepo
 
 class TestConfigure:
     def test_source(self, config):
@@ -20,6 +21,6 @@ class TestConfigure:
 
     def test_resolve_function(self, config):
         config = Configure(config)
-        assert config.dict['units']['source_from_git']['type'] == 'function'
+        assert isinstance(config.dict['units']['source_from_git'], GitRepo)
 
 

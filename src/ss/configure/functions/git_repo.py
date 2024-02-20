@@ -9,10 +9,11 @@ class GitRepo:
 
     @staticmethod
     def is_git_repo(value: dict):
-        return value.get('git') is not None
+        return value.get('^git') is not None
 
     def __init__(self, value: dict):
-        url = value.get('url')
+        data = value.get('^git')
+        url = data.get('url')
         if url is None:
             raise Exception("url is required for GitRepo")
         self.rev = value.get('rev')
@@ -20,9 +21,9 @@ class GitRepo:
 
     def __str__(self):
         return f'''
-builtints.fetchGit {{ 
-url = {self.url}; 
-rev = {self.rev}; 
-ref = {self.ref}; 
+builtints.fetchGit {{
+  url = {self.url};
+  {'' if self.rev == None else self.rev};
+  {'' if self.ref == None else self.ref};
 }}
 '''
