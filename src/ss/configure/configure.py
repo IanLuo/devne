@@ -76,7 +76,7 @@ class Configure:
         self._config = self._resolve_functions(temp_config)
 
         # read units
-        # self.units = self._find_units(self._find_value(key_path='$.units', config=self._config))
+        self.units = self._find_units(self._find_value(key_path='$.units', config=self._config))
 
     def _read_source(self, config: Dict[str, Any]) -> Dict[str, Source]:
         sources = config['source']

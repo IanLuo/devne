@@ -5,47 +5,46 @@
 source:
   units: latest
   pkgs: f895a4ef0f01f9d2af2370533829c4f03ec408f4
-  other: "github://" 
+  other: "github://"
 
 metadata:
   name: ss
-  version: 0.0.1 
-  description: devlopment environment with 1 command 
+  version: 0.0.1
+  description: devlopment environment with 1 command
 
 units:
-  - db_postgres:
-      username: "ss_db"
-      password: "admin"
-      database: "password"
+  db_postgres:
+    username: "ss_db"
+    password: "admin"
+    database: "password"
 
-  - language.python:
-      pythonVersion: "python310"
-      libs-default:
-        - typer 
-        - pynvim 
-        - pyyaml 
-        - rich 
-        - jsonpath-ng 
-        - requests
-        - black
-        - flit: 
-            /gitrepo:
-              url: "https://www.github.com/xxxxx" 
-              rev: "xxxxx"
+  language.python:
+    pythonVersion: "python310"
+    libs-default:
+      - typer
+      - pynvim
+      - pyyaml
+      - rich
+      - jsonpath-ng
+      - requests
+      - black
+      - flit:
+          /gitrepo:
+            url: "https://www.github.com/xxxxx"
+            rev: "xxxxx"
 
-  - language.pytest:
-      python: $language_python
+  language.pytest:
+    python: $language_python
 
-  - language.pythonRunnablePackage:
-      name: $metadata>name 
-      version: $metadata>version
-      src: ../.
-      format: pyproject
-      python: $language_python
-      buildInputs: $language_python~>libs-default
+  language.pythonRunnablePackage:
+    name: $metadata>name
+    version: $metadata>version
+    src: ../.
+    format: pyproject
+    python: $language_python
+    buildInputs: $language_python~>libs-default
 
 pkgs:
   - nodePackages.pyright
 
 other:
-

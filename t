@@ -1,7 +1,8 @@
 WIP:
 []!! support outside unit
-  []resolve vars
-  []resolve funcitons
+  [x] resolve vars
+  [] resolve funcitons
+    [] git repo
   []collect units
 
 BACKLOG:
