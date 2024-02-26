@@ -1,7 +1,16 @@
+from ..configure.configure import Configure
+from .template import Template
+from dataclasses import dataclass
 
-{ sstemplate, system, name, version, lib, pkgs }:
+@dataclass
+class UnitsTemplate(Template):
+  configure: Configure
+
+  def render(self):
+    return f'''
+{{ sstemplate, system, name, version, lib, pkgs }}:
 let
-  template = import sstemplate { inherit system pkgs; };
+  template = import sstemplate {{ inherit system pkgs; }};
   language = template.language;
   db = template.db;
 
@@ -12,10 +21,9 @@ let
   startScript = ''
     export SS_PROJECT_BASE=$PWD
   '';
-in {
+in {{
   inherit all;
-  scripts = builtins.concatStringsSep "
-" ([ startScript ] ++ map (unit: unit.script) all);
+  scripts = builtins.concatStringsSep "\n" ([ startScript ] ++ map (unit: unit.script) all);
   packages = lib.attrsets.genAttrs
                (map
                   (x: x.value.pname)
@@ -23,4 +31,5 @@ in {
 
                (name:
                 (lib.lists.findFirst (x: x.isPackage && x.value.pname == name) null all).value);
-}
+}}
+'''

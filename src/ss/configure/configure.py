@@ -7,11 +7,16 @@ import re
 from typing import Any, Dict, Optional, List
 from .functions.git_repo import GitRepo
 
+
 @dataclass
 class Source:
     name: str
     value: str
 
+@dataclass
+class UnitInstance:
+    source: Source
+    definition: Unit
 @dataclass
 class Metadata:
     name: str
@@ -19,10 +24,11 @@ class Metadata:
     description: str
 
 class Configure:
-    units: List[Unit]
     root: str
     sources: Dict[str, Source]
     metadata: Metadata
+    all_unit_instances: List[UnitInstance]
+    raw_config: Dict[str, Any]
 
     '''
     Public methods
@@ -51,7 +57,13 @@ class Configure:
 
     @property
     def dict(self) -> Dict[str, Any]:
-        return self._config
+        return self.raw_config
+
+    def units_for_source(self, source_name: str) -> List[UnitInstance]:
+        return [ unit for unit in self.all_unit_instances if unit.source.name == source_name ]
+
+    def unit_from_source(self, source_name: str, unit_name: str) -> Optional[UnitInstance]:
+        return next(unit for unit in self.units_for_source(source_name) if unit.definition.name == unit_name)
 
     '''
     Private methods
@@ -73,10 +85,10 @@ class Configure:
         # reparse the yaml after all vars are resolved
         temp_config = parse(self._resolve_vars(config_str=yaml))
 
-        self._config = self._resolve_functions(temp_config)
+        self.raw_config = self._resolve_functions(temp_config)
 
         # read units
-        self.units = self._find_units(self._find_value(key_path='$.units', config=self._config))
+        self.all_unit_instances = self._find_units(config=self.raw_config)
 
     def _read_source(self, config: Dict[str, Any]) -> Dict[str, Source]:
         sources = config['source']
@@ -135,13 +147,7 @@ class Configure:
 
         return result[0].value
 
-    def _find_units(self, data) -> list[Unit]:
-        units_in_json = [ Unit(json=unit) for unit in data if isinstance(unit, dict) ]
-        units_in_str = [ Unit(name=unit) for unit in data if isinstance(unit, str) ]
-
-        def flatten_list(nested_list):
-            return [item for sublist in nested_list for item in (flatten_list(sublist) if isinstance(sublist, list) else [sublist])]
-
-        nested_units = flatten_list([ [ value for _, value in unit.attrs.items() if isinstance(value, Unit)] for unit in units_in_json ])
-
-        return units_in_json + units_in_str + nested_units
+    def _find_units(self, config: dict) -> list[UnitInstance]:
+        return [ UnitInstance(source, Unit(name=unit_name, params=params))
+            for source_name, source in self.sources.items()
+                for unit_name, params in (config[source_name] or {}).items() ]

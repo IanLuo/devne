@@ -13,8 +13,8 @@ class GitRepo:
 
     def __init__(self, value: dict):
         data = value.get('^git')
-        url = data.get('url')
-        if url is None:
+        self.url = data.get('url')
+        if self.url is None:
             raise Exception("url is required for GitRepo")
         self.rev = value.get('rev')
         self.ref = value.get('ref')

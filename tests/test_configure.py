@@ -22,5 +22,15 @@ class TestConfigure:
     def test_resolve_function(self, config):
         config = Configure(config)
         assert isinstance(config.dict['units']['source_from_git'], GitRepo)
+    def test_resolve_units(self, config):
+        config = Configure(config)
+        assert len(config.all_unit_instances) == 4
+        assert len(config.units_for_source('units')) == 3
+        assert len(config.units_for_source('pkgs')) == 1
+        assert len(config.units_for_source('other')) == 0
+        assert config.unit_from_source('units', 'db_postgres') != None
+        assert config.unit_from_source('units', 'db_postgres').definition.attrs['username'] == 'test'
+        assert isinstance(config.unit_from_source('units', 'source_from_git').definition.attrs, GitRepo)
+        assert config.unit_from_source('units', 'another').definition.attrs['db']['database'] == 'database'
 
 

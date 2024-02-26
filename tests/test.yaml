@@ -20,6 +20,6 @@ units:
       url: some_url
 
 pkgs:
-  - nodePackages.pyright
+  nodePackages.pyright:
 
 other:

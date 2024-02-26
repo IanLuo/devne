@@ -1,27 +1,21 @@
-from .flake_generator import FlakeGenerator
-from .flake_metadata_generator import FlakeMetadataGenerator
-from .units_generator import UnitsGenerator
+from .flake_template import FlakeTemplate
+from .units_template import UnitsTemplate
 from ..configure.configure import Configure
 from ..folder import Folder
 from os.path import exists
 
 class FilesCreator:
     def __init__(self, configure: Configure):
-        self.flake_generator = FlakeGenerator(configure)
-        self.flake_metadata_generator = FlakeMetadataGenerator(configure)
-        self.units_generator = UnitsGenerator(configure)
+        self.flake_template = FlakeTemplate(configure)
+        self.units_template = UnitsTemplate(configure)
         self.folder = Folder(configure.root)
 
     def create(self) -> bool:
         # creat flake.nix
-        if not exists(self.folder.flake_path):
-            self._write_to_file(self.flake_generator.export(), self.folder.init_flake_file())
+        self._write_to_file(self.flake_template.render(), self.folder.init_flake_file())
 
         # create unit.nix
-        self._write_to_file(self.units_generator.export(), self.folder.init_unit_file())
-
-        # create metadata.nix
-        self._write_to_file(self.flake_metadata_generator.export(), self.folder.init_flake_metadata_file())
+        self._write_to_file(self.units_template.render(), self.folder.init_unit_file())
 
         return True
 

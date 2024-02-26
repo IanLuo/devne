@@ -1,3 +1,4 @@
+
 {
   description = "devlopment environment with 1 command";
 
@@ -8,7 +9,7 @@
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
-  inputs.sstemplate.url = "git+file:///Users/ianluo/Documents/apps/templates";
+  inputs.sstemplate.url = "github:ianluo/ss-templates";
   inputs.sstemplate.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs = { self, nixpkgs, flake-utils, sstemplate }:
@@ -16,19 +17,17 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        metadata = import ./flake_metadata.nix;
-        version = metadata.version;
-        name = metadata.name;
+        version = 0.0.1;
+        name = ss;
 
-        units = pkgs.callPackage ./units.nix { inherit sstemplate name version system pkgs; };
-        deps = pkgs.callPackage ./deps.nix { };
+        units = pkgs.callPackage ./units.nix { inherit sstemplate name version system; };
       in
       {
         devShells = with pkgs; {
           default = mkShell {
             name = name;
             version = version;
-            buildInputs = units.all ++ deps; 
+            buildInputs = units.all
 
             shellHook = ''
               ${units.scripts}

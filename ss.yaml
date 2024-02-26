@@ -1,6 +1,7 @@
-# there are two source of 'units'
+# there are three source of 'units'
 # 1. defiend in templates
 # 2. refed from nixpkgs, and wrapped by template function: with same interface with other 'units'
+# 3. customized by user, provide a git repo with a default.nix or flake.nix in it, or point to a .nix file
 
 source:
   units: latest
@@ -29,7 +30,7 @@ units:
       - requests
       - black
       - flit:
-          /gitrepo:
+          ^git:
             url: "https://www.github.com/xxxxx"
             rev: "xxxxx"
 
@@ -45,6 +46,6 @@ units:
     buildInputs: $language_python~>libs-default
 
 pkgs:
-  - nodePackages.pyright
+  nodePackages.pyright:
 
 other:
