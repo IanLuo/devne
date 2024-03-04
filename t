@@ -6,6 +6,7 @@ WIP:
   []collect units
 
 BACKLOG:
+[]!! interface for define hash for each unit
 []!! install and use in another project
 []!! binary package
 []!! ruby env and package
