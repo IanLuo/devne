@@ -1,50 +1,54 @@
 from .template import Template
 from ..configure.configure import Configure
 from dataclasses import dataclass
+from .str_render import StrRender
+
 
 @dataclass
 class FlakeTemplate(Template):
-  configure: Configure
+    configure: Configure
 
-  def render(self):
-    return f"""
-{{
-  description = "{self.configure.metadata.description}";
-
-  inputs.nixpkgs = {{
-    url = "github:NixOS/nixpkgs?rev={self.configure.sources['pkgs'].value}";
-    inputs.nixpkgs.follows = "nixpkgs";
-  }};
-
-  inputs.flake-utils.url = "github:numtide/flake-utils";
-
-  inputs.sstemplate.url = "github:ianluo/ss-templates";
-  inputs.sstemplate.inputs.nixpkgs.follows = "nixpkgs";
-
-  outputs = {{ self, nixpkgs, flake-utils, sstemplate }}:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs {{ inherit system; }};
-
-        version = {self.configure.metadata.version};
-        name = {self.configure.metadata.name};
-
-        units = pkgs.callPackage ./units.nix {{ inherit sstemplate name version system; }};
-      in
+    def render(self) -> str:
+        return StrRender(
+            f"""
       {{
-        devShells = with pkgs; {{
-          default = mkShell {{
-            name = name;
-            version = version;
-            buildInputs = units.all
+        description = "{self.configure.metadata.description}";
 
-            shellHook = ''
-              ${{units.scripts}}
-            '';
-          }};
+        inputs.nixpkgs = {{
+          url = "github:NixOS/nixpkgs?rev={self.configure.sources['pkgs'].value}";
+          inputs.nixpkgs.follows = "nixpkgs";
         }};
 
-        packages = units.packages;
-      }});
-}}
-"""
+        inputs.flake-utils.url = "github:numtide/flake-utils";
+
+        inputs.sstemplate.url = "github:ianluo/ss-templates";
+        inputs.sstemplate.inputs.nixpkgs.follows = "nixpkgs";
+
+        outputs = {{ self, nixpkgs, flake-utils, sstemplate }}:
+          flake-utils.lib.eachDefaultSystem (system:
+            let
+              pkgs = import nixpkgs {{ inherit system; }};
+
+              version = "{self.configure.metadata.version}";
+              name = "{self.configure.metadata.name}";
+
+              units = pkgs.callPackage ./units.nix {{ inherit sstemplate name version system; }};
+            in
+            {{
+              devShells = with pkgs; {{
+                default = mkShell {{
+                  name = name;
+                  version = version;
+                  buildInputs = units.all;
+
+                  shellHook = ''
+                    ${{units.scripts}}
+                  '';
+                }};
+              }};
+
+              packages = units.packages;
+            }});
+      }}
+      """
+        ).render

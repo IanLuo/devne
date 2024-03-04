@@ -8,5 +8,5 @@ class Unit:
 
     def __init__(self, name: str  = None, params: Optional[dict[str, dict]] = None) :
         self.name = name
-        self.attrs = params
+        self.attrs = params or {}
 
