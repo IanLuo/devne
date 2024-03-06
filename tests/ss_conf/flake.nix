@@ -17,9 +17,6 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        version = 0.0.1;
-        name = test project;
-
         units = pkgs.callPackage ./units.nix { inherit sstemplate name version system; };
       in
       {

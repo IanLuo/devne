@@ -14,7 +14,7 @@ metadata:
   description: devlopment environment with 1 command
 
 units:
-  db_postgres:
+  db.postgres:
     username: "ss_db"
     password: "admin"
     database: "password"

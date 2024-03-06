@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import List
 from .str_render import StrRender
 from ..configure.functions.git_repo import GitRepo
+from functools import reduce
 
 
 @dataclass
@@ -27,8 +28,10 @@ class UnitsTemplate(Template):
 				TODO: render git repo
 			"""
             ).render
+        elif None:
+            return nil
         else:
-            return f'"{value}"'
+            return str(value)
 
     def _render_from_pkgs(self, config: Configure) -> List[str]:
         units = [
@@ -70,20 +73,44 @@ class UnitsTemplate(Template):
 
     def render(self) -> str:
         space = " "
+        line_break = "\n"
+        sources = self.configure.sources
+
+        units_in_source = lambda source_name: {
+            f"{source_name}.{unit_instance.definition.name}": unit_instance.definition.attrs
+            for unit_instance in self.configure.units_for_source(source_name)
+        }
+
+        render_sources = reduce(
+            lambda a, b: {**a, **b},
+            filter(
+                lambda x: len(x) > 0,
+                [units_in_source(source_name) for source_name in sources],
+            ),
+        )
+
+        names = list(map(lambda x: x.replace(".", "_"), render_sources.keys()))
+        render_unit = lambda name, attrs: StrRender(
+            f"""
+            {name.replace(".","_")} = {name} {{
+                {line_break.join([f'{name} = "{self._render_value(value)}";' for name, value in attrs.items()])}
+            }};
+        """
+        ).render
+
+        render_units_in_sources = line_break.join(
+            [render_unit(name, attrs) for name, attrs in render_sources.items()]
+        )
+
         return StrRender(
             f"""
 	{{ sstemplate, system, name, version, lib, pkgs }}:
 		let
 		template = import sstemplate {{ inherit system pkgs; }};
 
-		all = lib.lists.filter (x: x.isUnit) (
-			[
-				{space.join(map(lambda x: f'({x})', self._render_from_pkgs(self.configure)))}
-			]
-			++
-			[
-				{space.join(map(lambda x: f'({x})', self._render_from_units_template(self.configure)))}
-			]);
+        {render_units_in_sources}
+
+        all = [ {space.join(names)}]
 
 		startScript = ''
 			export SS_PROJECT_BASE=$PWD
