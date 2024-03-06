@@ -46,6 +46,6 @@ units:
     buildInputs: $language_python~>libs-default
 
 pkgs:
-  nodePackages.pyright:
+  nodePackages.pyright: null
 
-other:
+other: null

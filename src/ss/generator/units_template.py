@@ -90,13 +90,22 @@ class UnitsTemplate(Template):
         )
 
         names = list(map(lambda x: x.replace(".", "_"), render_sources.keys()))
-        render_unit = lambda name, attrs: StrRender(
-            f"""
-            {name.replace(".","_")} = {name} {{
-                {line_break.join([f'{name} = "{self._render_value(value)}";' for name, value in attrs.items()])}
-            }};
-        """
-        ).render
+
+        def render_unit(name, attrs):
+            if attrs == None:
+                return StrRender(
+                    f"""
+                    {name.replace(".","_")} = {name};
+                """
+                ).render
+            else:
+                return StrRender(
+                    f"""
+                    {name.replace(".","_")} = {name} {{
+                        {line_break.join([f'{name} = "{self._render_value(value)}";' for name, value in attrs.items()])}
+                    }};
+                """
+                ).render
 
         render_units_in_sources = line_break.join(
             [render_unit(name, attrs) for name, attrs in render_sources.items()]

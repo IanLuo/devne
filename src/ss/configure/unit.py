@@ -1,12 +1,12 @@
 from typing import Optional
 from dataclasses import dataclass
 
+
 @dataclass
 class Unit:
     name: str
-    attrs: dict
+    attrs: Optional[dict]
 
-    def __init__(self, name: str  = None, params: Optional[dict[str, dict]] = None) :
+    def __init__(self, name: str = None, params: Optional[dict[str, dict]] = None):
         self.name = name
-        self.attrs = params or {}
-
+        self.attrs = params
