@@ -17,7 +17,7 @@ class UnitsTemplate(Template):
 
     def _render_value(self, value) -> str:
         if isinstance(value, list):
-            return f"""[{" ".join(map(lambda x: f'"{x}"', value))}];"""
+            return f"""[{" ".join(map(lambda x: f'"{x}"', value))}]"""
         elif isinstance(value, dict):
             return self._render_map(value)
         elif isinstance(value, bool):
@@ -29,9 +29,9 @@ class UnitsTemplate(Template):
 			"""
             ).render
         elif None:
-            return nil
+            return "nil"
         else:
-            return str(value)
+            return f'"{str(value)}"'
 
     def _render_from_pkgs(self, config: Configure) -> List[str]:
         units = [
@@ -102,7 +102,7 @@ class UnitsTemplate(Template):
                 return StrRender(
                     f"""
                     {name.replace(".","_")} = {name} {{
-                        {line_break.join([f'{name} = "{self._render_value(value)}";' for name, value in attrs.items()])}
+                        {line_break.join([f'{name} = {self._render_value(value)};' for name, value in attrs.items()])}
                     }};
                 """
                 ).render
@@ -119,7 +119,7 @@ class UnitsTemplate(Template):
 
         {render_units_in_sources}
 
-        all = [ {space.join(names)}]
+        all = [ {space.join(names)}];
 
 		startScript = ''
 			export SS_PROJECT_BASE=$PWD

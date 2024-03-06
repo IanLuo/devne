@@ -13,7 +13,7 @@ database = "password";
 
                     units_language_python = units.language.python {
                         pythonVersion = "python310";
-libs-default = "["typer" "pynvim" "pyyaml" "rich" "jsonpath-ng" "requests" "black" "{'flit': {'^git': {'url': 'https://www.github.com/xxxxx', 'rev': 'xxxxx'}}}"];";
+libs-default = ["typer" "pynvim" "pyyaml" "rich" "jsonpath-ng" "requests" "black" "{'flit': {'^git': {'url': 'https://www.github.com/xxxxx', 'rev': 'xxxxx'}}}"];
                     };
                 
 
@@ -35,7 +35,7 @@ buildInputs = "$language_python~>libs-default";
                     pkgs_nodePackages_pyright = pkgs.nodePackages.pyright;
                 
 
-        all = [ units_db_postgres units_language_python units_language_pytest units_language_pythonRunnablePackage pkgs_nodePackages_pyright]
+        all = [ units_db_postgres units_language_python units_language_pytest units_language_pythonRunnablePackage pkgs_nodePackages_pyright];
 
 		startScript = ''
 			export SS_PROJECT_BASE=$PWD
