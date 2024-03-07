@@ -5,35 +5,33 @@
 
         
                     units_db_postgres = units.db.postgres {
-                        username = "ss_db";
+                        { username = "ss_db";
 password = "admin";
-database = "password";
+database = "password"; }
                     };
-                
+                    
 
                     units_language_python = units.language.python {
-                        pythonVersion = "python310";
-libs-default = ["typer" "pynvim" "pyyaml" "rich" "jsonpath-ng" "requests" "black" "{'flit': {'^git': {'url': 'https://www.github.com/xxxxx', 'rev': 'xxxxx'}}}"];
+                        { pythonVersion = "python310";
+libs-default = ["typer" "pynvim" "pyyaml" "rich" "jsonpath-ng" "requests" "black" "{'flit': {'^git': {'url': 'https://www.github.com/xxxxx', 'rev': 'xxxxx'}}}"]; }
                     };
-                
+                    
 
                     units_language_pytest = units.language.pytest {
-                        python = "$language_python";
+                        { python = units_language_python; }
                     };
-                
+                    
 
                     units_language_pythonRunnablePackage = units.language.pythonRunnablePackage {
-                        name = "$metadata>name";
-version = "$metadata>version";
+                        { name = metadata_name;
+version = metadata_version;
 src = "../.";
 format = "pyproject";
-python = "$language_python";
-buildInputs = "$language_python~>libs-default";
+python = units_language_python;
+buildInputs = "$units.language.python~>libs-default"; }
                     };
-                
-
-                    pkgs_nodePackages_pyright = pkgs.nodePackages.pyright;
-                
+                    
+pkgs_nodePackages_pyright = pkgs.nodePackages.pyright;
 
         all = [ units_db_postgres units_language_python units_language_pytest units_language_pythonRunnablePackage pkgs_nodePackages_pyright];
 

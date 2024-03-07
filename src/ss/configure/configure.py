@@ -2,10 +2,9 @@ from dataclasses import dataclass
 from .parser import parse
 from .unit import Unit
 from os.path import dirname, exists
-from jsonpath_ng import parser
-import re
 from typing import Any, Dict, Optional, List
 from .functions.git_repo import GitRepo
+import re
 
 
 @dataclass
@@ -90,11 +89,9 @@ class Configure:
                 raise Exception(f"config file is empty: {config_path}")
 
         self.sources = self._read_source(temp_config)
-        # read metadata
         self.metadata = self._read_metadata(temp_config)
 
         temp_config = self._resolve_functions(temp_config)
-
         self.all_unit_instances = self._find_units(config=temp_config)
 
     def _read_source(self, config: Dict[str, Any]) -> Dict[str, Source]:
@@ -129,15 +126,6 @@ class Configure:
             return GitRepo(value)
         else:
             value
-
-    def _find_value(self, key_path: str, config: dict) -> Optional[Any]:
-        jsonpath_expr = parser.parse(key_path)
-        result = jsonpath_expr.find(config)
-
-        if len(result) == 0:
-            return None
-
-        return result[0].value
 
     def _find_units(self, config: dict) -> list[UnitInstance]:
         return [

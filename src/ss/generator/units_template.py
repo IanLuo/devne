@@ -11,66 +11,6 @@ from functools import reduce
 class UnitsTemplate(Template):
     configure: Configure
 
-    def _render_map(self, data: dict) -> str:
-        line_break = "\n"
-        return f"""{{ {line_break.join([ f'{key} = {self._render_value(value)};' for key, value in data.items() ])} }}"""
-
-    def _render_value(self, value) -> str:
-        if isinstance(value, list):
-            return f"""[{" ".join(map(lambda x: f'"{x}"', value))}]"""
-        elif isinstance(value, dict):
-            return self._render_map(value)
-        elif isinstance(value, bool):
-            return "true" if value else "false"
-        elif isinstance(value, GitRepo):
-            return StrRender(
-                f"""
-				TODO: render git repo
-			"""
-            ).render
-        elif None:
-            return "nil"
-        else:
-            return f'"{str(value)}"'
-
-    def _render_from_pkgs(self, config: Configure) -> List[str]:
-        units = [
-            unit.definition
-            for unit in config.all_unit_instances
-            if unit.source.name == "pkgs"
-        ]
-
-        line_break = "\n"
-
-        render_unit = lambda unit: StrRender(
-            f"""
-		# TODO: wrap every dev inside a unit
-			pkgs.{unit.name}.overrideAttrs { self._render_map(unit.attrs) }
-		"""
-        ).render
-
-        return map(render_unit, units)
-
-    def _render_from_units_template(self, config: Configure) -> List[str]:
-        units = [
-            unit.definition
-            for unit in config.all_unit_instances
-            if unit.source.name == "units"
-        ]
-
-        line_break = "\n"
-
-        render_unit = lambda unit: StrRender(
-            f"""
-				template.{unit.name.replace('_', '.')} { self._render_map(unit.attrs) }
-				"""
-        ).render
-
-        return map(render_unit, units)
-
-    def _render_from_customized(self, config: Configure) -> str:
-        return ""
-
     def render(self) -> str:
         space = " "
         line_break = "\n"
@@ -91,20 +31,18 @@ class UnitsTemplate(Template):
 
         names = list(map(lambda x: x.replace(".", "_"), render_sources.keys()))
 
+        super_class = super()
+
         def render_unit(name, attrs):
-            if attrs == None:
-                return StrRender(
-                    f"""
-                    {name.replace(".","_")} = {name};
-                """
-                ).render
+            if attrs is None:
+                return StrRender(f"""{name.replace(".","_")} = {name};""").render
             else:
                 return StrRender(
                     f"""
                     {name.replace(".","_")} = {name} {{
-                        {line_break.join([f'{name} = {self._render_value(value)};' for name, value in attrs.items()])}
+                        {super_class.render_map(self.configure, attrs)}
                     }};
-                """
+                    """
                 ).render
 
         render_units_in_sources = line_break.join(

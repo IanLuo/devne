@@ -35,15 +35,15 @@ units:
             rev: "xxxxx"
 
   language.pytest:
-    python: $language_python
+    python: $units.language.python
 
   language.pythonRunnablePackage:
-    name: $metadata>name
-    version: $metadata>version
+    name: $metadata.name
+    version: $metadata.version
     src: ../.
     format: pyproject
-    python: $language_python
-    buildInputs: $language_python~>libs-default
+    python: $units.language.python
+    buildInputs: $units.language.python~>libs-default
 
 pkgs:
   nodePackages.pyright: null
