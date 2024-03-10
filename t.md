@@ -1,30 +1,34 @@
-WIP:
-[]!! support outside unit
+# WIP
+
+[ ]!! support outside unit
+  [ ] ref from outside repo on github
   [x] resolve vars
-  [] resolve funcitons
-    [] git repo
-  []collect units
+  [x] resolve funcitons
+    [x] git repo
+  [x]collect units
 
-BACKLOG:
-[]!! interface for define hash for each unit
-[]!! install and use in another project
-[]!! binary package
-[]!! ruby env and package
-[]! python web env and package
-[]! AI project env and package
-[] update flake description and nixpkgsrev when flake.nix exists
-[] unit documentations
-[] command auto completion
-[] check github flows for inspiration
-[] welcome information
-[]! package search function
-[]! unit search function
-[] ss.yaml validation
-[] ss.yaml helper, used in website
-[] units guide
-[] ss.yaml package rev option
+# BACKLOG
 
-<ARCHIVE>
+[ ]!! interface for define hash for each unit
+[ ]!! install and use in another project
+[ ]!! binary package
+[ ]!! ruby env and package
+[ ]! python web env and package
+[ ]! AI project env and package
+[ ] update flake description and nixpkgsrev when flake.nix exists
+[ ] unit documentations
+[ ] command auto completion
+[ ] check github flows for inspiration
+[ ] welcome information
+[ ]! package search function
+[ ]! unit search function
+[ ] ss.yaml validation
+[ ] ss.yaml helper, used in website
+[ ] units guide
+[ ] ss.yaml package rev option
+
+# ARCHIVE
+
 [x]! option to show version number
 [x]!! put inputs to passthrus so other units can reuse
 [x]!! ss.yaml unit ref
