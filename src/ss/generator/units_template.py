@@ -35,13 +35,15 @@ class UnitsTemplate(Template):
 
         def render_unit(name, attrs):
             if attrs is None:
-                return StrRender(f"""{name.replace(".","_")} = {name};""").render
+                return StrRender(
+                    f"""{name.replace(".","_")} = (wrapInUnit {{ drv = {name}; }});"""
+                ).render
             else:
                 return StrRender(
                     f"""
-                    {name.replace(".","_")} = {name} {{
-                        {super_class.render_map(self.configure, attrs)}
-                    }};
+                    {name.replace(".","_")} = (wrapInUnit {{
+                        drv = ({name} {super_class.render_map(self.configure, attrs)});
+                    }});
                     """
                 ).render
 
@@ -53,15 +55,17 @@ class UnitsTemplate(Template):
             f"""
 	{{ sstemplate, system, name, version, lib, pkgs }}:
 		let
-		template = import sstemplate {{ inherit system pkgs; }};
+            units = import sstemplate {{ inherit system pkgs; }};
+            wrapInUnit = units.sslib.wrapInUnit;
+            metadata = {{ inherit name version; }};
 
-        {render_units_in_sources}
+            {render_units_in_sources}
 
-        all = [ {space.join(names)}];
+            all = [ {line_break.join(names)}];
 
-		startScript = ''
-			export SS_PROJECT_BASE=$PWD
-		'';
+            startScript = ''
+                export SS_PROJECT_BASE=$PWD
+            '';
 		in {{
 		inherit all;
 		scripts = builtins.concatStringsSep "\\n" ([ startScript ] ++ map (unit: unit.script) all);

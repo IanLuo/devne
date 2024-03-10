@@ -3,7 +3,7 @@
         description = "devlopment environment with 1 command";
 
         inputs.nixpkgs = {
-          url = "github:NixOS/nixpkgs?rev=f895a4ef0f01f9d2af2370533829c4f03ec408f4";
+          url = "github:NixOS/nixpkgs/";
           inputs.nixpkgs.follows = "nixpkgs";
         };
 

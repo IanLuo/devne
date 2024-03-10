@@ -15,7 +15,7 @@ class FlakeTemplate(Template):
         description = "{self.configure.metadata.description}";
 
         inputs.nixpkgs = {{
-          url = "github:NixOS/nixpkgs?rev={self.configure.sources['pkgs'].value}";
+          url = "github:NixOS/nixpkgs/{self.configure.sources['pkgs'].value}";
           inputs.nixpkgs.follows = "nixpkgs";
         }};
 

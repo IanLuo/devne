@@ -5,8 +5,7 @@
 
 source:
   units: latest
-  pkgs: f895a4ef0f01f9d2af2370533829c4f03ec408f4
-  other: "github://"
+  pkgs: ''
 
 metadata:
   name: ss
@@ -29,10 +28,7 @@ units:
       - jsonpath-ng
       - requests
       - black
-      - flit:
-          ^git:
-            url: "https://www.github.com/xxxxx"
-            rev: "xxxxx"
+      - flit
 
   language.pytest:
     python: $units.language.python
@@ -47,5 +43,4 @@ units:
 
 pkgs:
   nodePackages.pyright: null
-
-other: null
+  nixpkgs-fmt: null

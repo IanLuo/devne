@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
+
 @dataclass
 class GitRepo:
     url: str
@@ -9,21 +10,21 @@ class GitRepo:
 
     @staticmethod
     def is_git_repo(value: dict):
-        return value.get('^git') is not None
+        return value.get("^git") is not None
 
     def __init__(self, value: dict):
-        data = value.get('^git')
-        self.url = data.get('url')
+        data = value.get("^git")
+        self.url = data.get("url")
         if self.url is None:
             raise Exception("url is required for GitRepo")
-        self.rev = value.get('rev')
-        self.ref = value.get('ref')
+        self.rev = value.get("rev")
+        self.ref = value.get("ref")
 
     def __str__(self):
-        return f'''
+        return f"""
 builtints.fetchGit {{
   url = {self.url};
-  {'' if self.rev == None else self.rev};
-  {'' if self.ref == None else self.ref};
+  {'' if self.rev == None else f'{self.rev};'}
+  {'' if self.ref == None else f'{self.ref};'}
 }}
-'''
+"""

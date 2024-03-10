@@ -116,6 +116,10 @@ class Configure:
                     )
                 elif isinstance(value, dict):
                     walk_dict(value, parent_dict=d, parent_key=key)
+                elif isinstance(value, list):
+                    for i, item in enumerate(value):
+                        if isinstance(item, dict):
+                            walk_dict(item, parent_dict=value, parent_key=i)
 
         walk_dict(config)
 
