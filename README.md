@@ -27,3 +27,7 @@
 1. Install and setup dependencies
 2. Create folers and files
 3. Run the skeleton for the first time
+
+## The power comes from integration of everything
+All units can be used together as a pipeline, and to generate a result,
+by defining a chain of units

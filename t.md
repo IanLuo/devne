@@ -26,6 +26,12 @@
 [ ] ss.yaml helper, used in website
 [ ] units guide
 [ ] ss.yaml package rev option
+[ ] local shared store
+[ ] to make unit runnable
+    add doc for each unit, by adding a special parameter 'doc', by default null
+    to specify input/output type for each unit
+[ ] support services, like database, redis, thrid party services, inside
+    docker
 
 # ARCHIVE
 
