@@ -16,7 +16,6 @@ class FlakeTemplate(Template):
 
         inputs.nixpkgs = {{
           url = "github:NixOS/nixpkgs/{self.configure.sources['pkgs'].value}";
-          inputs.nixpkgs.follows = "nixpkgs";
         }};
 
         inputs.flake-utils.url = "github:numtide/flake-utils";
@@ -39,7 +38,7 @@ class FlakeTemplate(Template):
                 default = mkShell {{
                   name = name;
                   version = version;
-                  buildInputs = units.all;
+                  buildInputs = (map (x: x.value) units.all);
 
                   shellHook = ''
                     ${{units.scripts}}

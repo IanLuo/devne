@@ -4,7 +4,6 @@
 
         inputs.nixpkgs = {
           url = "github:NixOS/nixpkgs/";
-          inputs.nixpkgs.follows = "nixpkgs";
         };
 
         inputs.flake-utils.url = "github:numtide/flake-utils";
@@ -27,7 +26,7 @@
                 default = mkShell {
                   name = name;
                   version = version;
-                  buildInputs = units.all;
+                  buildInputs = (map (x: x.value) units.all);
 
                   shellHook = ''
                     ${units.scripts}
