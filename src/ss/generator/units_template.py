@@ -55,7 +55,7 @@ class UnitsTemplate(Template):
             f"""
 	{{ sstemplate, system, name, version, lib, pkgs }}:
 		let
-            units = import sstemplate {{ inherit system pkgs; }};
+            units = import sstemplate {{ inherit pkgs; }};
             wrapInUnit = units.sslib.wrapInUnit;
             metadata = {{ inherit name version; }};
 
