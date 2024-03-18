@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Any, Dict
 
 
 @dataclass
@@ -9,14 +9,17 @@ class GitRepo:
     rev: Optional[str]
 
     @staticmethod
-    def is_git_repo(value: dict):
+    def is_git_repo(value: Dict[str, Any]):
         return value.get("^git") is not None
 
     def __init__(self, value: dict):
         data = value.get("^git")
-        self.url = data.get("url")
-        if self.url is None:
+        url = str(data.get("url")) if data is not None else None
+        if url is None:
             raise Exception("url is required for GitRepo")
+        else:
+            self.url = url
+
         self.rev = value.get("rev")
         self.ref = value.get("ref")
 

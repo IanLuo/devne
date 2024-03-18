@@ -14,8 +14,8 @@ def run(command: str):
     t = threading.Thread(target=stdout_printer, args=(p,))
     t.start()
 
-    p.stdin.write((command + "\n"))
-    p.stdin.flush()
+    p.stdin.write((command + "\n")) if p.stdin is not None else None
+    p.stdin.flush() if p.stdin is not None else None
 
-    p.stdin.close()
+    p.stdin.close() if p.stdin is not None else None
     t.join()

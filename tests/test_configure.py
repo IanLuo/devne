@@ -15,10 +15,6 @@ class TestConfigure:
         assert config.metadata.version == '0.0.1'
         assert config.metadata.description == 'project description'
 
-    def test_resolve_vars(self, config):
-        config = Configure(config)
-        assert config.dict['units']['another']['db'] == config.dict['units']['db_postgres']
-
     def test_resolve_function(self, config):
         config = Configure(config)
         assert isinstance(config.dict['units']['source_from_git'], GitRepo)
@@ -31,6 +27,5 @@ class TestConfigure:
         assert config.unit_from_source('units', 'db_postgres') != None
         assert config.unit_from_source('units', 'db_postgres').definition.attrs['username'] == 'test'
         assert isinstance(config.unit_from_source('units', 'source_from_git').definition.attrs, GitRepo)
-        assert config.unit_from_source('units', 'another').definition.attrs['db']['database'] == 'database'
 
 

@@ -91,7 +91,7 @@ class Configure:
         self.sources = self._read_source(temp_config)
         self.metadata = self._read_metadata(temp_config)
 
-        temp_config = self._resolve_functions(temp_config)
+        self.raw_config = self._resolve_functions(temp_config)
         self.all_unit_instances = self._find_units(config=temp_config)
 
     def _read_source(self, config: Dict[str, Any]) -> Dict[str, Source]:
@@ -102,15 +102,14 @@ class Configure:
         metadata = parsed_config["metadata"]
         return Metadata(metadata["name"], metadata["version"], metadata["description"])
 
-    def _resolve_functions(self, config: Dict[str, Any]) -> dict:
+    def _resolve_functions(self, config: Dict[str, Any]) -> Dict[str, Any]:
         """Functions are resolved by each function provider, then will be generated into nix function as a result"""
         pattern = r"(\^\w+)"
 
         def walk_dict(d, parent_dict=None, parent_key=None):
             for key, value in d.items():
                 match = re.search(pattern, key)
-                if match is not None:
-                    function_name = match.group(1)
+                if match is not None and parent_dict is not None:
                     parent_dict[parent_key] = self._resolve_function_by_name(
                         parent_dict[parent_key]
                     )
@@ -125,13 +124,13 @@ class Configure:
 
         return config
 
-    def _resolve_function_by_name(self, value: dict):
+    def _resolve_function_by_name(self, value: Dict[str, Any]):
         if GitRepo.is_git_repo(value):
             return GitRepo(value)
         else:
-            value
+            return value
 
-    def _find_units(self, config: dict) -> list[UnitInstance]:
+    def _find_units(self, config: Dict[str, Any]) -> list[UnitInstance]:
         return [
             UnitInstance(source, Unit(name=unit_name, params=params))
             for source_name, source in self.sources.items()

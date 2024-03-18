@@ -1,9 +1,7 @@
 from ..configure.configure import Configure
 from .template import Template
 from dataclasses import dataclass
-from typing import List
 from .str_render import StrRender
-from ..configure.functions.git_repo import GitRepo
 from functools import reduce
 
 
@@ -12,7 +10,6 @@ class UnitsTemplate(Template):
     configure: Configure
 
     def render(self) -> str:
-        space = " "
         line_break = "\n"
         sources = self.configure.sources
 
@@ -33,8 +30,8 @@ class UnitsTemplate(Template):
 
         super_class = super()
 
-        def render_unit(name, attrs):
-            if attrs is None:
+        def render_unit(name, value):
+            if value is None:
                 return StrRender(
                     f"""{name.replace(".","_")} = (wrapInUnit {{ drv = {name}; }});"""
                 ).render
@@ -42,13 +39,13 @@ class UnitsTemplate(Template):
                 return StrRender(
                     f"""
                     {name.replace(".","_")} = (wrapInUnit {{
-                        drv = ({name} {super_class.render_map(self.configure, attrs)});
+                        drv = ({name} {super_class.render_value(self.configure, value)});
                     }});
                     """
                 ).render
 
         render_units_in_sources = line_break.join(
-            [render_unit(name, attrs) for name, attrs in render_sources.items()]
+            [render_unit(name, value) for name, value in render_sources.items()]
         )
 
         return StrRender(

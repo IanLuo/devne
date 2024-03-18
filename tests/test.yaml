@@ -14,7 +14,7 @@ units:
     password: "password"
     database: "database"
   another:
-    db: $units>db_postgres
+    db: $units.db_postgres
   source_from_git:
     ^git:
       url: some_url

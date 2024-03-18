@@ -26,8 +26,7 @@
                 default = mkShell {
                   name = name;
                   version = version;
-                  buildInputs = (map (x: x.value) units.all);
-
+                  buildInputs = (map (x: x.value) units.all) ++ units.all;
                   shellHook = ''
                     ${units.scripts}
                   '';
