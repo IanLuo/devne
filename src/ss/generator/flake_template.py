@@ -16,7 +16,7 @@ class FlakeTemplate(Template):
 
     def _render_inputs(self, source: Source):
         pre_defined = {
-            'units': 'github:ianluo/ss-templates',
+            'sstemplate': 'github:ianluo/ss-templates',
             'pkgs': 'github:ianluo/ss-templates'
             }
 
@@ -33,9 +33,10 @@ class FlakeTemplate(Template):
       {{
         description = "{self.configure.metadata.description}";
 
-        inputs.flake-utils.url = "github:numtide/flake-utils";
-
+        inputs = {{
+        flake-utils.url = "github:numtide/flake-utils";
         {super().LINE_BREAK.join(map(self._render_inputs, self.configure.sources.values()))}
+        }};
 
         outputs = {{ self, flake-utils, {','.join( self._replace_source_name_if_needed(key) for key in self.configure.sources.keys())}  }}:
           flake-utils.lib.eachDefaultSystem (system:

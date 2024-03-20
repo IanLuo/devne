@@ -1,23 +1,24 @@
 {
   description = "devlopment environment with 1 command";
 
-  inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs = {
+    flake-utils.url = "github:numtide/flake-utils";
+
+    sstemplate = {
+      url = "github:ianluo/ss-templates";
+    };
 
 
-  sstemplate = {
-    url = "";
+    nixpkgs = {
+      url = "github:ianluo/ss-templates";
+    };
+
+
+    other = {
+      url = "";
+    };
+
   };
-
-
-  nixpkgs = {
-    url = "github:ianluo/ss-templates";
-  };
-
-
-  other = {
-    url = "";
-  };
-
 
   outputs = { self, flake-utils, sstemplate, nixpkgs, other }:
     flake-utils.lib.eachDefaultSystem (system:
