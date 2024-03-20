@@ -1,7 +1,6 @@
 from ..configure.configure import Configure
 from .template import Template
 from dataclasses import dataclass
-from .str_render import StrRender
 from functools import reduce
 
 
@@ -22,8 +21,9 @@ class UnitsTemplate(Template):
             lambda a, b: {**a, **b},
             filter(
                 lambda x: len(x) > 0,
-                [units_in_source(source_name) for source_name in sources],
+                [units_in_source(source_name) for source_name in sources.keys()],
             ),
+            {}
         )
 
         names = list(map(lambda x: x.replace(".", "_"), render_sources.keys()))
@@ -32,25 +32,20 @@ class UnitsTemplate(Template):
 
         def render_unit(name, value):
             if value is None:
-                return StrRender(
-                    f"""{name.replace(".","_")} = (wrapInUnit {{ drv = {name}; }});"""
-                ).render
+                return f"""{name.replace(".","_")} = (wrapInUnit {{ drv = {name}; }});"""
             else:
-                return StrRender(
-                    f"""
+                return f"""
                     {name.replace(".","_")} = (wrapInUnit {{
                         drv = ({name} {super_class.render_value(self.configure, value)});
                     }});
                     """
-                ).render
 
         render_units_in_sources = line_break.join(
             [render_unit(name, value) for name, value in render_sources.items()]
         )
 
-        return StrRender(
-            f"""
-	{{ sstemplate, system, name, version, lib, pkgs }}:
+        return f"""
+	{{ system, name, version, lib, {','.join(self.configure.sources.keys())} }}:
 		let
             units = import sstemplate {{ inherit pkgs; }};
             wrapInUnit = units.sslib.wrapInUnit;
@@ -75,4 +70,3 @@ class UnitsTemplate(Template):
 						(lib.lists.findFirst (x: x.isPackage && x.value.pname == name) null all).value);
 		}}
 	"""
-        ).render

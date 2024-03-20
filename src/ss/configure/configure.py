@@ -11,6 +11,7 @@ import re
 class Source:
     name: str
     value: str
+    url: str = ''
 
 
 @dataclass
@@ -134,5 +135,5 @@ class Configure:
         return [
             UnitInstance(source, Unit(name=unit_name, params=params))
             for source_name, source in self.sources.items()
-            for unit_name, params in (config[source_name] or {}).items()
+            for unit_name, params in (config.get(source_name, None) or {}).items()
         ]

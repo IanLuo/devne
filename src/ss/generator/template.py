@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from ..configure.functions.git_repo import GitRepo
 from ..configure.configure import Configure
-from .str_render import StrRender
 import re
 from typing import Any, Dict
 
@@ -42,15 +41,15 @@ class Template(ABC):
         elif isinstance(value, bool):
             return "true" if value else "false"
         elif isinstance(value, GitRepo):
-            return StrRender(str(value)).render
-        elif str and self._is_var_ref(configure, value):
+            return str(value)
+        elif isinstance(value, str) and self._is_var_ref(configure, value):
             if value.startswith("$metadata"):
                 return value.replace("$", "")
             elif "~>" in value:
                 return value.replace("$", "").replace(".", "_").replace("~>", ".")
             else:
                 return value.replace("$", "").replace(".", "_") + ".value"
-        elif str and self._is_path(value):
+        elif isinstance(value, str) and self._is_path(value):
             return value
         else:
             return f'"{str(value)}"'

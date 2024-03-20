@@ -107,6 +107,7 @@ class Cli:
 
     def reload(self):
         FilesCreator(self.configure).create()
+        os.system(f'nixpkgs-fmt {Folder(self.configure.root).flake_path}')
         os.system(f'nixpkgs-fmt {Folder(self.configure.root).unit_path}')
 
 

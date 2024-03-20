@@ -18,6 +18,24 @@
         "type": "github"
       }
     },
+    "flake-utils_2": {
+      "inputs": {
+        "systems": "systems_2"
+      },
+      "locked": {
+        "lastModified": 1710146030,
+        "narHash": "sha256-SZ5L6eA7HJ/nmkzGG7/ISclqe6oZdOZTNoesiInkXPQ=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "b1d9ab70662946ef0850d488da1c9019f3a9752a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1710077318,
@@ -42,22 +60,41 @@
     },
     "sstemplate": {
       "inputs": {
+        "flake-utils": "flake-utils_2",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1710602451,
-        "narHash": "sha256-q0SMo2IHoPq0fN8X0j8YP5jbfeQpJRSTPufy8Qzu7Pc=",
-        "path": "/Users/ianluo/Documents/apps/templates",
-        "type": "path"
+        "lastModified": 1710083237,
+        "narHash": "sha256-4oo1wHHpXM4dECgzKBIs1rptsAiaHQS2ilTaSbD+3ek=",
+        "owner": "ianluo",
+        "repo": "ss-templates",
+        "rev": "0b6cdaf3bfd47bb387f2cc810c39f02eeec451cb",
+        "type": "github"
       },
       "original": {
-        "path": "/Users/ianluo/Documents/apps/templates",
-        "type": "path"
+        "owner": "ianluo",
+        "repo": "ss-templates",
+        "type": "github"
       }
     },
     "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_2": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",

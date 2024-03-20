@@ -1,29 +1,43 @@
 from .template import Template
-from ..configure.configure import Configure
+from ..configure.configure import Configure, Source
 from dataclasses import dataclass
-from .str_render import StrRender
 
 
 @dataclass
 class FlakeTemplate(Template):
     configure: Configure
 
+    def _replace_source_name_if_needed(self, source_name) -> str:
+        map_source_name = {
+            'pkgs': 'nixpkgs'
+        }
+
+        return map_source_name.get(source_name, source_name)
+
+    def _render_inputs(self, source: Source):
+        pre_defined = {
+            'units': 'github:ianluo/ss-templates',
+            'pkgs': 'github:ianluo/ss-templates'
+            }
+
+        prefix = lambda source: pre_defined.get(source.name, None) or ''
+
+        return f'''
+            {self._replace_source_name_if_needed(source.name)} = {{
+               url = "{prefix(source)}{source.url}";
+            }};
+        '''
+
     def render(self) -> str:
-        return StrRender(
-            f"""
+        return f"""
       {{
         description = "{self.configure.metadata.description}";
 
-        inputs.nixpkgs = {{
-          url = "github:NixOS/nixpkgs/{self.configure.sources['pkgs'].value}";
-        }};
-
         inputs.flake-utils.url = "github:numtide/flake-utils";
 
-        inputs.sstemplate.url = "github:ianluo/ss-templates";
-        inputs.sstemplate.inputs.nixpkgs.follows = "nixpkgs";
+        {super().LINE_BREAK.join(map(self._render_inputs, self.configure.sources.values()))}
 
-        outputs = {{ self, nixpkgs, flake-utils, sstemplate }}:
+        outputs = {{ self, flake-utils, {','.join( self._replace_source_name_if_needed(key) for key in self.configure.sources.keys())}  }}:
           flake-utils.lib.eachDefaultSystem (system:
             let
               pkgs = import nixpkgs {{ inherit system; }};
@@ -50,4 +64,3 @@ class FlakeTemplate(Template):
             }});
       }}
       """
-        ).render

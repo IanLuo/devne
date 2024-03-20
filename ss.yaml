@@ -4,15 +4,16 @@
 # 3. customized by user, provide a git repo with a default.nix or flake.nix in it, or point to a .nix file
 
 source:
-  units: latest
+  sstemplate: latest
   pkgs: ''
+  other: ''
 
 metadata:
   name: ss
   version: 0.0.1
   description: devlopment environment with 1 command
 
-units:
+sstemplate:
   db.postgres:
     username: "ss_db"
     password: "admin"
@@ -31,16 +32,22 @@ units:
       - flit
 
   language.pytest:
-    python: $units.language.python
+    python: $sstemplate.language.python
 
   language.pythonRunnablePackage:
     name: $metadata.name
     version: $metadata.version
     src: ../.
-    format: pyproject
-    python: $units.language.python
-    buildInputs: $units.language.python~>libs-default
+    format: wheel 
+    python: $sstemplate.language.python
+    buildInputs: $sstemplate.language.python~>libs-default
 
 pkgs:
   nodePackages.pyright: null
   nixpkgs-fmt: null
+
+other:
+  some1: null
+  some2: 
+    param1: 1
+   
