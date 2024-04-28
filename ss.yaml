@@ -1,53 +1,46 @@
-# there are three source of 'units'
-# 1. defiend in templates
-# 2. refed from nixpkgs, and wrapped by template function: with same interface with other 'units'
-# 3. customized by user, provide a git repo with a default.nix or flake.nix in it, or point to a .nix file
-
-source:
-  sstemplate: latest
-  pkgs: ''
-  other: ''
-
 metadata:
   name: ss
   version: 0.0.1
   description: devlopment environment with 1 command
 
-sstemplate:
-  db.postgres:
-    username: "ss_db"
-    password: "admin"
-    database: "password"
+include:
+  ss: https://github.com/IanLuo/ss-templates
+  nixpkgs: https://github.com/NixOS/nixpkgs/nixpkgs-unstable
 
-  language.python:
-    pythonVersion: "python310"
-    libs-default:
-      - typer
-      - pynvim
-      - pyyaml
-      - rich
-      - jsonpath-ng
-      - requests
-      - black
-      - flit
+units:
+  python:
+    source: $nixpkgs.python310
+    initialize:
+      python -m venv .venv
+      source .venv/bin/activate
 
-  language.pytest:
-    python: $sstemplate.language.python
-
-  language.pythonRunnablePackage:
+  poetry:
     name: $metadata.name
     version: $metadata.version
-    src: ../.
-    format: wheel 
-    python: $sstemplate.language.python
-    buildInputs: $sstemplate.language.python~>libs-default
+    source: $nixpkgs.poetry
 
-pkgs:
-  nodePackages.pyright: null
-  nixpkgs-fmt: null
+  pyright:
+    source: $nixpkgs.nodePackages.pyright
 
-other:
-  some1: null
-  some2: 
-    param1: 1
-   
+  nixpkgs-fmg:
+    source: $nixpkgs.nixpkgs-fmt
+
+  database:
+    source: $nixpkgs.postgres
+    actions:
+
+  cache:
+    source: $nixpkgs.redis
+
+actions:
+  test: "pytest"
+  build: "poetry build"
+  install: "poetry install"
+  add: "poetry add"
+  list: "poetry list"
+
+action-flow:
+  log-commit:
+    - commit
+    - error: "$param.length == 0"
+    - push

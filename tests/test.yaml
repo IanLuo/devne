@@ -1,25 +1,46 @@
-source:
-  units: latest
-  pkgs: the_rev_of_pkgs
-  other: "github"
-
 metadata:
-  name: test project
+  name: ss
   version: 0.0.1
-  description: project description
+  description: devlopment environment with 1 command
+
+include:
+  ss: https://github.com/IanLuo/ss-templates
+  nikpkgs: https://github.com/NixOS/nixpkgs-unstable
 
 units:
-  db_postgres:
-    username: "test"
-    password: "password"
-    database: "database"
-  another:
-    db: $units.db_postgres
-  source_from_git:
-    ^git:
-      url: some_url
+  python:
+    source: $nixpkgs.python310
+    initialize: 
+      python -m venv .venv
+      source .venv/bin/activate
 
-pkgs:
-  nodePackages.pyright:
+  poetry:
+    name: $metadata.name
+    version: $metadata.version
+    source: $python.pkgs.poetry
 
-other:
+  pyright: 
+    source: $nodePackages.pyright
+
+  nixpkgs-fmg:
+    source: $nixpkgs-fmt
+
+  database:
+    source: $postgres
+    actions:
+      
+  cache:
+    source: $redis
+
+actions:
+  test: "pytest"
+  build: "poetry build"
+  install: "poetry install"
+  add: "poetry add"
+  list: "poetry list"
+
+action-flow:
+  log-commit:
+    - commit   
+    - error: "$param.length == 0"
+ ther:

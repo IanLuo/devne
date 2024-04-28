@@ -1,59 +1,51 @@
 from .template import Template
-from ..configure.configure import Configure, Source
 from dataclasses import dataclass
+from ..configure.blueprint import *
 
 
 @dataclass
 class FlakeTemplate(Template):
-    configure: Configure
+    blueprint: Blueprint
 
-    def _replace_source_name_if_needed(self, source_name) -> str:
-        map_source_name = {
-            'pkgs': 'nixpkgs'
-        }
-
-        return map_source_name.get(source_name, source_name)
-
-    def _render_inputs(self, source: Source):
-        pre_defined = {
-            'sstemplate': 'github:ianluo/ss-templates',
-            'pkgs': 'github:ianluo/ss-templates'
-            }
-
-        prefix = lambda source: pre_defined.get(source.name, None) or ''
-
-        return f'''
-            {self._replace_source_name_if_needed(source.name)} = {{
-               url = "{prefix(source)}{source.url}";
+    def _render_inputs(self, item: tuple):
+        name = item[0]
+        content = item[1]
+        if name in super().SYS_SOURCE_NAME:
+            return ""
+        return f"""
+            {name} = {{
+               url = "{content['url']}";
             }};
-        '''
+        """
 
     def render(self) -> str:
+        filter_sys_sources = super().filter_sys_sources
+
         return f"""
       {{
-        description = "{self.configure.metadata.description}";
+        description = "{self.blueprint.description}";
 
         inputs = {{
-        flake-utils.url = "github:numtide/flake-utils";
-        {super().LINE_BREAK.join(map(self._render_inputs, self.configure.sources.values()))}
+            flake-utils.url = "github:numtide/flake-utils";
+        {super().LINE_BREAK.join(map(self._render_inputs, self.blueprint.includes.items()))}
         }};
 
-        outputs = {{ self, flake-utils, {','.join( self._replace_source_name_if_needed(key) for key in self.configure.sources.keys())}  }}:
+        outputs = {{ self, flake-utils, flake-parts, {','.join([key for key in self.blueprint.includes.keys()])}  }}:
           flake-utils.lib.eachDefaultSystem (system:
             let
-              pkgs = import nixpkgs {{ inherit system; }};
+              pkgs = nixpkgs.legacyPackages.${{system}};
 
-              version = "{self.configure.metadata.version}";
-              name = "{self.configure.metadata.name}";
+              version = "{self.blueprint.version}";
+              name = "{self.blueprint.name}";
 
-              units = pkgs.callPackage ./units.nix {{ inherit sstemplate name version system; }};
+              units = pkgs.callPackage ./units.nix {{ inherit name version ss; nixpkgs = pkgs; }};
             in
             {{
               devShells = with pkgs; {{
                 default = mkShell {{
                   name = name;
                   version = version;
-                  buildInputs = (map (x: x.value) units.all);
+                  packages = units.dependencies;
 
                   shellHook = ''
                     ${{units.scripts}}

@@ -1,11 +1,8 @@
 # WIP
-
 [ ]!! support outside unit
-  [ ] ref from outside repo on github
-  [x] resolve vars
-  [x] resolve funcitons
-    [x] git repo
-  [x]collect units
+[ ] yaml file will extend other yaml files to 'inherit' the existing tools and packgage setups
+[ ] in a yaml, the name should be customized and referenced
+[ ] to customize yaml will be only thing to do, work with script that can be referenced from yaml file to control other actions
 
 # BACKLOG
 
@@ -32,9 +29,21 @@
     to specify input/output type for each unit
 [ ] support services, like database, redis, thrid party services, inside
     docker
+[ ] units have executable interface
+[ ] units can be observed
+[ ] unify interface for all properties of a unit, so it can be easily
+    documented and presented
+[ ] nix format of unit should be generated, and support trasformed from other
+    format, like a yaml
 
 # ARCHIVE
-
+[x] ref from outside repo on github
+[x] resolve vars
+[x] resolve funcitons
+  [x] git repo
+[x]collect units
+[x]!! versioning for packages in yaml
+[x] reconstruct configure to define all logic with yaml, including package fetching, action definition, environment setup, combining etc
 [x]! option to show version number
 [x]!! put inputs to passthrus so other units can reuse
 [x]!! ss.yaml unit ref

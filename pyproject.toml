@@ -1,11 +1,15 @@
-[project]
+[tool.poetry]
 name = "ss"
-version = "0.0.1"
-description = ""
+version = "0.1.0"
+description = "super start"
+authors = ["ian luo <ianluo63@gmail.com>"]
+readme = "README.md"
 
-[project.scripts]
-ss = "main:app"
+[tool.poetry.dependencies]
+python = "^3.10"
+typer = "^0.12.3"
+
 
 [build-system]
-requires = ["setuptools>=43.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

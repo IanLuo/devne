@@ -1,84 +1,77 @@
-{ system, name, version, lib, sstemplate, pkgs, other }:
+{ ss, nixpkgs, system, name, version, lib }:
 let
-  units = import sstemplate { inherit pkgs; };
-  wrapInUnit = units.sslib.wrapInUnit;
+  wrapInUnit = ss.lib.wrapInUnit;
+  sslib = ss.lib;
   metadata = { inherit name version; };
 
 
-  sstemplate_db_postgres = (wrapInUnit {
-    drv = (sstemplate.db.postgres
-      {
-        username = "ss_db";
-        password = "admin";
-        database = "password";
-      }
-    );
+  python = (sslib.defineUnit {
+    name = "python";
+    versoin = "0.0.1";
+    source = nixpkgs.python310;
+    initialize = "python -m venv .venv source .venv/bin/activate";
+    actions = null;
+    listener = null;
   });
 
 
-  sstemplate_language_python = (wrapInUnit {
-    drv = (sstemplate.language.python
-      {
-        pythonVersion = "python310";
-        libs-default = [
-          "typer"
-          "pynvim"
-          "pyyaml"
-          "rich"
-          "jsonpath-ng"
-          "requests"
-          "black"
-          "flit"
-        ];
-      }
-    );
+  poetry = (sslib.defineUnit {
+    name = "poetry";
+    versoin = "0.0.1";
+    source = nixpkgs.poetry;
+    initialize = null;
+    actions = null;
+    listener = null;
   });
 
 
-  sstemplate_language_pytest = (wrapInUnit {
-    drv = (sstemplate.language.pytest
-      {
-        python = sstemplate_language_python.value;
-      }
-    );
+  pyright = (sslib.defineUnit {
+    name = "pyright";
+    versoin = "0.0.1";
+    source = nixpkgs.nodePackages.pyright;
+    initialize = null;
+    actions = null;
+    listener = null;
   });
 
 
-  sstemplate_language_pythonRunnablePackage = (wrapInUnit {
-    drv = (sstemplate.language.pythonRunnablePackage
-      {
-        name = metadata.name;
-        version = metadata.version;
-        src = ../.;
-        format = "wheel";
-        python = sstemplate_language_python.value;
-        buildInputs = sstemplate_language_python.libs-default;
-      }
-    );
+  nixpkgs-fmg = (sslib.defineUnit {
+    name = "nixpkgs-fmg";
+    versoin = "0.0.1";
+    source = nixpkgs.nixpkgs-fmt;
+    initialize = null;
+    actions = null;
+    listener = null;
   });
 
-  pkgs_nodePackages_pyright = (wrapInUnit { drv = pkgs.nodePackages.pyright; });
-  pkgs_nixpkgs-fmt = (wrapInUnit { drv = pkgs.nixpkgs-fmt; });
-  other_some1 = (wrapInUnit { drv = other.some1; });
 
-  other_some2 = (wrapInUnit {
-    drv = (other.some2
-      {
-        param1 = "1";
-      }
-    );
+  database = (sslib.defineUnit {
+    name = "database";
+    versoin = "0.0.1";
+    source = nixpkgs.postgres;
+    initialize = null;
+    actions = null;
+    listener = null;
+  });
+
+
+  cache = (sslib.defineUnit {
+    name = "cache";
+    versoin = "0.0.1";
+    source = nixpkgs.redis;
+    initialize = null;
+    actions = null;
+    listener = null;
   });
 
 
   all = [
-    sstemplate_db_postgres
-    sstemplate_language_python
-    sstemplate_language_pytest
-    sstemplate_language_pythonRunnablePackage
-    pkgs_nodePackages_pyright
-    pkgs_nixpkgs-fmt
-    other_some1
-    other_some2
+    python
+    poetry
+    pyright
+    nixpkgs-fmg
+    database
+    cache
   ];
 
   startScript = ''
@@ -88,12 +81,6 @@ in
 {
   inherit all;
   scripts = builtins.concatStringsSep "\n" ([ startScript ] ++ map (unit: unit.script) all);
-  packages = lib.attrsets.genAttrs
-    (map
-      (x: x.value.pname)
-      (lib.lists.filter (x: x.isPackage) all))
-
-    (name:
-      (lib.lists.findFirst (x: x.isPackage && x.value.pname == name) null all).value);
+  dependencies = all;
 }
 	
