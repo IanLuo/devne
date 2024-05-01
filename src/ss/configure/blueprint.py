@@ -92,7 +92,7 @@ def parse_unit(data: Dict[str, Any]) -> Dict[str, Any]:
 
     return {
         "source": mandatory("source"),
-        "initialize": optional("initialize"),
+        "instantiate": optional("instantiate"),
         "actions": optional("actions"),
         "listener": optional("listener"),
     }

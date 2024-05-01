@@ -5,12 +5,12 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     ss = {
-      url = "https://github.com/IanLuo/ss-templates";
+      url = "path:/Users/ianluo/Documents/apps/templates";
     };
 
 
     nixpkgs = {
-      url = "https://github.com/NixOS/nixpkgs/nixpkgs-unstable";
+      url = "github:NixOS/nixpkgs/nixos-23.11";
     };
 
   };

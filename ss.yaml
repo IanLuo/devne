@@ -4,19 +4,17 @@ metadata:
   description: devlopment environment with 1 command
 
 include:
-  ss: https://github.com/IanLuo/ss-templates
-  nixpkgs: https://github.com/NixOS/nixpkgs/nixpkgs-unstable
+  ss: path:/Users/ianluo/Documents/apps/templates
+  nixpkgs: github:NixOS/nixpkgs/nixos-23.11
 
 units:
   python:
     source: $nixpkgs.python310
-    initialize:
+    instantiate: |
       python -m venv .venv
       source .venv/bin/activate
 
   poetry:
-    name: $metadata.name
-    version: $metadata.version
     source: $nixpkgs.poetry
 
   pyright:
@@ -26,8 +24,7 @@ units:
     source: $nixpkgs.nixpkgs-fmt
 
   database:
-    source: $nixpkgs.postgres
-    actions:
+    source: $nixpkgs.postgresql
 
   cache:
     source: $nixpkgs.redis

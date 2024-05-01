@@ -19,7 +19,7 @@ class UnitsTemplate(Template):
             return f"""
                 {name} = (sslib.defineUnit {{
                     name = "{name}";
-                    versoin = "{value.get('version') or '0.0.1'}";
+                    version = "{value.get('version') or '0.0.1'}";
                     {line_break.join([f'{key}={super_class.render_value(value)};' for key, value in value.items()])}
                 }});
                 """

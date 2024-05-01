@@ -7,9 +7,13 @@ let
 
   python = (sslib.defineUnit {
     name = "python";
-    versoin = "0.0.1";
+    version = "0.0.1";
     source = nixpkgs.python310;
-    initialize = "python -m venv .venv source .venv/bin/activate";
+    instantiate =
+      ''python -m venv .venv
+source .venv/bin/activate
+''
+    ;
     actions = null;
     listener = null;
   });
@@ -17,9 +21,9 @@ let
 
   poetry = (sslib.defineUnit {
     name = "poetry";
-    versoin = "0.0.1";
+    version = "0.0.1";
     source = nixpkgs.poetry;
-    initialize = null;
+    instantiate = null;
     actions = null;
     listener = null;
   });
@@ -27,9 +31,9 @@ let
 
   pyright = (sslib.defineUnit {
     name = "pyright";
-    versoin = "0.0.1";
+    version = "0.0.1";
     source = nixpkgs.nodePackages.pyright;
-    initialize = null;
+    instantiate = null;
     actions = null;
     listener = null;
   });
@@ -37,9 +41,9 @@ let
 
   nixpkgs-fmg = (sslib.defineUnit {
     name = "nixpkgs-fmg";
-    versoin = "0.0.1";
+    version = "0.0.1";
     source = nixpkgs.nixpkgs-fmt;
-    initialize = null;
+    instantiate = null;
     actions = null;
     listener = null;
   });
@@ -47,9 +51,9 @@ let
 
   database = (sslib.defineUnit {
     name = "database";
-    versoin = "0.0.1";
-    source = nixpkgs.postgres;
-    initialize = null;
+    version = "0.0.1";
+    source = nixpkgs.postgresql;
+    instantiate = null;
     actions = null;
     listener = null;
   });
@@ -57,9 +61,9 @@ let
 
   cache = (sslib.defineUnit {
     name = "cache";
-    versoin = "0.0.1";
+    version = "0.0.1";
     source = nixpkgs.redis;
-    initialize = null;
+    instantiate = null;
     actions = null;
     listener = null;
   });
