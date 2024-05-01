@@ -37,8 +37,6 @@
             '';
           };
         };
-
-        packages = units.packages;
       });
 }
       

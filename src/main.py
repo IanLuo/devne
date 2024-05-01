@@ -10,7 +10,7 @@ from typing import Optional
 from os.path import dirname, exists
 
 app = typer.Typer()
-
+default_config = f"{os.getcwd()}/ss.yaml"
 
 def version(value: bool):
     if value:
@@ -48,10 +48,9 @@ def update():
 
 
 @app.command()
-def build(config: str = f"{os.getcwd()}/ss.yaml"):
+def build(config: str = default_config):
     """build the app based on the ss.yaml"""
     Cli(config).build()
-
 
 @app.command()
 def info():
@@ -59,39 +58,36 @@ def info():
 
 
 @app.command()
-def reload(config: str = f"{os.getcwd()}/ss.yaml"):
+def reload(config: str = default_config):
     """re-create all ss related files based on the ss.yaml"""
     Cli(config).reload()
 
-
 @app.command()
-def add_tool(name: Annotated[str, typer.Argument(help="name of the tool")]):
-    """Install a tool for working with the project"""
-    pass
+def actions(unit_name: Annotated[Optional[str], typer.Argument()] = None,
+           config: str = default_config):
+    '''List all actions or list actions for a specific unit,
+    if unit_name is provided
+    otherwise show all actions for ss
+    '''
 
-
+    actions = Cli(config).list_actions(unit_name)
+    typer.echo(actions)
+    
 @app.command()
-def add_dev_dependency(name: str):
-    """this is the documentation"""
-    pass
+def units(config: str = default_config):
+    '''List all units
+    '''
+    units = Cli(config).list_units()
+    typer.echo(units)
 
-
+    
 @app.command()
-def add_default_dependency(name: str):
-    """this is the documentation"""
-    pass
-
-
-@app.command()
-def search_dependency(name: str):
-    """this is the documentation"""
-    pass
-
-
-@app.command()
-def search_tool(name: str):
-    """this is the documentation"""
-    pass
+def exec(name: str, 
+         unit_name: Annotated[Optional[str], typer.Argument()] = None,
+         config: str = default_config):
+    '''Execute an action with the given name
+    '''
+    Cli(config).run_action(name, unit_name)
 
 
 class Cli:
@@ -107,9 +103,21 @@ class Cli:
         os.system(f"nixpkgs-fmt {creator.folder.flake_path}")
         os.system(f"nixpkgs-fmt {creator.folder.unit_path}")
 
-    def build(self):
-        script = Folder.at_current_location("scripts/build")
-        run(f'{script} "./ss_conf#{self.blueprint.name}"')
+    def list_units(self):
+        return self.blueprint.units.keys()
+
+    def list_actions(self, 
+                    unit_name: Optional[str] = None):
+        if unit_name == None:
+            return self.blueprint.actions.keys()    
+        else:
+            unit = self.blueprint.units.get(unit_name)
+            return unit.get("actions", {}).keys()
+
+    def run_action(self, 
+                   name: str, 
+                   unit_name: Optional[str] = None):
+        self.blueprint.perform_action(unit_name, name)
 
 
 if __name__ == "__main__":

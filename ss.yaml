@@ -16,6 +16,11 @@ units:
 
   poetry:
     source: $nixpkgs.poetry
+    actions:
+      install: "poetry install"
+      add: "poetryh add"
+      list: "poetry list"
+      build: "poetry build"
 
   pyright:
     source: $nixpkgs.nodePackages.pyright
@@ -30,11 +35,11 @@ units:
     source: $nixpkgs.redis
 
 actions:
-  test: "pytest"
-  build: "poetry build"
-  install: "poetry install"
-  add: "poetry add"
-  list: "poetry list"
+  test: "pytest tests"
+  build: $poetry.build
+  install: $poetry.install
+  add: $poetry.add
+  list: $poetry.list
 
 action-flow:
   log-commit:

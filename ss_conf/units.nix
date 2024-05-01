@@ -24,7 +24,13 @@ source .venv/bin/activate
     version = "0.0.1";
     source = nixpkgs.poetry;
     instantiate = null;
-    actions = null;
+    actions =
+      {
+        install = "poetry install";
+        add = "poetryh add";
+        list = "poetry list";
+        build = "poetry build";
+      };
     listener = null;
   });
 

@@ -52,8 +52,6 @@ class FlakeTemplate(Template):
                   '';
                 }};
               }};
-
-              packages = units.packages;
             }});
       }}
       """

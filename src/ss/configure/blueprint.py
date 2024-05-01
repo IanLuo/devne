@@ -34,9 +34,10 @@ include supports:
 """
 
 from dataclasses import dataclass
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from .parser import parse
-
+import os
+import re
 
 @dataclass
 class Blueprint:
@@ -78,6 +79,11 @@ class Blueprint:
             for name, data in json.get("action_flows", {}).items()
         }
 
+    def perform_action(self, 
+                       unit_name: Optional[str], 
+                       action_name: str):
+        perform_action(self.actions, self.units, action_name)
+
 
 def parse_yaml(yaml: str) -> Dict[str, Any]:
     return parse(yaml)
@@ -107,9 +113,9 @@ def parse_include(data: Any) -> Dict[str, Any]:
 
 def parse_actions(data: Dict[str, Any]):
     if isinstance(data, str):
-        return {"sh": data}
+        return data
 
-    return {}
+    return '' 
 
 
 def parse_action_flow(flow: Dict[str, Any]) -> Dict[str, Any]:
@@ -124,9 +130,30 @@ def perform_condition(param: Any) -> bool:
 
 
 def perform_action(
-    unit: Dict[str, Any], param: Any, condition: perform_condition = None
+    actions: Dict[str, Any], 
+    unit_list: list, 
+    action: str
 ) -> Any:
-    pass
+    command = actions.get(action)
+    if command.startswith("$"):
+        unit, unit_action = _read_action_ref(command, unit_list)
+        perform_action(unit.get('actions', {}), unit_list, unit_action)
+    else:
+       command = actions.get(action) 
+       os.system(f'bash {command}')
+
+
+def _read_action_ref(ref: str, 
+                    unit_list: list
+) -> tuple[Dict[str, Any], str]:
+    pattern = '\$(\w*)\.(\w*)'
+    match = re.match(pattern, ref)
+    if match:
+        unit = unit_list.get(match.group(1))
+        action = match.group(2)
+        return unit, action
+    else:
+        return None, None
 
 
 def action_flow(
