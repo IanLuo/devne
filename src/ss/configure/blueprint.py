@@ -12,7 +12,6 @@ a unit contains below attributes:
 3. initialize script (optional)
 4. actions
 5. source (nipkgs, git, plain text, file, etc)
-6. value
 7. listner (optional)
 
 a action flow is formed as:
@@ -38,6 +37,7 @@ from typing import List, Dict, Any, Optional
 from .parser import parse
 import os
 import re
+from ..run_command import run
 
 @dataclass
 class Blueprint:
@@ -67,13 +67,17 @@ class Blueprint:
         self.units = {
             name: parse_unit(data) for name, data in json.get("units", {}).items()
         }
+        
         self.includes = {
             name: parse_include(data) for name, data in json.get("include", {}).items()
         }
+
         self.metadata = json.get("metadata", {})
+
         self.actions = {
             name: parse_actions(data) for name, data in json.get("actions", {}).items()
         }
+
         self.action_flows = {
             name: parse_action_flow(data)
             for name, data in json.get("action_flows", {}).items()
@@ -83,6 +87,10 @@ class Blueprint:
                        unit_name: Optional[str], 
                        action_name: str):
         perform_action(self.actions, self.units, action_name)
+
+    def perform_action_flow(self, unit_name: Optional[str],
+                            flow_name: str):
+        pass # TODO:
 
 
 def parse_yaml(yaml: str) -> Dict[str, Any]:
@@ -111,7 +119,7 @@ def parse_include(data: Any) -> Dict[str, Any]:
     return {}
 
 
-def parse_actions(data: Dict[str, Any]):
+def parse_actions(data: Any):
     if isinstance(data, str):
         return data
 
@@ -122,34 +130,63 @@ def parse_action_flow(flow: Dict[str, Any]) -> Dict[str, Any]:
     pass
 
 
-#
+# handle include
+def resolve_include(name: str, includes: dict[str, Any]):
+    nix_store_file_path = None
+    value = includes.get(name)
+    
+    if value is None:
+        raise Exception(f"include {name} not found")
 
+    if isinstance(value, str):
+        nix_store_file_path = fetch_resource(value)
+    elif isinstance(value, dict):
+        url = value.get("url") 
 
-def perform_condition(param: Any) -> bool:
-    pass
+        if url is not None:
+            nix_store_file_path = fetch_resource(url)
+        else:
+            raise Exception("url is mandatory for include")
 
+    if nix_store_file_path is not None:
+        return nix_store_file_path
+
+def fetch_resource(url: str) -> Optional[str]:
+    resolved_url = resovle_resource_url(url)
+    command = f'nix-prefetch-url --unpack --print-path {resolved_url}'
+    result = run(command) or ''
+
+    pattern = r'(/nix/store/.+)'
+    match = re.search(pattern, result)
+    return match.group(1) if match else None 
+
+# perform actions
 
 def perform_action(
     actions: Dict[str, Any], 
-    unit_list: list, 
+    units: Dict[str, Any], 
     action: str
 ) -> Any:
     command = actions.get(action)
+
+    if command is None:
+        raise Exception(f'command for \'{action}\' not found') 
+
     if command.startswith("$"):
-        unit, unit_action = _read_action_ref(command, unit_list)
-        perform_action(unit.get('actions', {}), unit_list, unit_action)
+        unit, unit_action = read_action_ref(command, units)
+        perform_action(unit.get('actions', {}), units, unit_action)
     else:
        command = actions.get(action) 
        os.system(f'bash {command}')
 
 
-def _read_action_ref(ref: str, 
-                    unit_list: list
+def read_action_ref(ref: str, 
+                    units: Dict[str, Any] 
 ) -> tuple[Dict[str, Any], str]:
     pattern = '\$(\w*)\.(\w*)'
     match = re.match(pattern, ref)
     if match:
-        unit = unit_list.get(match.group(1))
+        unit = units.get(match.group(1))
         action = match.group(2)
         return unit, action
     else:
@@ -157,13 +194,35 @@ def _read_action_ref(ref: str,
 
 
 def action_flow(
-    unit1: Dict[str, Any],
-    param: Any,
-    unit2: Dict[str, Any],
-    condition: perform_condition = None,
-):
-    perform_action(unit2, perform_action(unit1, param), condition)
+    action: perform_action):
+        pass # TODO:
 
+def perform_condition(param: Any) -> bool:
+    pass # TODO:
 
-def listener(condition: perform_condition = None):
-    pass
+def resovle_resource_url(url: str) -> str:
+    pattern = r'(?P<scheme>\w+)\:(?P<path>\/?.+\/?)'
+    matchs = re.match(pattern, url)
+
+    if matchs is None:
+        return url
+
+    scheme = matchs.group("scheme") or ''
+    path = matchs.group("path")
+
+    def get_nth_element(arr, n):
+        return arr[n] if n < len(arr) else None
+
+    if scheme == "github":
+        comps = path.split("/")
+        owner = get_nth_element(comps, 0)
+        repo = get_nth_element(comps, 1)
+        branch = get_nth_element(comps, 2) or 'master'
+
+        return f'https://github.com/{owner}/{repo}/archive/{branch}.tar.gz'
+
+    elif scheme == "path":
+        return path
+
+    else:
+        return url

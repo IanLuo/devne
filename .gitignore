@@ -8,3 +8,4 @@ result
 .pytest_cache/
 .ss_data/
 .venv
+dist

@@ -6,25 +6,9 @@ metadata:
 include:
   ss: path:/Users/ianluo/Documents/apps/templates
   nixpkgs: github:NixOS/nixpkgs/nixos-23.11
+  python_units: github:/ianluo/python_units
 
 units:
-  python:
-    source: $nixpkgs.python310
-    instantiate: |
-      python -m venv .venv
-      source .venv/bin/activate
-
-  poetry:
-    source: $nixpkgs.poetry
-    actions:
-      install: "poetry install"
-      add: "poetryh add"
-      list: "poetry list"
-      build: "poetry build"
-
-  pyright:
-    source: $nixpkgs.nodePackages.pyright
-
   nixpkgs-fmg:
     source: $nixpkgs.nixpkgs-fmt
 
@@ -33,13 +17,6 @@ units:
 
   cache:
     source: $nixpkgs.redis
-
-actions:
-  test: "pytest tests"
-  build: $poetry.build
-  install: $poetry.install
-  add: $poetry.add
-  list: $poetry.list
 
 action-flow:
   log-commit:

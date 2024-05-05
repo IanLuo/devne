@@ -1,42 +1,25 @@
 # WIP
-[ ]!! support outside unit
 [ ] yaml file will extend other yaml files to 'inherit' the existing tools and packgage setups
-[ ] in a yaml, the name should be customized and referenced
-[ ] to customize yaml will be only thing to do, work with script that can be referenced from yaml file to control other actions
-
-# BACKLOG
-
-[ ]!! interface for define hash for each unit
-[ ]!! install and use in another project
-[ ]!! binary package
-[ ]!! ruby env and package
-[ ]! python web env and package
-[ ]! AI project env and package
-[ ] update flake description and nixpkgsrev when flake.nix exists
-[ ] unit documentations
-[ ] command auto completion
-[ ] check github flows for inspiration
-[ ] welcome information
-[ ]! package search function
-[ ]! unit search function
-[ ] ss.yaml validation
-[ ] ss.yaml helper, used in website
-[ ] units guide
-[ ] ss.yaml package rev option
-[ ] local shared store
 [ ] to make unit runnable
     add doc for each unit, by adding a special parameter 'doc', by default null
     to specify input/output type for each unit
-[ ] support services, like database, redis, thrid party services, inside
-    docker
 [ ] units have executable interface
 [ ] units can be observed
-[ ] unify interface for all properties of a unit, so it can be easily
-    documented and presented
-[ ] nix format of unit should be generated, and support trasformed from other
-    format, like a yaml
+
+# BACKLOG
+[ ] unit documentations
+[ ] command auto completion
+[ ] welcome information
+[ ] ss.yaml validation
+[ ] ss.yaml helper, used in website
+[ ] local shared store
+[ ] support services, like database, redis, thrid party services, inside
+    docker
 
 # ARCHIVE
+[x] in a yaml, the name should be customized and referenced
+[x] to customize yaml will be only thing to do, work with script that can be referenced from yaml file to control other actions
+[x]!! support outside unit
 [x] ref from outside repo on github
 [x] resolve vars
 [x] resolve funcitons

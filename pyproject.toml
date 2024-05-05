@@ -6,8 +6,11 @@ authors = ["ian luo <ianluo63@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.9"
 typer = "^0.12.3"
+
+[tool.poetry.scripts]
+ss = "ss.src:main"
 
 
 [build-system]
