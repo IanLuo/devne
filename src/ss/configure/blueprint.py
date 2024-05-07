@@ -153,10 +153,10 @@ def resolve_include(name: str, includes: dict[str, Any]):
 
 def fetch_resource(url: str) -> Optional[str]:
     resolved_url = resovle_resource_url(url)
-    command = f'nix-prefetch-url --unpack --print-path {resolved_url}'
+    command = command_for_url(resolved_url)
     result = run(command) or ''
 
-    pattern = r'(/nix/store/.+)'
+    pattern = r'(/nix/store/[^"]+)'
     match = re.search(pattern, result)
     return match.group(1) if match else None 
 
@@ -200,6 +200,12 @@ def action_flow(
 def perform_condition(param: Any) -> bool:
     pass # TODO:
 
+def command_for_url(url: str) -> str:
+    if url.startswith("path://"):
+        return f'nix-instantiate --eval --json -E "fetchTree {url}"'
+    else:
+        return f'nix-prefetch-url --unpack --print-path {url}'
+
 def resovle_resource_url(url: str) -> str:
     pattern = r'(?P<scheme>\w+)\:(?P<path>\/?.+\/?)'
     matchs = re.match(pattern, url)
@@ -214,7 +220,7 @@ def resovle_resource_url(url: str) -> str:
         return arr[n] if n < len(arr) else None
 
     if scheme == "github":
-        comps = path.split("/")
+        comps = [ comp for comp in path.split("/") if comp != '' ]
         owner = get_nth_element(comps, 0)
         repo = get_nth_element(comps, 1)
         branch = get_nth_element(comps, 2) or 'master'
@@ -222,7 +228,7 @@ def resovle_resource_url(url: str) -> str:
         return f'https://github.com/{owner}/{repo}/archive/{branch}.tar.gz'
 
     elif scheme == "path":
-        return path
+        return f'path://{path}'
 
     else:
         return url
