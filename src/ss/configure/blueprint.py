@@ -32,7 +32,7 @@ include supports:
 
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Dict, Any, Optional
 from .parser import parse
 import os
@@ -46,6 +46,8 @@ class Blueprint:
     action_flows: Dict[str, Any]
     includes: Dict[str, Any]
     metadata: Dict[str, Any]
+    include_flakes: Dict[str, Any]
+    include_blueprint: Dict[str, 'Blueprint']
 
     def __init__(self, config: str):
         self.init_blueprint(config)
@@ -63,6 +65,9 @@ class Blueprint:
         return self.metadata.get("description", "")
 
     def init_blueprint(self, yaml: str):
+        self.include_flakes = {}
+        self.include_blueprint = {}
+
         json = parse_yaml(yaml)
         self.units = {
             name: parse_unit(data) for name, data in json.get("units", {}).items()
@@ -83,14 +88,25 @@ class Blueprint:
             for name, data in json.get("action_flows", {}).items()
         }
 
-    def perform_action(self, 
-                       unit_name: Optional[str], 
-                       action_name: str):
-        perform_action(self.actions, self.units, action_name)
+        for name, value in self.includes.items():
+            self.resolve_include(name, value)
 
-    def perform_action_flow(self, unit_name: Optional[str],
-                            flow_name: str):
-        pass # TODO:
+    def resolve_include(self, name: str, value: dict[str, Any]):
+        if value is None:
+            raise Exception(f"include '{name}' not found")
+
+        store_path = collect_include(value)
+
+        flake_path = find_flake_to_import(store_path)
+
+        if flake_path is not None:
+            self.include_flakes[name] = store_path
+
+        ss_path = find_ss_to_import(store_path)
+
+        if ss_path is not None:
+            with open(ss_path, "r") as f:
+                self.include_blueprint[name] = Blueprint(f.read())
 
 
 def parse_yaml(yaml: str) -> Dict[str, Any]:
@@ -131,34 +147,49 @@ def parse_action_flow(flow: Dict[str, Any]) -> Dict[str, Any]:
 
 
 # handle include
-def resolve_include(name: str, includes: dict[str, Any]):
-    nix_store_file_path = None
-    value = includes.get(name)
-    
-    if value is None:
-        raise Exception(f"include {name} not found")
+def find_flake_to_import(store_path: str) -> Optional[str]:
+    flake_path = os.path.join(store_path, "flake.nix")
 
+    if os.path.exists(flake_path):
+        return flake_path
+    else:
+        return None
+
+def find_ss_to_import(store_path: str) -> Optional[str]:
+    ss_path = os.path.join(store_path, "ss.yaml")
+
+    if os.path.exists(ss_path):
+        return ss_path
+
+    return None
+
+
+def collect_include(value: Any) -> str:
     if isinstance(value, str):
-        nix_store_file_path = fetch_resource(value)
+        return fetch_resource(value)
     elif isinstance(value, dict):
         url = value.get("url") 
 
-        if url is not None:
-            nix_store_file_path = fetch_resource(url)
-        else:
+        if url is None:
             raise Exception("url is mandatory for include")
 
-    if nix_store_file_path is not None:
-        return nix_store_file_path
+        return fetch_resource(url)
 
-def fetch_resource(url: str) -> Optional[str]:
+    else:
+        raise Exception("include value should be a string or a dict")
+
+
+def fetch_resource(url: str) -> str:
     resolved_url = resovle_resource_url(url)
     command = command_for_url(resolved_url)
     result = run(command) or ''
 
     pattern = r'(/nix/store/[^"]+)'
     match = re.search(pattern, result)
-    return match.group(1) if match else None 
+    if match:
+        return match.group(1)
+    else:
+        raise Exception(f'failed to fetch resource from {url}')
 
 # perform actions
 
