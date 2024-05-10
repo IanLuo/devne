@@ -97,8 +97,8 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1714528849,
-        "narHash": "sha256-n4tU3DSko8iAE7RQbxqnZwp621iDxE6UhvrIwssvmnE=",
+        "lastModified": 1715358748,
+        "narHash": "sha256-wK2VtTPsx5ZkWtS/CxCVghqUtRozYylGpiBmRDQ1ICI=",
         "path": "/Users/ianluo/Documents/apps/templates",
         "type": "path"
       },

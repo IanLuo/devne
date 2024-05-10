@@ -32,12 +32,15 @@ include supports:
 
 """
 
-from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional
+from dataclasses import dataclass
+from typing import Dict, Any, Optional
 from .parser import parse
 import os
 import re
 from ..run_command import run
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 @dataclass
 class Blueprint:
@@ -65,30 +68,40 @@ class Blueprint:
         return self.metadata.get("description", "")
 
     def init_blueprint(self, yaml: str):
+        logging.info("initializing blueprint..")
         self.include_flakes = {}
         self.include_blueprint = {}
 
+        logging.info(f"parsed blueprint..")
         json = parse_yaml(yaml)
+
+        logging.info(f"parsed unit..")
         self.units = {
             name: parse_unit(data) for name, data in json.get("units", {}).items()
         }
         
+        logging.info(f"parsed include..")
         self.includes = {
             name: parse_include(data) for name, data in json.get("include", {}).items()
         }
 
+        logging.info(f"parsed metadata..")
         self.metadata = json.get("metadata", {})
 
+        logging.info(f"parsed actions..")
         self.actions = {
             name: parse_actions(data) for name, data in json.get("actions", {}).items()
         }
 
+        logging.info(f"parsed action flows..")
         self.action_flows = {
             name: parse_action_flow(data)
             for name, data in json.get("action_flows", {}).items()
         }
 
+        logging.info(f"start resolving includes..")
         for name, value in self.includes.items():
+            logging.info(f"resolving include '{name}'..")
             self.resolve_include(name, value)
 
     def resolve_include(self, name: str, value: dict[str, Any]):
@@ -165,6 +178,7 @@ def find_ss_to_import(store_path: str) -> Optional[str]:
 
 
 def collect_include(value: Any) -> str:
+    logging.info(f"collecting include {value}..")
     if isinstance(value, str):
         return fetch_resource(value)
     elif isinstance(value, dict):
@@ -180,6 +194,8 @@ def collect_include(value: Any) -> str:
 
 
 def fetch_resource(url: str) -> str:
+    logging.info(f"fetching resource from {url}..")
+
     resolved_url = resovle_resource_url(url)
     command = command_for_url(resolved_url)
     result = run(command) or ''
@@ -187,9 +203,11 @@ def fetch_resource(url: str) -> str:
     pattern = r'(/nix/store/[^"]+)'
     match = re.search(pattern, result)
     if match:
-        return match.group(1)
+        matched = match.group(1) 
+        logging.info(f"resource fetched to {matched}")
+        return matched
     else:
-        raise Exception(f'failed to fetch resource from {url}')
+        raise Exception(f'failed to fetch resource from {resolved_url}')
 
 # perform actions
 
@@ -232,12 +250,22 @@ def perform_condition(param: Any) -> bool:
     pass # TODO:
 
 def command_for_url(url: str) -> str:
+    command = None
     if url.startswith("path://"):
-        return f'nix-instantiate --eval --json -E "fetchTree {url}"'
+        command =  f'nix-instantiate --eval --json -E "fetchTree {url}"'
     else:
-        return f'nix-prefetch-url --unpack --print-path {url}'
+        command =  f'nix-prefetch-url --unpack --print-path {url}'
+
+    if command is None:
+        raise Exception(f'unsupported url {url}')
+
+    logging.info(f"command for url {url} is {command}")
+    
+    return command
 
 def resovle_resource_url(url: str) -> str:
+    logging.info(f"resolving resource url {url}..")
+
     pattern = r'(?P<scheme>\w+)\:(?P<path>\/?.+\/?)'
     matchs = re.match(pattern, url)
 

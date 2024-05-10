@@ -1,10 +1,9 @@
 # WIP
-[ ] yaml file will extend other yaml files to 'inherit' the existing tools and packgage setups
 [ ] to make unit runnable
     add doc for each unit, by adding a special parameter 'doc', by default null
     to specify input/output type for each unit
-[ ] units have executable interface
 [ ] units can be observed
+[ ] add sha-256 for ss.yaml include so download could be cached
 
 # BACKLOG
 [ ] unit documentations
@@ -17,6 +16,8 @@
     docker
 
 # ARCHIVE
+[x] units have executable interface
+[x] yaml file will extend other yaml files to 'inherit' the existing tools and packgage setups
 [x] in a yaml, the name should be customized and referenced
 [x] to customize yaml will be only thing to do, work with script that can be referenced from yaml file to control other actions
 [x]!! support outside unit
