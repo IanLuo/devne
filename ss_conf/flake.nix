@@ -5,17 +5,22 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     ss = {
-      url = "path:/Users/ianluo/Documents/apps/templates";
+      url = "path:///Users/ianluo/Documents/apps/templates";
     };
 
 
     nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-23.11";
+      url = "https://github.com/NixOS/nixpkgs";
+    };
+
+
+    python_units = {
+      url = "https://github.com/ianluo/python_units";
     };
 
   };
 
-  outputs = { self, flake-utils, flake-parts, ss, nixpkgs }:
+  outputs = { self, flake-utils, flake-parts, ss, nixpkgs, python_units }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};

@@ -19,8 +19,6 @@ class FlakeTemplate(Template):
         """
 
     def render(self) -> str:
-        filter_sys_sources = super().filter_sys_sources
-
         return f"""
       {{
         description = "{self.blueprint.description}";

@@ -92,8 +92,7 @@ def exec(name: str,
 
 class Cli:
     def __init__(self, config_path: str):
-        with open(config_path, "r") as f:
-            self.blueprint = Blueprint(f)
+        self.blueprint = Blueprint(config_path)
 
         self.root = dirname(config_path)
 

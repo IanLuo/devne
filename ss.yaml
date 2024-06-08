@@ -4,13 +4,18 @@ metadata:
   description: devlopment environment with 1 command
 
 include:
-  ss: path:/Users/ianluo/Documents/apps/templates
-  nixpkgs: github:NixOS/nixpkgs/nixos-23.11
-  python_units: github:/ianluo/python_units
+  ss: path:///Users/ianluo/Documents/apps/templates
+  nixpkgs:
+    url: https://github.com/NixOS/nixpkgs
+    branch: nixpkgs-unstable
+  python_units: https://github.com/ianluo/python_units
 
 units:
   nixpkgs-fmg:
     source: $nixpkgs.nixpkgs-fmt
+
+  jsonfmt:
+    source: $nixpkgs.jsonfmt 
 
   database:
     source: $nixpkgs.postgresql

@@ -1,8 +1,6 @@
 from ..configure.blueprint import Blueprint
 from .template import Template
 from dataclasses import dataclass
-from functools import reduce
-
 
 @dataclass
 class UnitsTemplate(Template):
