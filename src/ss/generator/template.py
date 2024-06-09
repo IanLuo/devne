@@ -6,12 +6,6 @@ from typing import Any, Dict
 
 class Template(ABC):
     LINE_BREAK = "\n"
-    SYS_SOURCE_NAME = ["pkgs", "ssunits"]
-
-    def filter_sys_sources(self, sources):
-        return list(
-            filter(lambda source: source in self.SYS_SOURCE_NAME == False, sources)
-        )
 
     @abstractmethod
     def render(self) -> str:

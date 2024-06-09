@@ -1,8 +1,43 @@
-{ ss, nixpkgs, python_units, system, name, version, lib }:
+{ ss, nixpkgs, system, name, version, lib }:
 let
   wrapInUnit = ss.lib.wrapInUnit;
   sslib = ss.lib;
   metadata = { inherit name version; };
+
+
+  python = (sslib.defineUnit {
+    name = "python";
+    version = "0.0.1";
+    source = nixpkgs.python310;
+    instantiate =
+      ''python -m venv .venv
+source venv/bin/activate
+poetry install
+''
+    ;
+    actions =
+      {
+        test = "pytest";
+        run = "python -m src.main";
+      };
+    listener = null;
+  });
+
+
+  poetry = (sslib.defineUnit {
+    name = "poetry";
+    version = "0.0.1";
+    source = nixpkgs.poetry;
+    instantiate = null;
+    actions =
+      {
+        install = "poetry install";
+        add = "poetryh add";
+        list = "poetry list";
+        build = "poetry build";
+      };
+    listener = null;
+  });
 
 
   nixpkgs-fmg = (sslib.defineUnit {
@@ -46,6 +81,8 @@ let
 
 
   all = [
+    python
+    poetry
     nixpkgs-fmg
     jsonfmt
     database

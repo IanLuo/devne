@@ -6,21 +6,18 @@
 
     ss = {
       url = "path:///Users/ianluo/Documents/apps/templates";
+      flake = true;
     };
 
 
     nixpkgs = {
-      url = "https://github.com/NixOS/nixpkgs";
-    };
-
-
-    python_units = {
-      url = "https://github.com/ianluo/python_units";
+      url = "git+https://github.com/NixOS/nixpkgs?rev=ed5f4b938fa96aa6ad20fff3b04bd96bf5abb3f9";
+      flake = true;
     };
 
   };
 
-  outputs = { self, flake-utils, flake-parts, ss, nixpkgs, python_units }:
+  outputs = { self, flake-utils, flake-parts, ss, nixpkgs }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -31,6 +28,7 @@
         units = pkgs.callPackage ./units.nix { inherit name version ss; nixpkgs = pkgs; };
       in
       {
+        libs = units;
         devShells = with pkgs; {
           default = mkShell {
             name = name;

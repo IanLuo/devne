@@ -8,9 +8,12 @@ from ss.run_command import run
 from ss.folder import Folder
 from typing import Optional
 from os.path import dirname, exists
+import logging
 
 app = typer.Typer()
 default_config = f"{os.getcwd()}/ss.yaml"
+
+
 
 def version(value: bool):
     if value:
@@ -31,10 +34,16 @@ def version(value: bool):
 def main(
     version: Annotated[
         Optional[bool], typer.Option("--version", "-v", callback=version)
-    ] = None
+    ] = None,
+    
+    log: Annotated[
+        Optional[str], typer.Option("--log", "-l")
+    ] = 'WARN' 
 ):
-    pass
-
+    if log == 'INFO':
+        logging.basicConfig(level=logging.INFO)  
+    else:
+        logging.basicConfig(level=logging.WARN)
 
 @app.command()
 def up():
@@ -111,12 +120,15 @@ class Cli:
             return self.blueprint.actions.keys()    
         else:
             unit = self.blueprint.units.get(unit_name)
+            if unit == None:
+                return f"unit {unit_name} not found"
+
             return unit.get("actions", {}).keys()
 
     def run_action(self, 
-                   name: str, 
+                   action_name: str, 
                    unit_name: Optional[str] = None):
-        self.blueprint.perform_action(unit_name, name)
+        self.blueprint.perform_action(unit_name, action_name)
 
 
 if __name__ == "__main__":

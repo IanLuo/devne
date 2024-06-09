@@ -35,6 +35,10 @@ class Lock:
 
     def format(self):
         os.system(f'jsonfmt -w {self.lock_path}')
+
+    def clear(self):
+        self.lock = {}
+        self.write_lock(self.lock)
         
     def add_node(self, name: str, node: Node) -> None:
         self.lock[name] = node.__dict__

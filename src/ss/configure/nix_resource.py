@@ -10,14 +10,6 @@ class NixResource:
         self.lock = lock
 
     # handle include
-    def find_flake_to_import(self, store_path: str) -> Optional[str]:
-        flake_path = os.path.join(store_path, "flake.nix")
-
-        if os.path.exists(flake_path):
-            return flake_path
-        else:
-            return None
-
     def find_ss_to_import(self, store_path: str) -> Optional[str]:
         ss_path = os.path.join(store_path, "ss.yaml")
 

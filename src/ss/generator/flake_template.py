@@ -1,6 +1,7 @@
 from .template import Template
 from dataclasses import dataclass
 from ..configure.blueprint import *
+from urllib.parse import urlparse, urlunparse
 
 
 @dataclass
@@ -10,13 +11,42 @@ class FlakeTemplate(Template):
     def _render_inputs(self, item: tuple):
         name = item[0]
         content = item[1]
-        if name in super().SYS_SOURCE_NAME:
-            return ""
-        return f"""
+
+        url = content['url']
+        scheme = self.get_scheme(url);
+        url_without_scheme = self.remove_scheme(url);
+        is_flake = 'true' if content.get('flake', True) else 'false'
+
+        if scheme == 'path':
+            return f"""
             {name} = {{
-               url = "{content['url']}";
+               url = "{url}";
+               flake = {is_flake};
             }};
         """
+        else:
+            return f"""
+                {name} = {{
+                   url = "git+https:{url_without_scheme}?rev={content['rev']}";
+                   flake = {is_flake};
+                }};
+            """
+
+    def get_scheme(self, url):
+        # Parse the URL into components
+        parsed_url = urlparse(url)
+        
+        # Return the scheme component
+        return parsed_url.scheme
+
+    def remove_scheme(self, url):
+        # Parse the URL into components
+        parsed_url = urlparse(url)
+        
+        # Reconstruct the URL without the scheme
+        url_without_scheme = urlunparse(('', parsed_url.netloc, parsed_url.path, parsed_url.params, parsed_url.query, parsed_url.fragment))
+        
+        return url_without_scheme
 
     def render(self) -> str:
         return f"""
@@ -39,6 +69,7 @@ class FlakeTemplate(Template):
               units = pkgs.callPackage ./units.nix {{ inherit name version ss; nixpkgs = pkgs; }};
             in
             {{
+              libs = units;
               devShells = with pkgs; {{
                 default = mkShell {{
                   name = name;

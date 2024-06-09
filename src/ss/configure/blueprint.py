@@ -41,8 +41,6 @@ import logging
 from .lock import Lock
 from .nix_resource import NixResource
 
-logging.basicConfig(level=logging.INFO)
-
 @dataclass
 class Blueprint:
     units: Dict[str, Any]
@@ -50,7 +48,6 @@ class Blueprint:
     action_flows: Dict[str, Any]
     includes: Dict[str, Any]
     metadata: Dict[str, Any]
-    include_flakes: Dict[str, Any]
     include_blueprint: Dict[str, 'Blueprint']
 
     def __init__(self, config_path: str, lock: Optional[Lock] = None):
@@ -72,7 +69,6 @@ class Blueprint:
 
     def init_blueprint(self, yaml_path: str):
         logging.info("initializing blueprint..")
-        self.include_flakes = {}
         self.include_blueprint = {}
 
         logging.info(f"parsed blueprint..")
@@ -85,7 +81,7 @@ class Blueprint:
         
         logging.info(f"parsed include..")
         self.includes = {
-            name: parse_include(data) for name, data in json.get("include", {}).items()
+            name: self.parse_include(data) for name, data in json.get("include", {}).items()
         }
 
         logging.info(f"parsed metadata..")
@@ -93,12 +89,12 @@ class Blueprint:
 
         logging.info(f"parsed actions..")
         self.actions = {
-            name: parse_actions(data) for name, data in json.get("actions", {}).items()
+            name: self.parse_actions(data) for name, data in json.get("actions", {}).items()
         }
 
         logging.info(f"parsed action flows..")
         self.action_flows = {
-            name: parse_action_flow(data)
+            name: self.parse_action_flow(data)
             for name, data in json.get("action_flows", {}).items()
         }
 
@@ -115,10 +111,9 @@ class Blueprint:
 
         nix_store_path = self.collect_include(name, value)
 
-        flake_path = self.nix_resource.find_flake_to_import(nix_store_path)
-
-        if flake_path is not None:
-            self.include_flakes[name] = nix_store_path
+        lock = self.lock.find_node(name)
+        if lock is not None:
+            self.includes[name] = {**self.includes[name], **lock.__dict__, **{'store_path': nix_store_path}}
 
         ss_path = self.nix_resource.find_ss_to_import(nix_store_path)
 
@@ -150,65 +145,70 @@ class Blueprint:
         return self.nix_resource.fetch_resource(name, value)
 
 
-def parse_include(data: Any) -> Dict[str, Any]:
-    if isinstance(data, str):
-        return {"url": data}
-    elif isinstance(data, dict):
-        return data
-    else:
-        raise Exception("include should be a string or a dict")
+    def parse_include(self, data: Any) -> Dict[str, Any]:
+        if isinstance(data, str):
+            return {"url": data}
+        elif isinstance(data, dict):
+            return data
+        else:
+            raise Exception("include should be a string or a dict")
 
 
 
-def parse_actions(data: Any):
-    if isinstance(data, str):
-        return data
+    def parse_actions(self, data: Any):
+        if isinstance(data, str):
+            return data
 
-    return '' 
+        return '' 
 
 
-def parse_action_flow(flow: Dict[str, Any]) -> Dict[str, Any]:
-    pass
+    def parse_action_flow(self, flow: Dict[str, Any]) -> Dict[str, Any]:
+        pass
 
 
 # perform actions
 
-def perform_action(
-    actions: Dict[str, Any], 
-    units: Dict[str, Any], 
-    action: str
-) -> Any:
-    command = actions.get(action)
+    def perform_action(
+        self, 
+        unit_name: Optional[str], 
+        action_name: str
+    ) -> Any:
+        unit = self.units.get(unit_name or '')
 
-    if command is None:
-        raise Exception(f'command for \'{action}\' not found') 
+        if unit is None:
+            command = self.actions.get(action_name)
+        else:
+            command = unit.get('actions', {}).get(action_name)
 
-    if command.startswith("$"):
-        unit, unit_action = read_action_ref(command, units)
-        perform_action(unit.get('actions', {}), units, unit_action)
-    else:
-       command = actions.get(action) 
-       os.system(f'bash {command}')
+        if command is None:
+            raise Exception(f'command for \'{action_name}\' not found') 
 
-
-def read_action_ref(ref: str, 
-                    units: Dict[str, Any] 
-) -> tuple[Dict[str, Any], str]:
-    pattern = r'\$(\w*)\.(\w*)'
-    match = re.match(pattern, ref)
-    if match:
-        unit = units.get(match.group(1))
-        action = match.group(2)
-        return unit, action
-    else:
-        raise Exception(f'invalid action reference {ref}')
+        if command.startswith("$"):
+            unit, unit_action = self.read_action_ref(command)
+            self.perform_action(unit.get('actions', {}), unit_action)
+        else:
+           os.system(f'bash {command}')
 
 
-def action_flow(
-    action: perform_action):
+    def read_action_ref(self, 
+                        ref: str, 
+    ) -> tuple[Dict[str, Any], str]:
+        pattern = r'\$(\w*)\.(\w*)'
+        match = re.match(pattern, ref)
+        if match:
+            unit = self.units.get(match.group(1))
+            action = match.group(2)
+            return unit, action
+        else:
+            raise Exception(f'invalid action reference {ref}')
+
+
+    def action_flow(
+        self,
+        action: perform_action):
+            pass # TODO:
+
+    def perform_condition(self, param: Any) -> bool:
         pass # TODO:
-
-def perform_condition(param: Any) -> bool:
-    pass # TODO:
 
 

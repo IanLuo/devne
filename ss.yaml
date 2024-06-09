@@ -8,9 +8,26 @@ include:
   nixpkgs:
     url: https://github.com/NixOS/nixpkgs
     branch: nixpkgs-unstable
-  python_units: https://github.com/ianluo/python_units
 
 units:
+  python:
+    source: $nixpkgs.python310
+    instantiate: |
+      python -m venv .venv
+      source venv/bin/activate
+      poetry install
+    actions: 
+      test: "pytest"
+      run: "python -m src.main"
+
+  poetry:
+    source: $nixpkgs.poetry
+    actions:
+      install: "poetry install"
+      add: "poetryh add"
+      list: "poetry list"
+      build: "poetry build"
+
   nixpkgs-fmg:
     source: $nixpkgs.nixpkgs-fmt
 
@@ -22,6 +39,9 @@ units:
 
   cache:
     source: $nixpkgs.redis
+
+actions:
+  test: $python.test
 
 action-flow:
   log-commit:
