@@ -5,6 +5,7 @@ metadata:
 
 include:
   ss: path:///Users/ianluo/Documents/apps/templates
+  python_units: https://github.com/IanLuo/python_units
   nixpkgs:
     url: https://github.com/NixOS/nixpkgs
     branch: nixpkgs-unstable
@@ -14,7 +15,7 @@ units:
     source: $nixpkgs.python310
     instantiate: |
       python -m venv .venv
-      source venv/bin/activate
+      source .venv/bin/activate
       poetry install
     actions: 
       test: "pytest"
@@ -39,6 +40,9 @@ units:
 
   cache:
     source: $nixpkgs.redis
+
+  # pyright:
+  #   source: $nixpkgs.pyright
 
 actions:
   test: $python.test

@@ -1,9 +1,6 @@
 # WIP
-[ ] to make unit runnable
-    add doc for each unit, by adding a special parameter 'doc', by default null
-    to specify input/output type for each unit
+[ ] import other ss.yaml and generate files for them
 [ ] units can be observed
-[ ] add sha-256 for ss.yaml include so download could be cached
 
 # BACKLOG
 [ ] unit documentations
@@ -16,6 +13,10 @@
     docker
 
 # ARCHIVE
+[x] to make unit runnable
+    add doc for each unit, by adding a special parameter 'doc', by default null
+    to specify input/output type for each unit
+[x] add sha-256 for ss.yaml include so download could be cached
 [x] units have executable interface
 [x] yaml file will extend other yaml files to 'inherit' the existing tools and packgage setups
 [x] in a yaml, the name should be customized and referenced

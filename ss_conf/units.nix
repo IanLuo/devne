@@ -1,4 +1,4 @@
-{ ss, nixpkgs, system, name, version, lib }:
+{ ss, python_units, nixpkgs, system, name, version, lib }:
 let
   wrapInUnit = ss.lib.wrapInUnit;
   sslib = ss.lib;
@@ -7,11 +7,11 @@ let
 
   python = (sslib.defineUnit {
     name = "python";
-    version = "0.0.1";
+
     source = nixpkgs.python310;
     instantiate =
       ''python -m venv .venv
-source venv/bin/activate
+source .venv/bin/activate
 poetry install
 ''
     ;
@@ -26,7 +26,7 @@ poetry install
 
   poetry = (sslib.defineUnit {
     name = "poetry";
-    version = "0.0.1";
+
     source = nixpkgs.poetry;
     instantiate = null;
     actions =
@@ -42,7 +42,7 @@ poetry install
 
   nixpkgs-fmg = (sslib.defineUnit {
     name = "nixpkgs-fmg";
-    version = "0.0.1";
+
     source = nixpkgs.nixpkgs-fmt;
     instantiate = null;
     actions = null;
@@ -52,7 +52,7 @@ poetry install
 
   jsonfmt = (sslib.defineUnit {
     name = "jsonfmt";
-    version = "0.0.1";
+
     source = nixpkgs.jsonfmt;
     instantiate = null;
     actions = null;
@@ -62,7 +62,7 @@ poetry install
 
   database = (sslib.defineUnit {
     name = "database";
-    version = "0.0.1";
+
     source = nixpkgs.postgresql;
     instantiate = null;
     actions = null;
@@ -72,7 +72,7 @@ poetry install
 
   cache = (sslib.defineUnit {
     name = "cache";
-    version = "0.0.1";
+
     source = nixpkgs.redis;
     instantiate = null;
     actions = null;

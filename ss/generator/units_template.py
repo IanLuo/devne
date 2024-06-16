@@ -13,11 +13,13 @@ class UnitsTemplate(Template):
 
         super_class = super()
 
+        version_str = lambda value: f'version = \"{value.get("version")}\";' if value.get("version", None) is not None else ''
+
         def render_unit(name, value):
             return f"""
                 {name} = (sslib.defineUnit {{
                     name = "{name}";
-                    version = "{value.get('version') or '0.0.1'}";
+                    {version_str(value)}
                     {line_break.join([f'{key}={super_class.render_value(value)};' for key, value in value.items()])}
                 }});
                 """
