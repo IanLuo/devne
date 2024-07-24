@@ -1,4 +1,4 @@
-{ ss, python_units, nixpkgs, system, name, version, lib }:
+{ ss, nixpkgs, system, name, version, lib }:
 let
   wrapInUnit = ss.lib.wrapInUnit;
   sslib = ss.lib;
@@ -7,7 +7,7 @@ let
 
   python = (sslib.defineUnit {
     name = "python";
-
+    version = null;
     source = nixpkgs.python310;
     instantiate =
       ''python -m venv .venv
@@ -26,7 +26,7 @@ poetry install
 
   poetry = (sslib.defineUnit {
     name = "poetry";
-
+    version = null;
     source = nixpkgs.poetry;
     instantiate = null;
     actions =
@@ -42,7 +42,7 @@ poetry install
 
   nixpkgs-fmg = (sslib.defineUnit {
     name = "nixpkgs-fmg";
-
+    version = null;
     source = nixpkgs.nixpkgs-fmt;
     instantiate = null;
     actions = null;
@@ -52,7 +52,7 @@ poetry install
 
   jsonfmt = (sslib.defineUnit {
     name = "jsonfmt";
-
+    version = null;
     source = nixpkgs.jsonfmt;
     instantiate = null;
     actions = null;
@@ -62,7 +62,7 @@ poetry install
 
   database = (sslib.defineUnit {
     name = "database";
-
+    version = null;
     source = nixpkgs.postgresql;
     instantiate = null;
     actions = null;
@@ -72,8 +72,18 @@ poetry install
 
   cache = (sslib.defineUnit {
     name = "cache";
-
+    version = null;
     source = nixpkgs.redis;
+    instantiate = null;
+    actions = null;
+    listener = null;
+  });
+
+
+  prefetch-git = (sslib.defineUnit {
+    name = "prefetch-git";
+    version = null;
+    source = nixpkgs.nix-prefetch-git;
     instantiate = null;
     actions = null;
     listener = null;
@@ -87,6 +97,7 @@ poetry install
     jsonfmt
     database
     cache
+    prefetch-git
   ];
 
   startScript = ''

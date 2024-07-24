@@ -10,20 +10,14 @@
     };
 
 
-    python_units = {
-      url = "git+https://github.com/IanLuo/python_units?rev=5563efcf1f9226796eaf2cec3e4f32498ba0a19e";
-      flake = true;
-    };
-
-
     nixpkgs = {
-      url = "git+https://github.com/NixOS/nixpkgs?rev=ed5f4b938fa96aa6ad20fff3b04bd96bf5abb3f9";
+      url = "git+https://github.com/NixOS/nixpkgs?rev=ec35143a579ad4e5efc198e4dbe3f0a2d9139b04";
       flake = true;
     };
 
   };
 
-  outputs = { self, flake-utils, flake-parts, ss, python_units, nixpkgs }:
+  outputs = { self, flake-utils, ss, nixpkgs }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -39,7 +33,7 @@
           default = mkShell {
             name = name;
             version = version;
-            packages = units.dependencies;
+            buildInputs = units.dependencies;
 
             shellHook = ''
               ${units.scripts}

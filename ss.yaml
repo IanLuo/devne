@@ -8,7 +8,7 @@ include:
   python_units: https://github.com/IanLuo/python_units
   nixpkgs:
     url: https://github.com/NixOS/nixpkgs
-    branch: nixpkgs-unstable
+    ref: nixpkgs-unstable
 
 units:
   python:
@@ -40,6 +40,9 @@ units:
 
   cache:
     source: $nixpkgs.redis
+
+  prefetch-git:
+    source: $nixpkgs.nix-prefetch-git
 
   # pyright:
   #   source: $nixpkgs.pyright

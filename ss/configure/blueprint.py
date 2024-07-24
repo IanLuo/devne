@@ -36,10 +36,11 @@ from dataclasses import dataclass
 from typing import Dict, Any, Optional
 from .parser import parse
 import os
+from os.path import exists 
 import re
 import logging
-from .lock import Lock
-from .nix_resource import NixResource
+from .resource_manager import ResourceManager, Resource
+from ..folder import Folder
 
 @dataclass
 class Blueprint:
@@ -48,12 +49,16 @@ class Blueprint:
     action_flows: Dict[str, Any]
     includes: Dict[str, Any]
     metadata: Dict[str, Any]
-    include_blueprint: Dict[str, 'Blueprint']
 
-    def __init__(self, config_path: str, lock: Optional[Lock] = None):
-        self.lock = lock or Lock(config_path)
-        self.nix_resource = NixResource(self.lock)
-        self.init_blueprint(config_path)
+    def __init__(self, 
+                 root: str, 
+                 include_root: Optional[str] = None, 
+                 config_path: Optional[str] = None):
+        self.root = root
+        self.folder = Folder(root or include_root)
+        self.resource_manager = ResourceManager(root=root, include_root=include_root)
+
+        self.init_blueprint(config_path or self.folder.config_path)
 
     @property
     def name(self):
@@ -69,7 +74,6 @@ class Blueprint:
 
     def init_blueprint(self, yaml_path: str):
         logging.info("initializing blueprint..")
-        self.include_blueprint = {}
 
         logging.info(f"parsed blueprint..")
         json = self.parse_yaml(yaml_path)
@@ -85,7 +89,11 @@ class Blueprint:
         }
 
         logging.info(f"parsed metadata..")
-        self.metadata = json.get("metadata", {})
+        self.metadata = json.get("metadata", None)
+        if self.metadata is None:
+            raise Exception("metadata is mandatory")
+        elif self.metadata.get("name") is None:
+            raise Exception("name is mandatory")
 
         logging.info(f"parsed actions..")
         self.actions = {
@@ -98,27 +106,31 @@ class Blueprint:
             for name, data in json.get("action_flows", {}).items()
         }
 
+    def resovle_all_includes(self, includes: Dict[str, Any]):
         logging.info(f"start resolving includes..")
-        for name, value in self.includes.items():
+        for name, value in includes.items():
             logging.info(f"resolving include '{name}'..")
             self.resolve_include(name, value)
-
-        self.lock.format()
 
     def resolve_include(self, name: str, value: dict[str, Any]):
         if value is None:
             raise Exception(f"include '{name}' not found")
 
-        nix_store_path = self.collect_include(name, value)
+        logging.info(f"collecting include {value}..")
+        resource_name = self.metadata.get("name", '') + "-" + name
+        include_resource = self.resource_manager.fetch_resource(resource_name, value)
 
-        lock = self.lock.find_node(name)
-        if lock is not None:
-            self.includes[name] = {**self.includes[name], **lock.__dict__, **{'store_path': nix_store_path}}
+        self.includes[name] = {**self.includes[name], 
+                               **include_resource.__dict__, 
+                               'root': self.folder.include_path(name)}
 
-        ss_path = self.nix_resource.find_ss_to_import(nix_store_path)
-
-        if ss_path is not None:
-            self.include_blueprint[name] = Blueprint(ss_path, self.lock)
+        ss_path = Folder(root=include_resource.local_path).config_path
+        
+        if exists(ss_path):
+            logging.info(f"found ss.yaml at {ss_path}, using it..")
+            self.includes[name]['blueprint'] = Blueprint(root=self.root,
+                                                         include_root=self.folder.include_path(name),
+                                                         config_path=ss_path)
 
     def parse_yaml(self, yaml_path: str) -> Dict[str, Any]:
         with open(yaml_path, "r") as f:
@@ -138,12 +150,6 @@ class Blueprint:
             "actions": optional("actions"),
             "listener": optional("listener"),
         }
-
-    def collect_include(self, name: str, value: Dict) -> str:
-        logging.info(f"collecting include {value}..")
-
-        return self.nix_resource.fetch_resource(name, value)
-
 
     def parse_include(self, data: Any) -> Dict[str, Any]:
         if isinstance(data, str):

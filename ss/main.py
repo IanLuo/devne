@@ -7,7 +7,7 @@ from ss.generator.files_creator import FilesCreator
 from ss.run_command import run
 from ss.folder import Folder
 from typing import Optional
-from os.path import dirname, exists
+from os.path import dirname
 import logging
 
 app = typer.Typer()
@@ -55,12 +55,6 @@ def up():
 def update():
     run(Folder.at_current_location("scripts/update"))
 
-
-@app.command()
-def build(config: str = default_config):
-    """build the app based on the ss.yaml"""
-    Cli(config).build()
-
 @app.command()
 def info():
     run(Folder.at_current_location("scripts/info"))
@@ -101,15 +95,17 @@ def exec(name: str,
 
 class Cli:
     def __init__(self, config_path: str):
-        self.blueprint = Blueprint(config_path)
-
         self.root = dirname(config_path)
+        self.blueprint = Blueprint(root=self.root)
+        self.folder = Folder(root=self.root)
 
     def reload(self):
         creator = FilesCreator(self.blueprint, self.root)
-        creator.create()
-        os.system(f"nixpkgs-fmt {creator.folder.flake_path}")
-        os.system(f"nixpkgs-fmt {creator.folder.unit_path}")
+        creator.create_all()
+
+        os.system(f"nixpkgs-fmt {self.folder.flake_path}")
+        os.system(f"nixpkgs-fmt {self.folder.unit_path}")
+        os.system(f'jsonfmt -w {self.folder.lock_path}')
 
     def list_units(self):
         return self.blueprint.units.keys()

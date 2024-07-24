@@ -1,26 +1,22 @@
-from ..configure.blueprint import Blueprint
 from .template import Template
-from dataclasses import dataclass
 
-@dataclass
 class UnitsTemplate(Template):
-    blueprint: Blueprint
+    def __init__(self, blueprint):
+        super().__init__(blueprint)
 
     def render(self) -> str:
         line_break = "\n"
 
         names = list(map(lambda x: x.replace(".", "_"), self.blueprint.units.keys()))
 
-        super_class = super()
-
-        version_str = lambda value: f'version = \"{value.get("version")}\";' if value.get("version", None) is not None else ''
+        version_str = lambda value: f'\"{value.get("version")}\"' if value.get("version", None) is not None else 'null'
 
         def render_unit(name, value):
             return f"""
                 {name} = (sslib.defineUnit {{
                     name = "{name}";
-                    {version_str(value)}
-                    {line_break.join([f'{key}={super_class.render_value(value)};' for key, value in value.items()])}
+                    version = {version_str(value)};
+                    {line_break.join([f'{key}={self.render_value(value)};' for key, value in value.items()])}
                 }});
                 """
 
@@ -29,7 +25,7 @@ class UnitsTemplate(Template):
         )
 
         default_imports = ["system", "name", "version", "lib" ]
-        all_import = list(self.blueprint.includes.keys()) + default_imports
+        all_import = [ item[0] for item in self.includes if item[1] is not None ] + default_imports
 
         return f"""
 	{{  {','.join(all_import) } }}:

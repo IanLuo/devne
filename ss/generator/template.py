@@ -2,10 +2,38 @@ from abc import ABC, abstractmethod
 from ..configure.functions.git_repo import GitRepo
 import re
 from typing import Any, Dict
+from ..configure.blueprint import Blueprint
+from os.path import exists
 
 
 class Template(ABC):
     LINE_BREAK = "\n"
+
+    def __init__(self, blueprint: Blueprint):
+        self.blueprint = blueprint
+        def render_import(name: str, item: dict):
+            resource = item.get("local_path")
+            ss_nix = f'{resource}/ss.nix'
+            default_nix = f'{resource}/default.nix'
+            flake_nix = f'{resource}/flake.nix'
+            shell_nix = f'{resource}/shell.nix'
+
+            if exists(ss_nix):
+                return name, f'{name} = pkgs.callPackage {ss_nix} {{}};'
+
+            elif exists(default_nix):
+                return name, f'{name} = pkgs.callPackage {default_nix} {{}};'
+
+            elif exists(flake_nix):
+                return name, f'{name} = pkgs.importFlake {flake_nix} {{}};'
+
+            elif exists(shell_nix):
+                return f'{name} = pkgs.callPackage {shell_nix} {{}};'
+            else: 
+                return name, None 
+
+        self.includes = [ render_import(name=item[0], item=item[1]) for item in self.blueprint.includes.items()]
+
 
     @abstractmethod
     def render(self) -> str:

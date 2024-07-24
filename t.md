@@ -1,6 +1,7 @@
 # WIP
 [ ] import other ss.yaml and generate files for them
 [ ] units can be observed
+[ ] replace flake to normal .nix
 
 # BACKLOG
 [ ] unit documentations

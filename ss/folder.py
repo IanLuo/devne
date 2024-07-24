@@ -1,15 +1,18 @@
-ROOT_FOLDER = 'ss_conf'
+ROOT_FOLDER = '.ss'
 CONFIG_FILE = "ss.yaml"
-FLAKE_FILE = f'{ROOT_FOLDER}/flake.nix'
+LOCK_FILE = "ss.lock"
+FLAKE_FILE = f'{ROOT_FOLDER}/ss.nix'
 UNIT_FILE = f'{ROOT_FOLDER}/units.nix'
-FLAKE_METADATA_FILE = f'{ROOT_FOLDER}/flake_metadata.nix'
-DEPS_FILE = f'{ROOT_FOLDER}/deps.nix'
 DATA_FOLDER = f'{ROOT_FOLDER}/data'
+INCLUDES_FOLDER = f'{ROOT_FOLDER}/includes'
 
 from os.path import exists, dirname, join, abspath
-from os import makedirs, path 
+from os import makedirs 
 
 class Folder:
+    def __init__(self, root):
+        self.root = root
+
     @staticmethod
     def at_current_location(path: str):
         return join(dirname(abspath(__file__)), path)
@@ -23,14 +26,6 @@ class Folder:
         return f'{self.root}/{UNIT_FILE}'
 
     @property
-    def flake_metadata_path(self):
-        return f'{self.root}/{FLAKE_METADATA_FILE}'
-
-    @property
-    def deps_path(self):
-        return f'{self.root}/{DEPS_FILE}'
-
-    @property
     def data_folder_path(self):
         return f'{self.root}/{DATA_FOLDER}'
 
@@ -38,8 +33,9 @@ class Folder:
     def config_path(self):
         return f'{self.root}/{CONFIG_FILE}'
 
-    def __init__(self, root):
-        self.root = root
+    @property
+    def lock_path(self):
+        return f'{self.root}/{LOCK_FILE}'
 
     def init_data_path(self) -> str:
         return self.create_folder(self.data_folder_path)
@@ -50,17 +46,18 @@ class Folder:
     def init_unit_file(self):
         return self.make_file(self.unit_path)
 
-    def init_flake_metadata_file(self):
-        return self.make_file(self.flake_metadata_path)
-
-    def init_deps_file(self):
-        return self.make_file(self.deps_path)
-
     def create_folder(self, path):
         if exists(path) == False:
             makedirs(path)
 
         return path 
+
+    def include_path(self, name: str):
+        return join(self.root, INCLUDES_FOLDER, name)
+
+    def create_includes(self, name: str):
+        path = self.create_folder(self.include_path(name))
+        self.create_folder(path)
 
     def make_file(self, path, content = ''):
         dir = dirname(path)
