@@ -7,5 +7,6 @@ test_output/
 result
 .pytest_cache/
 .ss
+.ss_data
 .venv
 dist
