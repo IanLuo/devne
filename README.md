@@ -1,19 +1,23 @@
 # Client commands 
-  [CLI](cli/cli.md)
+[ CLI ] (cli/cli.md)
 
 # Env configure sharing
-- Choose and apply env 
+- Choose and apply env
 - Upload and manage personal env configure
 - Configure file search
 - Integrate tools
 
 # Env configure edit
 - Generate Flake.nix from configure files
-- Format and protocol to express the configuration
+  - Format and protocol to express the configuration
 
-# Traditional process
-## To make a development environment reproduciable
-1. Write down tools needed, probably versions
+  # Traditional process
+  ## To make a development environment reproduciable
+  1.
+  Write
+  down
+  tools
+  needed, probably versions
 2. Write down how to setup up and init those tools
 3. Write down how to prepare environment and initial data
 4. Write down how to start to project

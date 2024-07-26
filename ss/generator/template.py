@@ -12,13 +12,15 @@ class Template(ABC):
     def __init__(self, blueprint: Blueprint):
         self.blueprint = blueprint
         def render_import(name: str, item: dict):
-            resource = item.get("local_path")
-            ss_nix = f'{resource}/ss.nix'
-            default_nix = f'{resource}/default.nix'
-            flake_nix = f'{resource}/flake.nix'
-            shell_nix = f'{resource}/shell.nix'
+            local_path = item.get("local_path")
+            gen_root = item.get("gen_root")
+            ss_nix = f'{gen_root}/ss.nix'
+            ss_yaml = f'{local_path}/ss.yaml'
+            default_nix = f'{local_path}/default.nix'
+            flake_nix = f'{local_path}/flake.nix'
+            shell_nix = f'{local_path}/shell.nix'
 
-            if exists(ss_nix):
+            if exists(ss_yaml):
                 return name, f'{name} = pkgs.callPackage {ss_nix} {{}};'
 
             elif exists(default_nix):

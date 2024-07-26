@@ -1,0 +1,1 @@
+/nix/store/c5sg23x5rhwp62q3rr655j1zhx8s3ncp-postgresql-15.4/bin/postgres "-D" "/Users/ianluo/Documents/apps/ss/.ss_data/db/postgres"

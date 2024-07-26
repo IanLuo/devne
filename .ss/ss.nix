@@ -1,10 +1,11 @@
 { pkgs ? import <nixpkgs> { } }:
 let
-  ss = pkgs.importFlake /nix/store/l1q8ki2nm5pcyxs1gk6zd7c9r3v4bz8f-source/flake.nix { };
+  ss = pkgs.callPackage /Users/ianluo/Documents/apps/ss/.ss/includes/ss/ss.nix { };
+  python_units = pkgs.callPackage /Users/ianluo/Documents/apps/ss/.ss/includes/python_units/ss.nix { };
   nixpkgs = pkgs.callPackage /nix/store/jx2p25acvlwdl87cl237rk23qgyn35h7-nixpkgs-b729601/default.nix { };
   name = "ss";
   version = "0.0.1";
-  units = pkgs.callPackage ./unit.nix { inherit ss nixpkgs; };
+  units = pkgs.callPackage ./unit.nix { inherit ss python_units nixpkgs; };
 in
 pkgs.mkShell {
   name = name;

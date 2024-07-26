@@ -97,14 +97,13 @@ class Cli:
     def __init__(self, config_path: str):
         self.root = dirname(config_path)
         self.blueprint = Blueprint(root=self.root)
-        self.folder = Folder(root=self.root)
+        self.folder = Folder(self.root)
 
     def reload(self):
         creator = FilesCreator(self.blueprint, self.root)
         creator.create_all()
 
-        os.system(f"nixpkgs-fmt {self.folder.flake_path}")
-        os.system(f"nixpkgs-fmt {self.folder.unit_path}")
+        os.system(f"nixpkgs-fmt {' '.join(self.folder.all_files('.nix'))}")
         os.system(f'jsonfmt -w {self.folder.lock_path}')
 
     def list_units(self):

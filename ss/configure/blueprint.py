@@ -41,6 +41,8 @@ import re
 import logging
 from .resource_manager import ResourceManager, Resource
 from ..folder import Folder
+from os.path import dirname, join
+
 
 @dataclass
 class Blueprint:
@@ -52,13 +54,16 @@ class Blueprint:
 
     def __init__(self, 
                  root: str, 
-                 include_root: Optional[str] = None, 
+                 include_path: Optional[str] = None, 
                  config_path: Optional[str] = None):
+        config_path = config_path or Folder(root).config_path
         self.root = root
-        self.folder = Folder(root or include_root)
-        self.resource_manager = ResourceManager(root=root, include_root=include_root)
+        self.gen_folder = Folder(join(root, '.ss') or include_path)
+        self.config_folder = Folder(dirname(config_path))
+        self.resource_manager = ResourceManager(lock_root=root, 
+                                                config_folder=self.config_folder)
 
-        self.init_blueprint(config_path or self.folder.config_path)
+        self.init_blueprint(config_path)
 
     @property
     def name(self):
@@ -122,14 +127,15 @@ class Blueprint:
 
         self.includes[name] = {**self.includes[name], 
                                **include_resource.__dict__, 
-                               'root': self.folder.include_path(name)}
+                               'gen_root': self.gen_folder.include_path(name),
+                               }
 
-        ss_path = Folder(root=include_resource.local_path).config_path
+        ss_path = Folder(include_resource.local_path).config_path
         
         if exists(ss_path):
             logging.info(f"found ss.yaml at {ss_path}, using it..")
             self.includes[name]['blueprint'] = Blueprint(root=self.root,
-                                                         include_root=self.folder.include_path(name),
+                                                         include_path=self.gen_folder.include_path(name),
                                                          config_path=ss_path)
 
     def parse_yaml(self, yaml_path: str) -> Dict[str, Any]:

@@ -1,17 +1,17 @@
-ROOT_FOLDER = '.ss'
 CONFIG_FILE = "ss.yaml"
 LOCK_FILE = "ss.lock"
-FLAKE_FILE = f'{ROOT_FOLDER}/ss.nix'
-UNIT_FILE = f'{ROOT_FOLDER}/units.nix'
-DATA_FOLDER = f'{ROOT_FOLDER}/data'
-INCLUDES_FOLDER = f'{ROOT_FOLDER}/includes'
+FLAKE_FILE = 'ss.nix'
+UNIT_FILE = 'units.nix'
+DATA_FOLDER = 'data'
+INCLUDES_FOLDER = 'includes'
 
 from os.path import exists, dirname, join, abspath
 from os import makedirs 
+import os
 
 class Folder:
-    def __init__(self, root):
-        self.root = root
+    def __init__(self, path):
+        self.path = path 
 
     @staticmethod
     def at_current_location(path: str):
@@ -19,23 +19,23 @@ class Folder:
 
     @property
     def flake_path(self):
-        return f'{self.root}/{FLAKE_FILE}'
+        return join(self.path, FLAKE_FILE)
 
     @property
     def unit_path(self):
-        return f'{self.root}/{UNIT_FILE}'
+        return join(self.path, UNIT_FILE)
 
     @property
     def data_folder_path(self):
-        return f'{self.root}/{DATA_FOLDER}'
+        return join(self.path, DATA_FOLDER)
 
     @property
     def config_path(self):
-        return f'{self.root}/{CONFIG_FILE}'
+        return join(self.path, CONFIG_FILE)
 
     @property
     def lock_path(self):
-        return f'{self.root}/{LOCK_FILE}'
+        return join(self.path, LOCK_FILE)
 
     def init_data_path(self) -> str:
         return self.create_folder(self.data_folder_path)
@@ -53,11 +53,19 @@ class Folder:
         return path 
 
     def include_path(self, name: str):
-        return join(self.root, INCLUDES_FOLDER, name)
+        return join(self.path, INCLUDES_FOLDER, name)
 
     def create_includes(self, name: str):
         path = self.create_folder(self.include_path(name))
         self.create_folder(path)
+
+    def all_files(self, ext):
+        matching_files = []
+        for root, dirs, files in os.walk(self.path):
+            for file in files:
+                if file.endswith(ext):
+                    matching_files.append(os.path.join(root, file))
+        return matching_files
 
     def make_file(self, path, content = ''):
         dir = dirname(path)

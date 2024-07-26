@@ -2,12 +2,12 @@ from .nix_generator import NixGenerator
 from .units_template import UnitsTemplate
 from ..configure.blueprint import Blueprint
 from ..folder import Folder
-
+from os.path import join
 
 class FilesCreator:
     def __init__(self, blueprint: Blueprint, root: str):
         self.blueprint = blueprint
-        self.root = root
+        self.folder = Folder(join(root, '.ss'))
 
     def create_all(self):
         self.blueprint.resovle_all_includes(self.blueprint.includes)
@@ -15,9 +15,9 @@ class FilesCreator:
             blueprint = include.get('blueprint')
             if blueprint is not None:
                 blueprint.resovle_all_includes(blueprint.includes)
-                self.create(blueprint= blueprint, root=Folder(self.root).include_path(name))
+                self.create(blueprint= blueprint, root=self.folder.include_path(name))
 
-        self.create(root=self.root, blueprint=self.blueprint)
+        self.create(root=self.folder.path, blueprint=self.blueprint)
 
 
     def create(self, root: str, blueprint: Blueprint) -> bool:

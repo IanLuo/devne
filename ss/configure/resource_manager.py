@@ -16,9 +16,10 @@ class Resource:
     locked: bool
 
 class ResourceManager:
-    def __init__(self, root: str, include_root: Optional[str] = None):
-        self.lock = Lock(root)
-        self.nix_resource_manager = NixResourceManager(include_root or root)
+    def __init__(self, lock_root: str, config_folder: Folder):
+        self.lock = Lock(lock_root)
+        self.config_folder = config_folder
+        self.nix_resource_manager = NixResourceManager(config_folder=config_folder)
 
     def fetch_resource(self, name: str, value: Dict) -> Resource:
         node = self.lock.find_node(name)
@@ -40,8 +41,8 @@ class ResourceManager:
             return resource
 
 class NixResourceManager:
-    def __init__(self, root: str):
-        self.folder = Folder(root)
+    def __init__(self, config_folder: Folder):
+        self.config_folder = config_folder
 
     def fetch_resource(self, name: str, value: Dict) -> Resource:
         url = value.get("url")
@@ -49,7 +50,7 @@ class NixResourceManager:
             raise Exception(f"no url found for resource {name}")
 
         if url.startswith('path:'):
-            store_path = self.fetch_for_path(path=self.resolve_path(url=url, root=self.folder.root))
+            store_path = self.fetch_for_path(path=self.resolve_path(url=url, folder=self.config_folder))
             hash = '' 
             rev = ''
             locked = False
@@ -72,9 +73,9 @@ class NixResourceManager:
 
         return Resource(local_path=matched, rev=rev, remote_path=url, hash=hash, locked=locked)
 
-    def resolve_path(self, root, url):
+    def resolve_path(self, url: str, folder: Folder):
         if url.startswith('path:///.'):
-            return url.replace('.', root)
+            return url.replace('.', folder.path)
         else:
             return url
 
