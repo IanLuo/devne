@@ -12,7 +12,7 @@ include:
 
 units:
   python:
-    source: $python_units.python310
+    source: $python_units.python
     
   poetry:
     source: $python_units.poetry
