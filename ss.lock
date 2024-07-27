@@ -4,16 +4,6 @@
     "rev": "b729601a9e6c459fd8884dea513af143111bed54",
     "hash": "05m8d4hj2ifkypwddy152rkxdwcdzicy5si3pqwgnhxw62l7a2fl"
   },
-  "ss-python_units": {
-    "repo": "https://github.com/IanLuo/python_units",
-    "rev": "0ec991ca961e68761e7a38c09f48cc66b3f86c64",
-    "hash": "03yic7s677szmf0nzfg3hix0igk4r3cqyksv7361l25419a3r4g2"
-  },
-  "python_units-ss": {
-    "repo": "https://github.com/ianluo/templates",
-    "rev": "f9977067ab1def6fbdf530c6730309a1a69ca3db",
-    "hash": "1rnj65iwzm5zs1hw44zn8kgql6zgjy9pwfwc63vf2nfrayclkmcg"
-  },
   "python_units-nixpkgs": {
     "repo": "https://github.com/NixOS/nixpkgs",
     "rev": "7c67f72893a04c0b15422cb6f951ed0c8238aa50",
@@ -23,5 +13,20 @@
     "repo": "https://github.com/NixOS/nixpkgs",
     "rev": "453402b94f39f968a7c27df28e060f69e4a50c3b",
     "hash": "10ipmhb34ccrbndiryzbgqfdjaw1w7c05wi22yg45m605nxsl3w9"
+  },
+  "python_units-ss": {
+    "repo": "https://github.com/ianluo/templates",
+    "rev": "22010901b5f0aef6ed1bad3a2de02eeb769cd40d",
+    "hash": "0lvk4vki3j4gjh0bwm19afmwarzhrc9s18bnl6lllk2x8303bjwk"
+  },
+  "ss-python_units": {
+    "repo": "https://github.com/IanLuo/python_units",
+    "rev": "1105e7e95808aaeabba97b089511c7c5efd64eb5",
+    "hash": "1g60cxm3lskszvcwisbq9bkzls90z9az9wzp309k9arcgrnbzmjn"
+  },
+  "python_units-templates": {
+    "repo": "https://github.com/ianluo/templates",
+    "rev": "22010901b5f0aef6ed1bad3a2de02eeb769cd40d",
+    "hash": "0lvk4vki3j4gjh0bwm19afmwarzhrc9s18bnl6lllk2x8303bjwk"
   }
 }

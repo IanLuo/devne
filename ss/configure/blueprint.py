@@ -51,12 +51,14 @@ class Blueprint:
     action_flows: Dict[str, Any]
     includes: Dict[str, Any]
     metadata: Dict[str, Any]
+    is_root_blueprint: bool
 
     def __init__(self, 
                  root: str, 
                  include_path: Optional[str] = None, 
                  config_path: Optional[str] = None):
         config_path = config_path or Folder(root).config_path
+        self.is_root_blueprint = include_path is None
         self.root = root
         self.gen_folder = Folder(join(root, '.ss') or include_path)
         self.config_folder = Folder(dirname(config_path))

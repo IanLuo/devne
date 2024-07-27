@@ -4,7 +4,7 @@ metadata:
   description: devlopment environment with 1 command
 
 include:
-  ss: path:///Users/ianluo/Documents/apps/templates
+  templates: path:///Users/ianluo/Documents/apps/templates
   python_units: https://github.com/IanLuo/python_units
   nixpkgs:
     url: https://github.com/NixOS/nixpkgs
@@ -12,22 +12,13 @@ include:
 
 units:
   python:
-    source: $nixpkgs.python310
-    instantiate: |
-      python -m venv .venv
-      source .venv/bin/activate
-      poetry install
-    actions: 
-      test: "pytest"
-      run: "python -m src.main"
-
+    source: $python_units.python310
+    
   poetry:
-    source: $nixpkgs.poetry
-    actions:
-      install: "poetry install"
-      add: "poetryh add"
-      list: "poetry list"
-      build: "poetry build"
+    source: $python_units.poetry
+    
+  pyright:
+    source: $python_units.pyright 
 
   nixpkgs-fmg:
     source: $nixpkgs.nixpkgs-fmt
@@ -43,9 +34,6 @@ units:
 
   prefetch-git:
     source: $nixpkgs.nix-prefetch-git
-
-  # pyright:
-  #   source: $nixpkgs.pyright
 
 actions:
   test: $python.test

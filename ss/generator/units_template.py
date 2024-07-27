@@ -6,6 +6,7 @@ class UnitsTemplate(Template):
 
     def render(self) -> str:
         line_break = "\n"
+        space = " "
 
         names = list(map(lambda x: x.replace(".", "_"), self.blueprint.units.keys()))
 
@@ -30,19 +31,20 @@ class UnitsTemplate(Template):
         return f"""
 	{{  {','.join(all_import) } }}:
 		let
-            wrapInUnit = ss.lib.wrapInUnit;
-            sslib = ss.lib;
+            wrapInUnit = templates.lib.wrapInUnit;
+            sslib = templates.lib;
             metadata = {{ inherit name version; }};
 
             {render_units_in_sources}
 
             all = [ {line_break.join(names)}];
+            all_attr = {{ inherit { space.join(names) }; }};
 
             startScript = ''
                 export SS_PROJECT_BASE=$PWD
             '';
 		in {{
-		inherit all;
+		inherit all all_attr;
 		scripts = builtins.concatStringsSep "\\n" ([ startScript ] ++ map (unit: unit.script) all);
         dependencies = all; 
 		}}
