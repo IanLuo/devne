@@ -50,28 +50,28 @@ class NixResourceManager:
             raise Exception(f"no url found for resource {name}")
 
         if url.startswith('path:'):
-            store_path = self.fetch_for_path(path=self.resolve_path(url=url, folder=self.config_folder))
+            local_path = self.fetch_for_path(path=self.resolve_path(url=url, folder=self.config_folder))
             hash = '' 
             rev = ''
             locked = False
         else:
             rev = value.get('rev') or self.get_commit(url, value.get('ref'))
             hash = self.fetch_for_git(url=url, rev=rev)
-            store_path = self.get_store_path_from_git(url=url, hash=hash, rev=rev)
+            local_path = self.get_store_path_from_git(url=url, hash=hash, rev=rev)
             locked = True 
 
-        logging.info(f"command result: {store_path}")
+        logging.info(f"command result: {local_path}")
 
-        pattern = r'(/nix/store/[^"]+)'
-        match = re.search(pattern, store_path)
+        # pattern = r'(/nix/store/[^"]+)'
+        # match = re.search(pattern, store_path)
+        #
+        # if match:
+        #     matched = match.group(1) 
+        #     logging.info(f"resource fetched to {matched}")
+        # else:
+        #     raise Exception(f'failed to fetch resource from {url}')
 
-        if match:
-            matched = match.group(1) 
-            logging.info(f"resource fetched to {matched}")
-        else:
-            raise Exception(f'failed to fetch resource from {url}')
-
-        return Resource(local_path=matched, rev=rev, remote_path=url, hash=hash, locked=locked)
+        return Resource(local_path=local_path, rev=rev, remote_path=url, hash=hash, locked=locked)
 
     def resolve_path(self, url: str, folder: Folder):
         if url.startswith('path:///.'):
@@ -107,13 +107,14 @@ class NixResourceManager:
         return rev 
 
     def fetch_for_path(self, path) -> str:
-        command = f'nix-instantiate --eval --json -E "fetchTree {path}"'
-
-        if command is None:
-            raise Exception("fail to get store path for {url}")
-
-        store_path = run(command)
-        return store_path
+        # command = f'nix-instantiate --eval --json -E "fetchTree {path}"'
+        #
+        # if command is None:
+        #     raise Exception("fail to get store path for {url}")
+        #
+        # store_path = run(command)
+        # return store_path
+        return path.replace('path://', '')
 
 
     def fetch_for_url(self, url: str) -> str:

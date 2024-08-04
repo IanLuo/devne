@@ -4,7 +4,7 @@ import re
 from typing import Any, Dict
 from ..configure.blueprint import Blueprint
 from os.path import exists
-
+from .functions.function_factory import find_function
 
 class Template(ABC):
     LINE_BREAK = "\n"
@@ -51,33 +51,29 @@ class Template(ABC):
         pattern = r"^\$([\w\.\_\-]|~>)+$"
         return re.search(pattern, value) is not None
 
-    def render_map(self, data: Dict[str, Any]) -> str:
-        if isinstance(data, dict):
+    def render_map(self, name:str, data: dict) -> str:
+        function = find_function(name=name, value=data)
+        if function is not None:
+            return function.render()
+        else:
             return f"""
                 {{
-                    {self.LINE_BREAK.join([f'{key} = {self.render_value(value)};' for key, value in data.items() ])
+                    {self.LINE_BREAK.join([f'{key} = {self.render_value(key, value)};' for key, value in data.items() ])
                     }
                 }}
             """
-        else:
-            raise TypeError("data must be a dictionary")
 
-    def render_value(self, value: Any) -> str:
+    def render_value(self, name: str, value: Any) -> str:
         if value == None:
             return "null"
         elif isinstance(value, list):
-            return f"""[{self.LINE_BREAK.join(map(lambda x: f'{self.render_value(x)}', value))}]"""
+            return f"""[{self.LINE_BREAK.join(map(lambda x: f'{self.render_value(name, x)}', value))}]"""
         elif isinstance(value, dict):
-            return self.render_map(value)
+            return self.render_map(name=name, data=value)
         elif isinstance(value, bool):
             return "true" if value else "false"
-        elif isinstance(value, GitRepo):
-            return str(value)
         elif isinstance(value, str) and self._is_var_ref(value):
-            if value.startswith("$metadata"):
-                return value.replace("$", "")
-            else:
-                return value.replace("$", "")
+            return value.replace("$", "")
         elif isinstance(value, str) and self._is_path(value):
             return value
         elif isinstance(value, str) and self._is_multiple_lines(value):

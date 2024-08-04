@@ -1,9 +1,9 @@
 # WIP
-[ ] import other ss.yaml and generate files for them
-[ ] units can be observed
-[ ] replace flake to normal .nix
+[ ] show unit source
+[ ] parameter override for units
 
 # BACKLOG
+[ ] units can be observed
 [ ] unit documentations
 [ ] command auto completion
 [ ] welcome information
@@ -14,6 +14,8 @@
     docker
 
 # ARCHIVE
+[x] import other ss.yaml and generate files for them
+[x] replace flake to normal .nix
 [x] to make unit runnable
     add doc for each unit, by adding a special parameter 'doc', by default null
     to specify input/output type for each unit

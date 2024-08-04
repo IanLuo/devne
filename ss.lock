@@ -13,20 +13,5 @@
     "repo": "https://github.com/NixOS/nixpkgs",
     "rev": "453402b94f39f968a7c27df28e060f69e4a50c3b",
     "hash": "10ipmhb34ccrbndiryzbgqfdjaw1w7c05wi22yg45m605nxsl3w9"
-  },
-  "python_units-ss": {
-    "repo": "https://github.com/ianluo/templates",
-    "rev": "22010901b5f0aef6ed1bad3a2de02eeb769cd40d",
-    "hash": "0lvk4vki3j4gjh0bwm19afmwarzhrc9s18bnl6lllk2x8303bjwk"
-  },
-  "ss-python_units": {
-    "repo": "https://github.com/IanLuo/python_units",
-    "rev": "1105e7e95808aaeabba97b089511c7c5efd64eb5",
-    "hash": "1g60cxm3lskszvcwisbq9bkzls90z9az9wzp309k9arcgrnbzmjn"
-  },
-  "python_units-templates": {
-    "repo": "https://github.com/ianluo/templates",
-    "rev": "22010901b5f0aef6ed1bad3a2de02eeb769cd40d",
-    "hash": "0lvk4vki3j4gjh0bwm19afmwarzhrc9s18bnl6lllk2x8303bjwk"
   }
 }

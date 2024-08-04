@@ -39,7 +39,7 @@ import os
 from os.path import exists 
 import re
 import logging
-from .resource_manager import ResourceManager, Resource
+from .resource_manager import ResourceManager
 from ..folder import Folder
 from os.path import dirname, join
 
@@ -120,9 +120,6 @@ class Blueprint:
             self.resolve_include(name, value)
 
     def resolve_include(self, name: str, value: dict[str, Any]):
-        if value is None:
-            raise Exception(f"include '{name}' not found")
-
         logging.info(f"collecting include {value}..")
         resource_name = self.metadata.get("name", '') + "-" + name
         include_resource = self.resource_manager.fetch_resource(resource_name, value)
@@ -211,6 +208,8 @@ class Blueprint:
         match = re.match(pattern, ref)
         if match:
             unit = self.units.get(match.group(1))
+            if unit is None:
+                raise Exception(f'unit {match.group(1)} not found')
             action = match.group(2)
             return unit, action
         else:

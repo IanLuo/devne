@@ -5,7 +5,8 @@ metadata:
 
 include:
   templates: path:///Users/ianluo/Documents/apps/templates
-  python_units: https://github.com/IanLuo/python_units
+  # python_units: https://github.com/IanLuo/python_units
+  python_units: path:///Users/ianluo/Documents/apps/python_units
   nixpkgs:
     url: https://github.com/NixOS/nixpkgs
     ref: nixpkgs-unstable
