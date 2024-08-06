@@ -1,5 +1,4 @@
-from typing import Optional, Any, Dict
-from ..resource_manager import ResourceManager
+from typing import Optional 
 
 class GitRepo:
     url: str

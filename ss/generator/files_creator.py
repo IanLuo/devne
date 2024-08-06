@@ -1,4 +1,4 @@
-from .nix_generator import NixGenerator 
+from .nix_template import NixTemplate
 from .units_template import UnitsTemplate
 from ..configure.blueprint import Blueprint
 from ..folder import Folder
@@ -22,7 +22,7 @@ class FilesCreator:
 
     def create(self, root: str, blueprint: Blueprint) -> bool:
         folder = Folder(root)
-        flake_template = NixGenerator(blueprint)
+        flake_template = NixTemplate(blueprint)
         units_template = UnitsTemplate(blueprint)
 
         # creat flake.nix

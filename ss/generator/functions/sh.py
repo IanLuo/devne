@@ -8,6 +8,8 @@ class Sh:
 
     def render(self):
         return f"""
+        ''
           {self.command}
+        ''
         """
 

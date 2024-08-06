@@ -29,6 +29,9 @@ class Lock:
     def clear(self):
         self.lock = {}
         self.write_lock(self.lock)
+
+    def add_new(self, name: str, repo: str, rev: str, hash: str) -> None:
+        self.add_node(name, Node(repo=repo, rev=rev, hash=hash))
         
     def add_node(self, name: str, node: Node) -> None:
         self.lock[name] = node.__dict__

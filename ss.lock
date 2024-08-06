@@ -13,5 +13,10 @@
     "repo": "https://github.com/NixOS/nixpkgs",
     "rev": "453402b94f39f968a7c27df28e060f69e4a50c3b",
     "hash": "10ipmhb34ccrbndiryzbgqfdjaw1w7c05wi22yg45m605nxsl3w9"
+  },
+  "22fe023ea4b5cd5c4a061f2ed2ec6d14": {
+    "repo": "https://www.python.org/ftp/python/3.1/Python-3.1.tgz",
+    "rev": "",
+    "hash": "0shy0gnidli5ga09s29xb6lnxzfp4s0p585h29jc58sfaz7k984r"
   }
 }

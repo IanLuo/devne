@@ -1,8 +1,9 @@
-from .template import Template
+from .renderer import Renderer
 
-class UnitsTemplate(Template):
+class UnitsTemplate:
     def __init__(self, blueprint):
-        super().__init__(blueprint)
+        self.blueprint = blueprint 
+        self.renderer = Renderer(blueprint=blueprint)    
 
     def render(self) -> str:
         line_break = "\n"
@@ -10,14 +11,11 @@ class UnitsTemplate(Template):
 
         names = list(map(lambda x: x.replace(".", "_"), self.blueprint.units.keys()))
 
-        version_str = lambda value: f'\"{value.get("version")}\"' if value.get("version", None) is not None else 'null'
-
-        def render_unit(name, value):
+        def render_unit(name, unit):
             return f"""
                 {name} = (sslib.defineUnit {{
                     name = "{name}";
-                    version = {version_str(value)};
-                    {line_break.join([f'{key}={self.render_value(value)};' for key, value in value.items()])}
+                    {self.renderer.render_unit(unit=unit)}
                 }});
                 """
 
@@ -26,7 +24,7 @@ class UnitsTemplate(Template):
         )
 
         default_imports = ["system", "name", "version", "lib" ]
-        all_import = [ item[0] for item in self.includes if item[1] is not None ] + default_imports
+        all_import = [ item[0] for item in self.renderer.includes if item[1] is not None ] + default_imports
 
         return f"""
 	{{  {','.join(all_import) } }}:

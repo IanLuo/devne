@@ -90,6 +90,17 @@ class NixResourceManager:
         logging.info(f"store path: {local_path}")
         return local_path
 
+    def get_store_path_from_url(self, url, hash):
+        cmd = f'''nix-store -r \
+            $(nix-instantiate -E \
+                \"with import <nixpkgs> {{}}; \
+                    (fetchurl {{ url = \\"{url}\\"; \
+                    sha256 = \\"{hash}\\"; \
+                    }})\")'''
+        local_path = run(cmd)
+        logging.info(f"store path: {local_path}")
+        return local_path
+
     def get_commit(self, url: str, ref: Optional[str]) -> str:
         if ref is None:
             get_commit = f'git ls-remote {url} HEAD ref/heads | awk \'/\\tHEAD$/ {{print $1}}\''

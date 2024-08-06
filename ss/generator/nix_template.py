@@ -1,17 +1,20 @@
-from .template import Template
+from ss.configure.schema import * 
+from os.path import exists
+from .renderer import Renderer
 
-class NixGenerator(Template):
+class NixTemplate:
     def __init__(self, blueprint):
-        super().__init__(blueprint)
+        self.blueprint = blueprint
+        self.renderer = Renderer(blueprint=blueprint)
 
     def render(self) -> str:
         return f"""
         {{ pkgs ? import <nixpkgs> {{}} }}:
         let
-        {super().LINE_BREAK.join([ item[1] for item in self.includes if item[1] is not None])}
+        {LINE_BREAK.join([ item[1] for item in self.renderer.includes if item[1] is not None])}
         name = "{self.blueprint.name}";
         version = "{self.blueprint.version}";
-        units = pkgs.callPackage ./units.nix {{ inherit name version { ' '.join([item[0] for item in self.includes if item[1] is not None]) }; }};
+        units = pkgs.callPackage ./units.nix {{ inherit name version { ' '.join([item[0] for item in self.renderer.includes if item[1] is not None]) }; }};
         in
 
         {  self.render_mkshell() if self.blueprint.is_root_blueprint else self.render_package() }

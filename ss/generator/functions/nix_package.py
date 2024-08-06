@@ -7,5 +7,4 @@ class NixPackage:
         self.params = params
 
     def render(self):
-        return f"""
-        """
+        return self.value
