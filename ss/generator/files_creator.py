@@ -11,11 +11,11 @@ class FilesCreator:
 
     def create_all(self):
         self.blueprint.resovle_all_includes(self.blueprint.includes)
-        for (name, include) in self.blueprint.includes.items():
-            blueprint = include.get('blueprint')
-            if blueprint is not None:
-                blueprint.resovle_all_includes(blueprint.includes)
-                self.create(blueprint= blueprint, root=self.folder.include_path(name))
+        # for (name, include) in self.blueprint.includes.items():
+        #     blueprint = include.get('blueprint')
+        #     if blueprint is not None:
+        #         blueprint.resovle_all_includes(blueprint.includes)
+        #         self.create(blueprint= blueprint, root=self.folder.include_path(name))
 
         self.create(root=self.folder.path, blueprint=self.blueprint)
 
