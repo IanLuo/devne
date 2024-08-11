@@ -1,7 +1,8 @@
+from ss.configure.blueprint import Blueprint
 from .renderer import Renderer
 
 class UnitsTemplate:
-    def __init__(self, blueprint):
+    def __init__(self, blueprint: Blueprint):
         self.blueprint = blueprint 
         self.renderer = Renderer(blueprint=blueprint)    
 
@@ -12,12 +13,26 @@ class UnitsTemplate:
         names = list(map(lambda x: x.replace(".", "_"), self.blueprint.units.keys()))
 
         def render_unit(name, unit):
-            return f"""
-                {name} = (sslib.defineUnit {{
-                    name = "{name}";
-                    {self.renderer.render_unit(unit=unit)}
-                }});
+            params = self.renderer.extract_params(unit=unit)
+
+            if self.blueprint.is_root_blueprint:
+                has_father = (self.renderer.father_name(unit=unit, blueprint=self.blueprint) is not None)
+
+                return f"""
+                    {name} = (
+                      {self.renderer.render_call_father(name=name, unit=unit, blueprint=self.blueprint)}
+                    sslib.defineUnit
+                    {{
+                        name = "{name}";
+                        {self.renderer.render_unit(unit=unit)}
+                    }});
                 """
+            else:
+                return f"""{name} ={{ 
+                    {",".join([f"{key} ? {value}" for key, value in params.items()])}
+                }}: {{
+                  {self.renderer.render_unit(unit=unit)}
+               }};""" 
 
         render_units_in_sources = line_break.join(
             [render_unit(name, value) for name, value in self.blueprint.units.items()]

@@ -4,24 +4,19 @@
     "rev": "b729601a9e6c459fd8884dea513af143111bed54",
     "hash": "05m8d4hj2ifkypwddy152rkxdwcdzicy5si3pqwgnhxw62l7a2fl"
   },
-  "python_units-nixpkgs": {
-    "repo": "https://github.com/NixOS/nixpkgs",
-    "rev": "7c67f72893a04c0b15422cb6f951ed0c8238aa50",
-    "hash": "1f9bv0cizpj5m0rdfycaq49qbzrv635gyr8vzyzsjnyvhgrrw6ql"
-  },
   "ss-templates-nixpkgs": {
     "repo": "https://github.com/NixOS/nixpkgs",
     "rev": "453402b94f39f968a7c27df28e060f69e4a50c3b",
     "hash": "10ipmhb34ccrbndiryzbgqfdjaw1w7c05wi22yg45m605nxsl3w9"
   },
-  "22fe023ea4b5cd5c4a061f2ed2ec6d14": {
-    "repo": "https://www.python.org/ftp/python/3.1/Python-3.1.tgz",
-    "rev": "",
-    "hash": "0shy0gnidli5ga09s29xb6lnxzfp4s0p585h29jc58sfaz7k984r"
+  "python_units-nixpkgs-python": {
+    "repo": "https://github.com/cachix/nixpkgs-python",
+    "rev": "7c550bca7e6cf95898e32eb2173efe7ebb447460",
+    "hash": "0pyi6rfb6h9ivic53bgbakvphxbrkv0zv81n0w2ja9c9l88qx8xj"
   },
-  "41b02fbe4aa808eb7f796e26d504805e": {
-    "repo": "https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz",
-    "rev": "",
-    "hash": "0n17pm2r4k5x88n1w5yqhzsx1d3hyqz6dd1zh75r01n9aynwpq64"
+  "python_units-nixpkgs": {
+    "repo": "https://github.com/NixOS/nixpkgs",
+    "rev": "13fe00cb6c75461901f072ae62b5805baef9f8b2",
+    "hash": "0vybq6rd8m9m53a12ijj0l79rfj6np7yywdr3sbj36c22z8mh1gl"
   }
 }

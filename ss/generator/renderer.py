@@ -9,7 +9,6 @@ class Renderer:
         self.blueprint = blueprint
         self.includes = [ self.resolve_import(name=item[0], item=item[1]) for item in self.blueprint.includes.items()]
 
-
     def resolve_import(self, name: str, item: dict):
         local_path = item.get("local_path")
         gen_root = item.get("gen_root")
@@ -19,17 +18,20 @@ class Renderer:
         flake_nix = f'{local_path}/flake.nix'
         shell_nix = f'{local_path}/shell.nix'
 
-        # if exists(ss_yaml):
-        #     return name, f'{name} = pkgs.callPackage {ss_nix} {{}};'
+        if exists(ss_yaml):
+            return name, f'{name} = pkgs.callPackage {ss_nix} {{}};'
 
-        if exists(default_nix):
-            return name, f'{name} = pkgs.callPackage {default_nix} {{}};'
+        elif exists(default_nix):
+            if item.get(CALLABLE, True) == False:
+                return name, f'{name} = import {default_nix};'
+            else:
+                return name, f'{name} = pkgs.callPackage {default_nix} {{}};'
 
         elif exists(flake_nix):
-            return name, f'{name} = pkgs.importFlake {flake_nix} {{}};'
+            return name, f'{name} = pkgs.getFlake {flake_nix} {{}};'
 
         elif exists(shell_nix):
-            return f'{name} = pkgs.callPackage {shell_nix} {{}};'
+            return name, f'{name} = pkgs.callPackage {shell_nix} {{}};'
         else: 
             return name, None 
 
@@ -40,36 +42,73 @@ class Renderer:
     def _is_multiple_lines(self, value: str) -> bool:
         return "\n" in value
 
-    def merge_all_fields(self, unit: dict, blueprint: Blueprint) -> dict:
+    def render_let_in(self, vars: dict) -> str:
+        if len(vars) == 0:
+            return ''
+
+        return f"""
+            let
+                { LINE_BREAK.join([f'{key} = {value};' for key, value in vars.items()]) }
+            in
+        """
+
+    def render_call_father(self, name: str, unit: dict, blueprint: Blueprint) -> str:
+        params = self.extract_params(unit)
+        
+        father_name = self.father_name(unit=unit, blueprint=blueprint)
+
+        if father_name is None:
+            result = {}
+        else:
+            if len(params) == 0:
+                result = { "fatherUnit": f"{father_name}.{name} {{}}" }
+            else:
+                vars = SPACE.join([f"{key}={value};" for key, value in params.items()]);
+                result = { "fatherUnit": f"{father_name}.{name} {{ { vars } }}" }
+
+        return self.render_let_in(vars=result)
+
+    def father_name(self, unit: dict, blueprint: Blueprint) -> str:
+        params = self.extract_params(unit)
         source = unit.get(K_SOURCE, '')
+        source_comp = source.split('.')
+
+        if not isinstance(source, str):
+            return None
+
+        if len(source_comp) < 2:
+            return None
+
         resolvable_includes = [ item for item in blueprint.includes.keys() if blueprint.includes[item].get('blueprint') is not None ]
 
-        for resolvable_include in resolvable_includes:
-            include = blueprint.includes[resolvable_include]
-            source_comp = source.split('.')
-            if len(source_comp) > 1:
-                include_unit = include.get('blueprint').units.get(source_comp[1])
-                if include_unit is not None:
-                    # because 'source' is worked like 'father', so the child's source should be overrided by the father, other fields will use child's 
-                    # None fields should be removed from child
-                    unit = { key: value for key, value in unit.items() if value is not None and key != K_SOURCE }
-                    unit = { **include_unit, **unit  }
-                if len(source_comp) > 2:
-                    unit = self.merge_all_fields(unit, blueprint.includes[resolvable_include].get('blueprint'))
+        if source_comp[0] not in resolvable_includes:
+            return None
+
+        return source_comp[0]
+
+    def merge_all_fields(self, unit: dict, blueprint: Blueprint) -> dict:
+        father_name = self.father_name(unit=unit, blueprint=blueprint)
+        
+        if father_name is not None:
+            unit = { key: unit.get(key, f'fatherUnit.{key}') for key in PRE_DEFINED_KEYS }
+            unit[K_SOURCE] = f'fatherUnit.{K_SOURCE}'
 
         return unit
 
+    def extract_params(self, unit: dict) -> dict:
+        return { k: v for k, v in unit.items() if k not in PRE_DEFINED_KEYS }
 
     def render_unit(self, unit: dict) -> str:
-        keys_to_remove_as_parms = [K_SOURCE, K_INSTANTIATE, K_ACTIONS, K_LISTNER]
-
         # resolve all fields from includes
         unit = self.merge_all_fields(unit=unit, blueprint=self.blueprint)
 
-        params = { k: v for k, v in unit.items() if k not in keys_to_remove_as_parms }
+        params = self.extract_params(unit)
+
+        unit = { k: v for k, v in unit.items() if k in PRE_DEFINED_KEYS }
 
         def render_map(name:str, data: dict) -> str:
             function = find_function(name=name, value=data, params=params, blueprint=self.blueprint)
+
             if function is not None:
                 return function.render()
             else:
@@ -95,7 +134,7 @@ class Renderer:
                 return f'''
                     {q}{value}{q}
                 ''' 
-            elif name == K_SOURCE: # in source, the text by default is supposed to be nix code, don't add quote
+            elif name in PRE_DEFINED_KEYS: # in source, the text by default is supposed to be nix code, don't add quote
                 return f'{str(value)}'
             else:
                 return f'"{str(value)}"'

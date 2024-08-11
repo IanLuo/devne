@@ -16,14 +16,12 @@ class Parser:
             return {"source": data}
         elif isinstance(data, dict):
             mandatory = lambda x: data[x] if x in data else raise_exception(x)
-            optional = lambda x: data.get(x)
+            optionals = ["instantiate", "actions", "listener"]
 
-            return {**data, **{
-                "source": mandatory("source"),
-                "instantiate": optional("instantiate"),
-                "actions": optional("actions"),
-                "listener": optional("listener"),
-            }}
+            return {**data, 
+                    **{ "source": mandatory("source") },
+                    ** { key: data.get(key) for key in optionals if key in data.keys() }
+                    }
         else:
             raise Exception("unit should be a string or a dict")
 
