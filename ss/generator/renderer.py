@@ -90,7 +90,7 @@ class Renderer:
         father_name = self.father_name(unit=unit, blueprint=blueprint)
         
         if father_name is not None:
-            unit = { key: unit.get(key, f'fatherUnit.{key}') for key in PRE_DEFINED_KEYS }
+            unit = { key: unit.get(key, f'fatherUnit.{key} or null') for key in PRE_DEFINED_KEYS }
             unit[K_SOURCE] = f'fatherUnit.{K_SOURCE}'
 
         return unit

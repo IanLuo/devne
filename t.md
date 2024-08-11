@@ -1,6 +1,5 @@
 # WIP
-[ ] show unit source
-[ ] parameter override for units
+[ ] action chain
 
 # BACKLOG
 [ ] units can be observed
@@ -14,6 +13,8 @@
     docker
 
 # ARCHIVE
+[x] show unit source
+[x] parameter override for units
 [x] import other ss.yaml and generate files for them
 [x] replace flake to normal .nix
 [x] to make unit runnable
