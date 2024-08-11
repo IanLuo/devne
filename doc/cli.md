@@ -13,26 +13,12 @@
   which used by devne used, user can not change, they will be 'hidden' in the devne folder, and devne cli will activatly modify them.
 
 ```
-devne
-  start
-  end
-  package 
-    search
+ss
+  up
+  reload
+  update [name]
+  actions 
     list
-    add
-    remove
-  power
-    list
-    add
-    remove
-    search
+    exec
   dashboard
-
-powers
-  clock
-  now
-    list
-    check
-    remove
-    link
 ``t`
