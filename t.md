@@ -1,6 +1,7 @@
 # WIP
 [ ] ss update action
 [ ] action chain
+[ ] generate action shell with nix, and call them in a name patter: unit.action_name
 
 # BACKLOG
 [ ] units can be observed

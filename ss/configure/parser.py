@@ -1,6 +1,8 @@
 import yaml
 from typing import Any, Dict
 
+from ss.configure.schema import K_ACTIONS, K_LISTNER, K_ON_START, K_SOURCE
+
 class Parser:
 
     def parse_yaml(self, yaml_path: str) -> Dict[str, Any]:
@@ -13,13 +15,13 @@ class Parser:
             raise Exception(f"{name} is mandatory")
 
         if isinstance(data, str):
-            return {"source": data}
+            return {K_SOURCE: data}
         elif isinstance(data, dict):
             mandatory = lambda x: data[x] if x in data else raise_exception(x)
-            optionals = ["instantiate", "actions", "listener"]
+            optionals = [K_ON_START, K_ACTIONS, K_LISTNER]
 
             return {**data, 
-                    **{ "source": mandatory("source") },
+                    **{ K_SOURCE: mandatory(K_SOURCE) },
                     ** { key: data.get(key) for key in optionals if key in data.keys() }
                     }
         else:
