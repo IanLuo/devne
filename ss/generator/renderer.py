@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 from ss.configure.blueprint import Blueprint
 from os.path import exists
 from ss.generator.functions.function_factory import find_function
@@ -63,13 +63,12 @@ class Renderer:
             if len(params) == 0:
                 result = { "fatherUnit": f"{father_name}.{name} {{}}" }
             else:
-                vars = SPACE.join([f"{key}={value};" for key, value in params.items()]);
+                vars = SPACE.join([f"{key}={self.render_value(key, value)};" for key, value in params.items()]);
                 result = { "fatherUnit": f"{father_name}.{name} {{ { vars } }}" }
 
         return self.render_let_in(vars=result)
 
-    def father_name(self, unit: dict, blueprint: Blueprint) -> str:
-        params = self.extract_params(unit)
+    def father_name(self, unit: dict, blueprint: Blueprint) -> Optional[str]:
         source = unit.get(K_SOURCE, '')
         source_comp = source.split('.')
 
@@ -106,37 +105,40 @@ class Renderer:
 
         unit = { k: v for k, v in unit.items() if k in PRE_DEFINED_KEYS }
 
-        def render_map(name:str, data: dict) -> str:
-            function = find_function(name=name, value=data, params=params, blueprint=self.blueprint)
+        return LINE_BREAK.join([f'{key}={self.render_value(key, value, params)};' for key, value in unit.items()]) 
 
-            if function is not None:
-                return function.render()
-            else:
-                return f"""
-                    {{
-                        { LINE_BREAK.join([f'{key} = {render_value(key, value)};' for key, value in data.items() ]) }
-                    }}
-                """
+    def render_map(self, name:str, data: dict, params: dict={}) -> str:
+        function = find_function(name=name, value=data, params=params, blueprint=self.blueprint)
 
-        def render_value(name: str, value: Any) -> str:
-            if value == None:
-                return "null"
-            elif isinstance(value, list):
-                return f"""[{LINE_BREAK.join(map(lambda x: f'{render_value(name, x)}', value))}]"""
-            elif isinstance(value, dict):
-                return render_map(name=name, data=value)
-            elif isinstance(value, bool):
-                return "true" if value else "false"
-            elif isinstance(value, str) and self._is_path(value):
-                return value
-            elif isinstance(value, str) and self._is_multiple_lines(value):
-                q = "''"
-                return f'''
-                    {q}{value}{q}
-                ''' 
-            elif name in PRE_DEFINED_KEYS: # in source, the text by default is supposed to be nix code, don't add quote
-                return f'{str(value)}'
-            else:
-                return f'"{str(value)}"'
+        if function is not None:
+            return function.render()
+        else:
+            return f"""
+                {{
+                    { LINE_BREAK.join([f'{key} = {self.render_value(key, value, params)};' for key, value in data.items() ]) }
+                }}
+            """
 
-        return LINE_BREAK.join([f'{key}={render_value(key, value)};' for key, value in unit.items()]) 
+    def render_value(self, name: str, value: Any, params: dict={}) -> str:
+        if value == None:
+            return "null"
+        elif isinstance(value, list):
+            return f"""[{LINE_BREAK.join(map(lambda x: f'{self.render_value(name, x, params)}', value))}]"""
+        elif isinstance(value, dict):
+            return self.render_map(name=name, data=value, params=params)
+        elif isinstance(value, bool):
+            return "true" if value else "false"
+        elif isinstance(value, str) and self._is_path(value):
+            return value
+        elif isinstance(value, str) and self._is_multiple_lines(value):
+            q = "''"
+            return f'''
+                {q}{value}{q}
+            ''' 
+        elif name in PRE_DEFINED_KEYS: # in predefined keys, the text by default is supposed to be nix code, don't add quote
+            return f'{str(value)}'
+        elif isinstance(value, float):
+            return f'{str(value)}'
+        else:
+            return f'"{str(value)}"'
+

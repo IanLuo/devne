@@ -16,8 +16,6 @@ class UnitsTemplate:
             params = self.renderer.extract_params(unit=unit)
 
             if self.blueprint.is_root_blueprint:
-                has_father = (self.renderer.father_name(unit=unit, blueprint=self.blueprint) is not None)
-
                 return f"""
                     {name} = (
                       {self.renderer.render_call_father(name=name, unit=unit, blueprint=self.blueprint)}
@@ -29,7 +27,7 @@ class UnitsTemplate:
                 """
             else:
                 return f"""{name} ={{ 
-                    {",".join([f"{key} ? {value}" for key, value in params.items()])}
+                    {",".join([f"{key} ? {self.renderer.render_value(name, value)}" for key, value in params.items()])}
                 }}: {{
                   {self.renderer.render_unit(unit=unit)}
                }};""" 

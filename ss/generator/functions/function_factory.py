@@ -10,7 +10,7 @@ def find_function(name: str, value: dict, params: dict, blueprint: Blueprint):
     url = value.get(URL)
     git = value.get(GIT)
 
-    if name == K_INSTANTIATE:    
+    if name == K_ON_START:    
         if sh is not None and isinstance(sh, str):
             return Sh(command=sh, params=params)
         else: 
