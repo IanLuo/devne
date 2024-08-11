@@ -12,11 +12,10 @@ use callPackage directly
 
 ```
 .ss
-  project.yaml
-  /nix
-    flake.nix
-    flake.lock
-    /backstage
-      python.nix      
-      postgres.nix
+  ss.nix
+  units.nix
+  /inclues
+    /python_units
+      ss.nix
+      units.nix
 ```
