@@ -9,6 +9,7 @@ from ss.folder import Folder
 from typing import Optional
 from os.path import dirname
 import logging
+import json
 
 app = typer.Typer()
 default_config = f"{os.getcwd()}/ss.yaml"
@@ -99,15 +100,19 @@ class Cli:
         self.blueprint = Blueprint(root=self.root)
         self.folder = Folder(self.root)
 
+    def _profile(self) -> dict:
+        json_str = run("load_profile")
+        return json.loads(json_str)
+
     def reload(self):
         creator = FilesCreator(self.blueprint, self.root)
         creator.create_all()
 
-        os.system(f"nixpkgs-fmt {' '.join(self.folder.all_files('.nix'))}")
+        os.system(f"nixfmt .ss/ {' '.join(self.folder.all_files('.nix'))}")
         os.system(f'jsonfmt -w {self.folder.lock_path}')
 
     def list_units(self):
-        return self.blueprint.units.keys()
+        return self._profile().get("units", {}).keys()
 
     def list_actions(self, 
                     unit_name: Optional[str] = None):

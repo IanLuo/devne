@@ -20,7 +20,7 @@ units:
     
   pyright: python_units.pyright 
 
-  nixpkgs-fmg: nixpkgs.nixpkgs-fmt
+  nixfmt: nixpkgs.nixfmt
 
   jsonfmt: nixpkgs.jsonfmt 
 

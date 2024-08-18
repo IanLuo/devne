@@ -36,7 +36,7 @@ class UnitsTemplate:
             [render_unit(name, value) for name, value in self.blueprint.units.items()]
         )
 
-        default_imports = ["system", "name", "version", "lib" ]
+        default_imports = ["pkgs", "system", "name", "version", "lib" ]
         all_import = [ item[0] for item in self.renderer.includes if item[1] is not None ] + default_imports
 
         return f"""
@@ -51,12 +51,26 @@ class UnitsTemplate:
             all = [ {line_break.join(names)}];
             all_attr = {{ inherit { space.join(names) }; }};
 
+            profile = {{
+                units = all_attr;
+            }};
+
+            load-profile = pkgs.writeScriptBin "load_profile" ''
+                echo '${{builtins.toJSON profile}}'
+            '';
+
+            onStartScript = lib.strings.concatStringsSep
+                "\n" 
+                (map (x: x.onstart) (lib.filter (unit: ({{ onstart = null;}} // unit).onstart != null) all));
+
             startScript = ''
                 export SS_PROJECT_BASE=$PWD
             '';
+
+            funcs = [ load-profile ];
 		in {{
-		inherit all all_attr;
-		scripts = builtins.concatStringsSep "\\n" ([ startScript ] ++ map (unit: unit.script) all);
+		inherit all all_attr funcs;
+		scripts = builtins.concatStringsSep "\\n" [ onStartScript ];
         dependencies = all; 
 		}}
 	"""

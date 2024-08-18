@@ -14,7 +14,7 @@ class NixTemplate:
         {LINE_BREAK.join(self._nix_icludes_value())}
         name = "{self.blueprint.name}";
         version = "{self.blueprint.version}";
-        units = pkgs.callPackage ./units.nix {{ inherit name version { ' '.join(self._nix_includes_names()) }; }};
+        units = pkgs.callPackage ./units.nix {{ inherit pkgs name version { ' '.join(self._nix_includes_names()) }; }};
         in
 
         {  self.render_mkshell() if self.blueprint.is_root_blueprint else self.render_package() }
@@ -22,16 +22,16 @@ class NixTemplate:
         """
 
     def render_package(self):
-        return f"units // {{ inherit name version { SPACE.join(self._nix_includes_names())}; }} // units.all_attr"
+        return f"units // {{ inherit pkgs name version { SPACE.join(self._nix_includes_names())}; }} // units.all_attr"
 
     def render_mkshell(self):
         return f"""
-        pkgs.mkShell {{
+        pkgs.mkShellNoCC {{
             name = name;
             version = version;
             buildInputs = [
                 units.all
-            ];
+            ] ++ units.funcs;
 
             shellHook = ''
                 echo "Welcome to ${{name}} shell"
