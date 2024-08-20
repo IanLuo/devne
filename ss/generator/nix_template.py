@@ -34,7 +34,6 @@ class NixTemplate:
             ] ++ units.funcs;
 
             shellHook = ''
-                echo "Welcome to ${{name}} shell"
                 ${{units.scripts}}
             '';
         }}

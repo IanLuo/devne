@@ -39,10 +39,8 @@ class Parser:
 
 
     def parse_actions(self, data: Any):
-        if isinstance(data, str):
-            return data
+        return data
 
-        return '' 
 
 
     def parse_action_flow(self, flow: Dict[str, Any]) -> Dict[str, Any]:

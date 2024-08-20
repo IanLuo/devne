@@ -114,21 +114,31 @@ class Cli:
     def list_units(self):
         return self._profile().get("units", {}).keys()
 
+    def store_path(self, unit: str) -> str:
+        return self._profile().get("units", {}).get(unit)
+    
+    def action_folder_path(self, unit: str) -> str:
+        return os.path.join(self.store_path(unit), 'actions')
+
     def list_actions(self, 
                     unit_name: Optional[str] = None):
         if unit_name == None:
             return self.blueprint.actions.keys()    
         else:
-            unit = self.blueprint.units.get(unit_name)
-            if unit == None:
-                return f"unit {unit_name} not found"
-
-            return unit.get("actions", {}).keys()
+            unit_action_path = self.action_folder_path(unit_name)
+            if os.path.exists(unit_action_path):
+                return os.listdir(unit_action_path)
+            else:
+                return []
 
     def run_action(self, 
                    action_name: str, 
                    unit_name: Optional[str] = None):
-        self.blueprint.perform_action(unit_name, action_name)
+        if unit_name is None:
+            pass
+        else:
+            action_path = os.path.join(self.action_folder_path(unit_name), action_name)
+            os.system(f"bash {action_path}")
 
 
 if __name__ == "__main__":

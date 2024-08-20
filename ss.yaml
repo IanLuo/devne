@@ -24,14 +24,13 @@ units:
 
   jsonfmt: nixpkgs.jsonfmt 
 
-  database: nixpkgs.postgresql
-
-  cache: nixpkgs.redis
-
   prefetch-git: nixpkgs.nix-prefetch-git
 
 actions:
-  test: $python.test
+  onstart:
+    - sh>: echo "welcome to ss, a development environment with 1 command"
+    - sh>: echo "type 'ss actions' to see available commands"
+  test: python_units.actions.test
 
 action-flow:
   log-commit:

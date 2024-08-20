@@ -1,4 +1,5 @@
 # WIP
+[ ] generate actions from included ss.yaml
 [ ] generate action shell with nix, and call them in a name patter: unit.action_name
 [ ] ss update action
 [ ] action chain

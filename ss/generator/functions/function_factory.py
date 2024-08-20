@@ -10,11 +10,8 @@ def find_function(name: str, value: dict, params: dict, blueprint: Blueprint):
     url = value.get(URL)
     git = value.get(GIT)
 
-    if name == K_ON_START:    
-        if sh is not None and isinstance(sh, str):
-            return Sh(command=sh, params=params)
-        else: 
-            return None
+    if sh is not None and isinstance(sh, str):
+        return Sh(command=sh, params=params)
     elif name == K_SOURCE:
         if url is not None and isinstance(url, str):
             return Weblink(value=url, params=params, blueprint=blueprint)
