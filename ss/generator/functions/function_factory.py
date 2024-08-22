@@ -11,7 +11,7 @@ def find_function(name: str, value: dict, params: dict, blueprint: Blueprint):
     git = value.get(GIT)
 
     if sh is not None and isinstance(sh, str):
-        return Sh(command=sh, params=params)
+        return Sh(name=name, command=sh, params=params)
     elif name == K_SOURCE:
         if url is not None and isinstance(url, str):
             return Weblink(value=url, params=params, blueprint=blueprint)

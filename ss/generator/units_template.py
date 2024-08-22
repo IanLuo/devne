@@ -66,7 +66,8 @@ class UnitsTemplate:
                 (name: unit: 
                     {{
                         path = unit;
-                        actions = unit.actions;
+                        actions = if unit ? actions then unit.actions else {{}};
+                        onstart = if unit ? onstart then unit.onstart else {{}};
                     }}                    
                 ) 
                 all_attr;
@@ -83,7 +84,7 @@ class UnitsTemplate:
 
             onStartScript = lib.strings.concatStringsSep
                 " " 
-                (map (x: x.onstart) (lib.filter (unit: ({{ onstart = null;}} // unit).onstart != null) all));
+                (map (x: "source ${{x.onstart}}") (lib.filter (unit: unit ? onstart && unit.onstart != null) all));
 
             startScript = ''
                 export SS_PROJECT_BASE=$PWD
