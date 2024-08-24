@@ -1,10 +1,8 @@
 # WIP
-[ ] generate actions from included ss.yaml
-[ ] generate action shell with nix, and call them in a name patter: unit.action_name
-[ ] ss update action
 [ ] action chain
 
 # BACKLOG
+[ ] ss update action
 [ ] units can be observed
 [ ] unit documentations
 [ ] command auto completion
@@ -16,6 +14,8 @@
     docker
 
 # ARCHIVE
+[x] generate action shell with nix, and call them in a name patter: unit.action_name
+[x] generate actions from included ss.yaml
 [x] show unit source
 [x] parameter override for units
 [x] import other ss.yaml and generate files for them

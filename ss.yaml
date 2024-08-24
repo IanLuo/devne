@@ -27,10 +27,11 @@ units:
   prefetch-git: nixpkgs.nix-prefetch-git
 
 actions:
-  onstart:
-    - sh>: echo "welcome to ss, a development environment with 1 command"
-    - sh>: echo "type 'ss actions' to see available commands"
   test: python_units.actions.test
+
+onstart:
+  - sh>: echo "welcome to ss, a development environment with 1 command"
+  - sh>: echo "type 'ss actions' to see available commands"
 
 action-flow:
   log-commit:

@@ -30,8 +30,13 @@ class UnitsTemplate:
     def render_actions(self, actions: dict) -> str:
         return f'''
         actions = {{
-            {LINE_BREAK.join([f"{name} = {self.renderer.render_value(name=name, value=action)};" for name, action in actions.items()])}            
+            {LINE_BREAK.join([f"{name} = {self.renderer.render_value(name=name, value=action, as_nix_code=True)};" for name, action in actions.items()])}            
         }};
+        '''
+
+    def render_onstart(self, onstart: dict) -> str:
+        return f'''
+            {self.blueprint.name}_onstart= { self.renderer.render_value(name='onstart', value=onstart) };
         '''
         
     def render(self) -> str:
@@ -58,33 +63,47 @@ class UnitsTemplate:
             {render_units_in_sources}
 
             { self.render_actions(self.blueprint.actions or {}) }
+            { self.render_onstart(self.blueprint.onstart or {}) }
 
             all = [ {line_break.join(names)}];
             all_attr = {{ inherit { space.join(names) }; }};
 
-            units_profile = lib.attrsets.mapAttrs 
+            unitsProfile = lib.attrsets.mapAttrs 
                 (name: unit: 
                     {{
                         path = unit;
-                        actions = if unit ? actions then unit.actions else {{}};
-                        onstart = if unit ? onstart then unit.onstart else {{}};
+                        actions = if unit ? actions && unit.actions != null then unit.actions else {{}};
+                        onstart = if unit ? onstart && unit.actions != null then unit.onstart else {{}};
                     }}                    
                 ) 
                 all_attr;
 
-            current_profile = {{
+            currentProfile = {{
                  {self.blueprint.name} = {{
-                    actions = actions;
+                     inherit actions;
                 }};
             }};
 
+            mapShs = sh:
+                if builtins.isList sh then 
+                    map (x: mapShs x) sh 
+                else 
+                    ["source ${{sh}}"];
+
             load-profile = pkgs.writeScriptBin "load_profile" ''
-                echo '${{builtins.toJSON (units_profile // current_profile)}}'
+                echo '${{builtins.toJSON ( unitsProfile // currentProfile)}}'
             '';
 
             onStartScript = lib.strings.concatStringsSep
-                " " 
-                (map (x: "source ${{x.onstart}}") (lib.filter (unit: unit ? onstart && unit.onstart != null) all));
+                "\n" 
+                (lib.flatten 
+                  (
+                    (map 
+                      (x: mapShs x.onstart) 
+                      (lib.filter (unit: unit ? onstart && unit.onstart != null) all) ++ (mapShs {self.blueprint.name}_onstart)
+                    )
+                  )
+                );
 
             startScript = ''
                 export SS_PROJECT_BASE=$PWD

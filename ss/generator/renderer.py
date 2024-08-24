@@ -119,13 +119,15 @@ class Renderer:
                 }}
             """
 
-    def render_value(self, name: str, value: Any, params: dict={}) -> str:
+    def render_value(self, name: str, value: Any, params: dict={}, as_nix_code: bool=False) -> str:
         if value == None:
             return "null"
         elif isinstance(value, list):
             return f"""[{LINE_BREAK.join(map(lambda x: f'{self.render_value(name, x, params)}', value))}]"""
         elif isinstance(value, dict):
             return self.render_map(name=name, data=value, params=params)
+        elif as_nix_code:
+            return f'{str(value)}'
         elif isinstance(value, bool):
             return "true" if value else "false"
         elif isinstance(value, str) and self._is_path(value):

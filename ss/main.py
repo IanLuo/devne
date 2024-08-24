@@ -10,6 +10,7 @@ from typing import Optional
 from os.path import dirname
 import logging
 import json
+from jsonpath_ng import parse
 
 app = typer.Typer()
 default_config = f"{os.getcwd()}/ss.yaml"
@@ -81,18 +82,25 @@ def actions(unit_name: Annotated[Optional[str], typer.Argument()] = None,
 def units(config: str = default_config):
     '''List all units
     '''
-    units = Cli(config).list_units()
+    units = Cli(config).all_units
     typer.echo(units)
 
     
 @app.command()
 def exec(name: str, 
-         unit_name: Annotated[Optional[str], typer.Argument()] = None,
+         source: 
+            Annotated[
+                Optional[bool], typer.Option("--source", "-s")
+            ] = None,
          config: str = default_config):
     '''Execute an action with the given name
     '''
-    Cli(config).run_action(name, unit_name)
+    if source != None:
+        show_source = True
+    else:
+        show_source = False 
 
+    Cli(config).run_action(name, show_source=show_source)
 
 class Cli:
     def __init__(self, config_path: str):
@@ -100,6 +108,7 @@ class Cli:
         self.blueprint = Blueprint(root=self.root)
         self.folder = Folder(self.root)
 
+    @property
     def _profile(self) -> dict:
         json_str = run("load_profile")
         return json.loads(json_str)
@@ -111,34 +120,40 @@ class Cli:
         os.system(f"nixfmt .ss/ {' '.join(self.folder.all_files('.nix'))}")
         os.system(f'jsonfmt -w {self.folder.lock_path}')
 
-    def list_units(self):
-        return self._profile().get("units", {}).keys()
+    @property
+    def _all_units(self) -> dict:
+        return self._profile
+        
 
-    def store_path(self, unit: str) -> str:
-        return self._profile().get("units", {}).get(unit)
+    @property
+    def all_units(self) -> list:
+        return list(self._all_units.keys())
+
+    def store_path(self, unit: str) -> Optional[str]:
+        return self._all_units.get(unit)
     
-    def action_folder_path(self, unit: str) -> str:
-        return os.path.join(self.store_path(unit), 'actions')
-
     def list_actions(self, 
                     unit_name: Optional[str] = None):
         if unit_name == None:
-            return self.blueprint.actions.keys()    
+            return [f'{unit_name}.actions.{action_name}' 
+                for unit_name in self._all_units.keys()
+                for action_name in self._all_units.get(unit_name, {}).get('actions', {}).keys() 
+            ]
         else:
-            unit_action_path = self.action_folder_path(unit_name)
-            if os.path.exists(unit_action_path):
-                return os.listdir(unit_action_path)
-            else:
-                return []
+            return [f'{unit_name}.actions.{action_name}' for action_name in self._all_units.get(unit_name, {}).get('actions', {}).keys()]
 
-    def run_action(self, 
-                   action_name: str, 
-                   unit_name: Optional[str] = None):
-        if unit_name is None:
-            pass
+    def run_action(self, action_name: str, show_source: bool = False):
+        jsonpath_expr = parse(f'$.{action_name}')
+        match = jsonpath_expr.find(self._profile)
+
+        if not match:
+            raise ValueError(f"action {action_name} not found")
         else:
-            action_path = os.path.join(self.action_folder_path(unit_name), action_name)
-            os.system(f"bash {action_path}")
+            shell_file = match[0].value
+            if show_source:
+                with open(shell_file) as f:
+                    print(f.read())
+            os.system(f"source {shell_file}")
 
 
 if __name__ == "__main__":

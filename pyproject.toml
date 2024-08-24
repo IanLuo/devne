@@ -10,6 +10,7 @@ python = "^3.9"
 typer = "^0.12.3"
 pyyaml = "^6.0.1"
 pytest = "^8.2.2"
+jsonpath-ng = "^1.6.1"
 
 [tool.poetry.scripts]
 ss = "ss.main:app"

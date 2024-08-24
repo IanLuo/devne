@@ -41,6 +41,15 @@ class Parser:
     def parse_actions(self, data: Any):
         return data
 
+    def parse_onstart(self, data: Any) -> Any:
+        if isinstance(data, list):
+            return data
+        elif isinstance(data, str):
+            return data
+        else:
+            raise Exception('onstart needs to be a string or a list of str')
+
+        
 
 
     def parse_action_flow(self, flow: Dict[str, Any]) -> Dict[str, Any]:

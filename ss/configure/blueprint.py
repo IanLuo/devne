@@ -48,6 +48,7 @@ from os.path import dirname, join
 class Blueprint:
     units: Dict[str, Any]
     actions: Dict[str, Any]
+    onstart: Dict[str, Any]
     action_flows: Dict[str, Any]
     includes: Dict[str, Any]
     metadata: Dict[str, Any]
@@ -84,36 +85,39 @@ class Blueprint:
     def init_blueprint(self, yaml_path: str):
         logging.info("initializing blueprint..")
 
-        logging.info(f"parsed blueprint..")
+        logging.info(f"parsing blueprint..")
         json = self.parser.parse_yaml(yaml_path)
 
-        logging.info(f"parsed unit..")
+        logging.info(f"parsing unit..")
         self.units = {
             name: self.parser.parse_unit(data) for name, data in json.get("units", {}).items()
         }
         
-        logging.info(f"parsed include..")
+        logging.info(f"parsing include..")
         self.includes = {
             name: self.parser.parse_include(data) for name, data in json.get("include", {}).items()
         }
 
-        logging.info(f"parsed metadata..")
+        logging.info(f"parsing metadata..")
         self.metadata = json.get("metadata", None)
         if self.metadata is None:
             raise Exception("metadata is mandatory")
         elif self.metadata.get("name") is None:
             raise Exception("name is mandatory")
 
-        logging.info(f"parsed actions..")
+        logging.info(f"parsing actions..")
         self.actions = {
             name: self.parser.parse_actions(data) for name, data in json.get("actions", {}).items()
         }
 
-        logging.info(f"parsed action flows..")
+        logging.info(f"parsing action flows..")
         self.action_flows = {
             name: self.parser.parse_action_flow(data)
             for name, data in json.get("action_flows", {}).items()
         }
+
+        logging.info(f'parseing onstart...')
+        self.onstart = self.parser.parse_onstart(data=json.get('onstart', ''))
 
     def resovle_all_includes(self, includes: Dict[str, Any]):
         logging.info(f"start resolving includes..")
