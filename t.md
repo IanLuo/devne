@@ -1,7 +1,9 @@
 # WIP
 [ ] action chain
+[ ] observation
 
 # BACKLOG
+[ ] commands description for each parameter
 [ ] ss update action
 [ ] units can be observed
 [ ] unit documentations

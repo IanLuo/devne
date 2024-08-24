@@ -112,11 +112,10 @@ class Blueprint:
 
         logging.info(f"parsing action flows..")
         self.action_flows = {
-            name: self.parser.parse_action_flow(data)
-            for name, data in json.get("action_flows", {}).items()
+            name: self.parser.parse_action_flow(data) for name, data in json.get("action_flows", {}).items()
         }
 
-        logging.info(f'parseing onstart...')
+        logging.info(f'parsing onstart...')
         self.onstart = self.parser.parse_onstart(data=json.get('onstart', ''))
 
     def resovle_all_includes(self, includes: Dict[str, Any]):
@@ -142,53 +141,4 @@ class Blueprint:
             self.includes[name]['blueprint'] = Blueprint(root=self.root,
                                                          include_path=self.gen_folder.include_path(name),
                                                          config_path=ss_path)
-
-
-# perform actions
-
-    def perform_action(
-        self, 
-        unit_name: Optional[str], 
-        action_name: str
-    ) -> Any:
-        unit = self.units.get(unit_name or '')
-
-        if unit is None:
-            command = self.actions.get(action_name)
-        else:
-            command = unit.get('actions', {}).get(action_name)
-
-        if command is None:
-            raise Exception(f'command for \'{action_name}\' not found') 
-
-        if command.startswith("^"):
-            unit, unit_action = self.read_action_ref(command)
-            self.perform_action(unit.get('actions', {}), unit_action)
-        else:
-           os.system(f'bash {command}')
-
-
-    def read_action_ref(self, 
-                        ref: str, 
-    ) -> tuple[Dict[str, Any], str]:
-        pattern = r'\$(\w*)\.(\w*)'
-        match = re.match(pattern, ref)
-        if match:
-            unit = self.units.get(match.group(1))
-            if unit is None:
-                raise Exception(f'unit {match.group(1)} not found')
-            action = match.group(2)
-            return unit, action
-        else:
-            raise Exception(f'invalid action reference {ref}')
-
-
-    def action_flow(
-        self,
-        action: perform_action):
-            pass # TODO:
-
-    def perform_condition(self, param: Any) -> bool:
-        pass # TODO:
-
 

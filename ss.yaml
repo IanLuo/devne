@@ -34,7 +34,8 @@ onstart:
   - sh>: echo "type 'ss actions' to see available commands"
 
 action-flow:
-  log-commit:
-    - commit
-    - error: "$param.length == 0"
-    - push
+  push-commit:
+    - sh>: git add .
+    - sh>: git pull --rebase
+    - sh>: get input
+    - sh>: git push -m $1

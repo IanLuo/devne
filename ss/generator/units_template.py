@@ -33,12 +33,17 @@ class UnitsTemplate:
             {LINE_BREAK.join([f"{name} = {self.renderer.render_value(name=name, value=action, as_nix_code=True)};" for name, action in actions.items()])}            
         }};
         '''
+        
+    def render_action_flows(self, action_flows: dict) -> str:
+        return f'''
+            {self.blueprint.name}_action_flows = { self.renderer.render_value(name='action_flows', value=action_flows, as_nix_code=True) };
+        '''
 
     def render_onstart(self, onstart: dict) -> str:
         return f'''
             {self.blueprint.name}_onstart= { self.renderer.render_value(name='onstart', value=onstart) };
         '''
-        
+
     def render(self) -> str:
         line_break = "\n"
         space = " "
@@ -63,6 +68,7 @@ class UnitsTemplate:
             {render_units_in_sources}
 
             { self.render_actions(self.blueprint.actions or {}) }
+            { self.render_action_flows(self.blueprint.onstart or {}) }
             { self.render_onstart(self.blueprint.onstart or {}) }
 
             all = [ {line_break.join(names)}];

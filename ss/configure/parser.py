@@ -37,7 +37,6 @@ class Parser:
             raise Exception("include should be a string or a dict")
 
 
-
     def parse_actions(self, data: Any):
         return data
 
@@ -49,10 +48,7 @@ class Parser:
         else:
             raise Exception('onstart needs to be a string or a list of str')
 
-        
-
-
     def parse_action_flow(self, flow: Dict[str, Any]) -> Dict[str, Any]:
-        pass
+        return flow
 
 
