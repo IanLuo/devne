@@ -1,28 +1,29 @@
-from ss.configure.schema import * 
+from ss.configure.schema import *
 from .renderer import Renderer
 from typing import List, Dict
 
 class NixTemplate:
     def __init__(self, blueprint):
         self.blueprint = blueprint
-        self.renderer = Renderer(blueprint=blueprint)
+        self.renderer = Renderer()
 
     def render(self) -> str:
         return f"""
         {{ pkgs ? import <nixpkgs> {{}} }}:
         let
         {LINE_BREAK.join(self._nix_icludes_value())}
+        sslib = pkgs.callPackage {self.blueprint.gen_folder.path}/nix/sslib.nix {{}};
         name = "{self.blueprint.name}";
         version = "{self.blueprint.version}";
-        units = pkgs.callPackage ./units.nix {{ inherit pkgs name version { ' '.join(self._nix_includes_names()) }; }};
+        units = pkgs.callPackage ./units.nix {{ inherit pkgs name version sslib { ' '.join(self._nix_includes_names()) }; }};
         in
 
         {  self.render_mkshell() if self.blueprint.is_root_blueprint else self.render_package() }
-        
+
         """
 
     def render_package(self):
-        return f"units // {{ inherit pkgs name version { SPACE.join(self._nix_includes_names())}; }} // units.all_attr"
+        return f"{{ isSS = true; }} // units // {{ inherit pkgs name version { SPACE.join(self._nix_includes_names())}; }} // units.allAttr"
 
     def render_mkshell(self):
         return f"""
@@ -46,5 +47,5 @@ class NixTemplate:
         return list(self._nix_includes().keys())
 
     def _nix_includes(self) -> Dict[str, str]:
-        return { item[0]:item[1] for item in self.renderer.includes if item[1] is not None }
+        return { item[0]:item[1] for item in self.renderer.resolve_all_includes(blueprint=self.blueprint) if item[1] is not None }
 

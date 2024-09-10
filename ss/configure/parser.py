@@ -17,11 +17,11 @@ class Parser:
         if isinstance(data, str):
             return {K_SOURCE: data}
         elif isinstance(data, dict):
-            mandatory = lambda x: data[x] if x in data else raise_exception(x)
-            optionals = [K_ON_START, K_ACTIONS, K_LISTNER]
+            mandatory = lambda x, default: data[x] if x in data else default
+            optionals = [K_ON_START, K_ACTIONS, K_LISTNER, K_SOURCE]
 
-            return {**data, 
-                    **{ K_SOURCE: mandatory(K_SOURCE) },
+            return {**data,
+                    **{ K_SOURCE: mandatory(K_SOURCE, 'null') },
                     ** { key: data.get(key) for key in optionals if key in data.keys() }
                     }
         else:

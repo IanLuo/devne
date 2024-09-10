@@ -3,6 +3,7 @@ from .units_template import UnitsTemplate
 from ..configure.blueprint import Blueprint
 from ..folder import Folder
 from os.path import join
+import os
 
 class FilesCreator:
     def __init__(self, blueprint: Blueprint, root: str):
@@ -18,7 +19,17 @@ class FilesCreator:
                 self.create(blueprint= blueprint, root=self.folder.include_path(name))
 
         self.create(root=self.folder.path, blueprint=self.blueprint)
+        self.copy_resource(blueprint=self.blueprint)
 
+    def copy_resource(self, blueprint: Blueprint) -> bool:
+        folder_path = join(os.path.dirname(__file__), 'nix')
+
+        if not os.path.exists(folder_path):
+            raise Exception(f'files not found in {folder_path}')
+
+        import shutil
+        nix_folder_path = os.path.join(self.blueprint.gen_folder.path, 'nix')
+        shutil.copytree(folder_path, nix_folder_path, dirs_exist_ok=True)
 
     def create(self, root: str, blueprint: Blueprint) -> bool:
         folder = Folder(root)

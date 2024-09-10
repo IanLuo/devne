@@ -1,12 +1,17 @@
-# Ignore Python compile files
-*.pyc
-**/__pycache__/
-.direnv/
-.coverage
-test_output/
-result
-.pytest_cache/
-.ss/
-.ss_data
 .venv
+.venv3.12.0
+.pytest_cache
+.mypy_cache
 dist
+build
+.tox
+.nox
+.coverage
+.eggs
+__pycache__
+.pytest
+ignores_array
+.ss
+direnv
+.direnv
+result

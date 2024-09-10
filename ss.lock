@@ -18,5 +18,10 @@
     "repo": "https://github.com/NixOS/nixpkgs",
     "rev": "13fe00cb6c75461901f072ae62b5805baef9f8b2",
     "hash": "0vybq6rd8m9m53a12ijj0l79rfj6np7yywdr3sbj36c22z8mh1gl"
+  },
+  "templates-nixpkgs": {
+    "repo": "https://github.com/NixOS/nixpkgs",
+    "rev": "9bb1e7571aadf31ddb4af77fc64b2d59580f9a39",
+    "hash": "1kkzvi3vc14k6sp829hc73228yixjl4m4sp37scjynx4shmhbpb1"
   }
 }

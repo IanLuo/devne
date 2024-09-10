@@ -1,13 +1,16 @@
 from typing import Any, Optional
 from ss.configure.blueprint import Blueprint
 from os.path import exists
-from ss.generator.functions.function_factory import find_function
 from ss.configure.schema import *
+from ss.generator.functions.action import Action
+from ss.generator.functions.weblink import Weblink
+from ss.generator.functions.git_repo import GitRepo
+from ss.generator.functions.nix_package import NixPackage
+from ss.generator.functions.sh import Sh
 
 class Renderer:
-    def __init__(self, blueprint: Blueprint):
-        self.blueprint = blueprint
-        self.includes = [ self.resolve_import(name=item[0], item=item[1]) for item in self.blueprint.includes.items()]
+    def resolve_all_includes(self, blueprint: Blueprint):
+        return [self.resolve_import(name=item[0], item=item[1]) for item in blueprint.includes.items()]
 
     def resolve_import(self, name: str, item: dict):
         local_path = item.get("local_path")
@@ -32,8 +35,8 @@ class Renderer:
 
         elif exists(shell_nix):
             return name, f'{name} = pkgs.callPackage {shell_nix} {{}};'
-        else: 
-            return name, None 
+        else:
+            return name, None
 
 
     def _is_path(self, value: str) -> bool:
@@ -52,21 +55,23 @@ class Renderer:
             in
         """
 
-    def render_call_father(self, name: str, unit: dict, blueprint: Blueprint) -> str:
+    def render_call_father(self, name: str, unit: dict, blueprint: Blueprint) -> dict:
         params = self.extract_params(unit)
-        
+
         father_name = self.father_name(unit=unit, blueprint=blueprint)
+
+        intreface = f'_{name}'
 
         if father_name is None:
             result = {}
         else:
             if len(params) == 0:
-                result = { "fatherUnit": f"{father_name}.{name} {{}}" }
+                result = { "fatherUnit": f"{father_name}.{intreface} {{}}" }
             else:
-                vars = SPACE.join([f"{key}={self.render_value(key, value)};" for key, value in params.items()]);
-                result = { "fatherUnit": f"{father_name}.{name} {{ { vars } }}" }
+                vars = SPACE.join([f"{key}={self.render_value(key, value, blueprint=blueprint)};" for key, value in params.items()]);
+                result = { "fatherUnit": f"{father_name}.{intreface} {{ { vars } }}" }
 
-        return self.render_let_in(vars=result)
+        return result
 
     def father_name(self, unit: dict, blueprint: Blueprint) -> Optional[str]:
         source = unit.get(K_SOURCE, '')
@@ -87,7 +92,7 @@ class Renderer:
 
     def merge_all_fields(self, unit: dict, blueprint: Blueprint) -> dict:
         father_name = self.father_name(unit=unit, blueprint=blueprint)
-        
+
         if father_name is not None:
             unit = { key: unit.get(key, f'fatherUnit.{key} or null') for key in PRE_DEFINED_KEYS }
             unit[K_SOURCE] = f'fatherUnit.{K_SOURCE}'
@@ -97,37 +102,34 @@ class Renderer:
     def extract_params(self, unit: dict) -> dict:
         return { k: v for k, v in unit.items() if k not in PRE_DEFINED_KEYS }
 
-    def render_unit(self, unit: dict) -> str:
+    def render_unit(self, unit: dict, blueprint: Blueprint) -> str:
         # resolve all fields from includes
-        unit = self.merge_all_fields(unit=unit, blueprint=self.blueprint)
+        unit = self.merge_all_fields(unit=unit, blueprint=blueprint)
 
         params = self.extract_params(unit)
 
         unit = { k: v for k, v in unit.items() if k in PRE_DEFINED_KEYS }
 
-        return LINE_BREAK.join([f'{key}={self.render_value(key, value, params)};' for key, value in unit.items()]) 
+        return LINE_BREAK.join([f'{key}={self.render_value(key, value, blueprint=blueprint, params=params)};' for key, value in unit.items()])
 
-    def render_map(self, name:str, data: dict, params: dict={}) -> str:
-        function = find_function(name=name, value=data, params=params, blueprint=self.blueprint)
+    def render_map(self, name:str, data: dict, blueprint: Blueprint, params: dict={}) -> str:
+        function = self.find_function(name=name, value=data, params=params, blueprint=blueprint)
 
         if function is not None:
             return function.render()
         else:
             return f"""
                 {{
-                    { LINE_BREAK.join([f'{key} = {self.render_value(key, value, params)};' for key, value in data.items() ]) }
+                    { LINE_BREAK.join([f'{key} = {self.render_value(key, value, blueprint=blueprint, params=params)};' for key, value in data.items() ]) }
                 }}
             """
-
-    def render_value(self, name: str, value: Any, params: dict={}, as_nix_code: bool=False) -> str:
+    def render_value(self, name: str, value: Any, blueprint: Blueprint, params: dict={}) -> str:
         if value == None:
             return "null"
         elif isinstance(value, list):
-            return f"""[{LINE_BREAK.join(map(lambda x: f'{self.render_value(name, x, params)}', value))}]"""
+            return f"""[{LINE_BREAK.join(map(lambda x: f'{self.render_value(name, x, blueprint, params)}', value))}]"""
         elif isinstance(value, dict):
-            return self.render_map(name=name, data=value, params=params)
-        elif as_nix_code:
-            return f'{str(value)}'
+            return self.render_map(name=name, data=value, params=params, blueprint=blueprint)
         elif isinstance(value, bool):
             return "true" if value else "false"
         elif isinstance(value, str) and self._is_path(value):
@@ -136,7 +138,7 @@ class Renderer:
             q = "''"
             return f'''
                 {q}{value}{q}
-            ''' 
+            '''
         elif name in PRE_DEFINED_KEYS: # in predefined keys, the text by default is supposed to be nix code, don't add quote
             return f'{str(value)}'
         elif isinstance(value, float):
@@ -144,3 +146,23 @@ class Renderer:
         else:
             return f'"{str(value)}"'
 
+    def find_function(self, name: str, value: dict, params: dict, blueprint: Blueprint):
+        sh = value.get(SH)
+        url = value.get(URL)
+        git = value.get(GIT)
+        action = value.get(ACTION)
+
+        if sh is not None and isinstance(sh, str):
+            return Sh(name=name, command=sh, params=params)
+        elif action is not None and isinstance(action, str):
+            return Action(name=name, value=action, blueprint=blueprint, renderer=self)
+        elif name == K_SOURCE:
+            if url is not None and isinstance(url, str):
+                return Weblink(value=url, params=params, blueprint=blueprint)
+            elif git is not None and isinstance(git, dict):
+                return GitRepo(value=git, params=params)
+            else:
+                return NixPackage(value=name, params=params)
+
+        else:
+            return None

@@ -1,5 +1,5 @@
 metadata:
-  name: ss 
+  name: ss
   version: 0.0.1
   description: devlopment environment with 1 command
 
@@ -12,22 +12,31 @@ include:
     ref: nixpkgs-unstable
 
 units:
-  python: 
+  python:
     source: python_units.python
     version: "3.12.0"
-    
+
   poetry: python_units.poetry
-    
-  pyright: python_units.pyright 
 
-  nixfmt: nixpkgs.nixfmt
+  pyright: python_units.pyright
 
-  jsonfmt: nixpkgs.jsonfmt 
+  nixfmt: nixpkgs.nixfmt-classic
+
+  jsonfmt: nixpkgs.jsonfmt
 
   prefetch-git: nixpkgs.nix-prefetch-git
 
+  git-helper:
+    source: templates.git-helper
+    ignores: ["result", ".direnv", ".ss", ".venv*", ".pytest_cache", ".mypy_cache", "dist", "build", "*.egg-info", ".tox", ".nox", ".coverage", ".eggs", "__pycache__", ".pytest"]
+
+
 actions:
-  test: python_units.actions.test
+  test:
+    action>: python_units.actions.test
+
+  build:
+    action>: python_units.actions.build
 
 onstart:
   - sh>: echo "welcome to ss, a development environment with 1 command"
@@ -37,5 +46,7 @@ action-flow:
   push-commit:
     - sh>: git add .
     - sh>: git pull --rebase
-    - sh>: get input
-    - sh>: git push -m $1
+    - sh>: read -p \"Enter commit message \" message
+    - sh>: git push -m $message
+
+subscriptions:
