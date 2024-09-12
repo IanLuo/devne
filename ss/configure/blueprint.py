@@ -36,12 +36,13 @@ from dataclasses import dataclass
 from typing import Dict, Any, Optional
 from .parser import Parser
 import os
-from os.path import exists 
+from os.path import exists
 import re
 import logging
 from ..resources.resource_manager import ResourceManager
 from ..folder import Folder
 from os.path import dirname, join
+from .schema import *
 
 
 @dataclass
@@ -54,9 +55,9 @@ class Blueprint:
     metadata: Dict[str, Any]
     is_root_blueprint: bool
 
-    def __init__(self, 
-                 root: str, 
-                 include_path: Optional[str] = None, 
+    def __init__(self,
+                 root: str,
+                 include_path: Optional[str] = None,
                  config_path: Optional[str] = None):
         config_path = config_path or Folder(root).config_path
 
@@ -65,7 +66,7 @@ class Blueprint:
         self.root = root
         self.gen_folder = Folder(join(root, '.ss') or include_path)
         self.config_folder = Folder(dirname(config_path))
-        self.resource_manager = ResourceManager(lock_root=root, 
+        self.resource_manager = ResourceManager(lock_root=root,
                                                 config_folder=self.config_folder)
 
         self.init_blueprint(config_path)
@@ -90,12 +91,12 @@ class Blueprint:
 
         logging.info(f"parsing unit..")
         self.units = {
-            name: self.parser.parse_unit(data) for name, data in json.get("units", {}).items()
+            name: self.parser.parse_unit(data) for name, data in json.get(K_1_UNITS, {}).items()
         }
-        
+
         logging.info(f"parsing include..")
         self.includes = {
-            name: self.parser.parse_include(data) for name, data in json.get("include", {}).items()
+            name: self.parser.parse_include(data) for name, data in json.get(K_1_INCLUDE, {}).items()
         }
 
         logging.info(f"parsing metadata..")
@@ -107,16 +108,16 @@ class Blueprint:
 
         logging.info(f"parsing actions..")
         self.actions = {
-            name: self.parser.parse_actions(data) for name, data in json.get("actions", {}).items()
+            name: self.parser.parse_actions(data) for name, data in json.get(K_1_ACTIONS, {}).items()
         }
 
         logging.info(f"parsing action flows..")
         self.action_flows = {
-            name: self.parser.parse_action_flow(data) for name, data in json.get("action_flows", {}).items()
+            name: self.parser.parse_action_flow(data) for name, data in json.get(K_1_ACTION_FLOWS, {}).items()
         }
 
         logging.info(f'parsing onstart...')
-        self.onstart = self.parser.parse_onstart(data=json.get('onstart', ''))
+        self.onstart = self.parser.parse_onstart(data=json.get(K_1_ON_START, ''))
 
     def resovle_all_includes(self, includes: Dict[str, Any]):
         logging.info(f"start resolving includes..")
@@ -129,13 +130,13 @@ class Blueprint:
         resource_name = self.metadata.get("name", '') + "-" + name
         include_resource = self.resource_manager.fetch_resource(resource_name, value)
 
-        self.includes[name] = {**self.includes[name], 
-                               **include_resource.__dict__, 
+        self.includes[name] = {**self.includes[name],
+                               **include_resource.__dict__,
                                'gen_root': self.gen_folder.include_path(name),
                                }
 
         ss_path = Folder(include_resource.local_path).config_path
-        
+
         if exists(ss_path):
             logging.info(f"found ss.yaml at {ss_path}, using it..")
             self.includes[name]['blueprint'] = Blueprint(root=self.root,

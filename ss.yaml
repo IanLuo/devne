@@ -42,11 +42,12 @@ onstart:
   - sh>: echo "welcome to ss, a development environment with 1 command"
   - sh>: echo "type 'ss actions' to see available commands"
 
-action-flow:
-  push-commit:
+action-flows:
+  push-commit-dry:
     - sh>: git add .
     - sh>: git pull --rebase
     - sh>: read -p \"Enter commit message \" message
-    - sh>: git push -m $message
+    - sh>: echo \"dry run git push -m $message\"
+    # - sh>: git push -m $message
 
 subscriptions:

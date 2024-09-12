@@ -153,7 +153,7 @@ class Renderer:
         action = value.get(ACTION)
 
         if sh is not None and isinstance(sh, str):
-            return Sh(name=name, command=sh, params=params)
+            return Sh(name=name, command=sh)
         elif action is not None and isinstance(action, str):
             return Action(name=name, value=action, blueprint=blueprint, renderer=self)
         elif name == K_SOURCE:

@@ -1,10 +1,6 @@
 class Sh:
-    command: str
-    params: dict
-
-    def __init__(self, name: str, command: str, params: dict):
-        self.command = command 
-        self.params = params
+    def __init__(self, name: str, command: str):
+        self.command = command
         self.name = name
 
     def render(self):
