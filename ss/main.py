@@ -201,20 +201,11 @@ class Cli:
             raise ValueError(f"action flow {action_flow_name} not found")
         else:
             files = match[0].value
-            for i, file in enumerate(files):
-                if i == 0:
-                    os.system(f"source {file} > /tmp/ss_result")
-                else:
-                    with open("/tmp/ss_result", "r") as f:
-                        prev_result = f.read().strip()
-                    os.system(f"source {file} {prev_result} > /tmp/ss_result")
-                    os.system("cat /tmp/ss_result")
-
-            with open("/tmp/ss_result", "r") as f:
-                final_result = f.read().strip()
-            if final_result:
-                print(final_result)
-            os.remove("/tmp/ss_result")
+            output = ""
+            for file in files:
+                command = f"source {file} {output}"
+                output = os.popen(command).read().strip()
+            console.print(output)
 
 
 if __name__ == "__main__":

@@ -43,13 +43,12 @@ onstart:
   - sh>: echo "type 'ss actions' to see available commands"
 
 action-flows:
-  push-commit-dry:
+  commit-push-all:
     - sh>: git add .
-    - sh>: "message=$(read -p \"Enter commit message: \" input && echo \"$input\")"
-    - sh>: "echo \"message: \""
+    - sh>: |
+        read -p "Enter commit message: " input && echo "$input"
     - sh>: git commit -m "$1"
     - sh>: git pull --rebase
-    - sh>: echo "dry run git push -m \"$1\""
-    # - sh>: git push -m "$message"
+    - sh>: git push
 
 subscriptions:
