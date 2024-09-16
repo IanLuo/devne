@@ -208,6 +208,7 @@ class Cli:
                     with open("/tmp/ss_result", "r") as f:
                         prev_result = f.read().strip()
                     os.system(f"source {file} {prev_result} > /tmp/ss_result")
+                    console.print(f"cat /tmp/ss_result")
 
             with open("/tmp/ss_result", "r") as f:
                 final_result = f.read().strip()
