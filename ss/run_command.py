@@ -1,21 +1,19 @@
 import subprocess
 import logging
+import os
 
-def run(command: str) -> str: 
-    trim = lambda x: " ".join(x.replace('\n', '').replace('\r', '').split())
-    command = trim(command)
-    logging.info(f"running command: {command}")
 
-    result = subprocess.run(command, 
-                            capture_output=True,
-                            text=True,
-                            shell=True
-                           )
+def run(command: str) -> str:
+    trimmed_command = " ".join(command.strip().split())
+    logging.info(f"Running command: {trimmed_command}")
 
     try:
-        result.check_returncode()
+        result = subprocess.run(
+            trimmed_command, capture_output=True, text=True, shell=True, check=True
+        )
+        return result.stdout.strip()
     except subprocess.CalledProcessError as e:
-        raise e
-
-    output = result.stdout.strip()
-    return output
+        logging.error(
+            f"Command '{trimmed_command}' failed with error: {e.stderr.strip()}"
+        )
+        return e.stderr.strip()

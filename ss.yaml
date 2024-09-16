@@ -45,9 +45,11 @@ onstart:
 action-flows:
   push-commit-dry:
     - sh>: git add .
+    - sh>: "message=$(read -p \"Enter commit message: \" input && echo \"$input\")"
+    - sh>: "echo \"message: \""
+    - sh>: git commit -m "$1"
     - sh>: git pull --rebase
-    - sh>: read -p \"Enter commit message \" message
-    - sh>: echo \"dry run git push -m $message\"
-    # - sh>: git push -m $message
+    - sh>: echo "dry run git push -m \"$1\""
+    # - sh>: git push -m "$message"
 
 subscriptions:

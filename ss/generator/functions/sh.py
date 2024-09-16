@@ -5,7 +5,6 @@ class Sh:
 
     def render(self):
         return f"""(pkgs.writeScript \"{self.name}.sh\" ''
-            #! /bin/env bash
+            #!/bin/bash
             {self.command}
             '')"""
-
