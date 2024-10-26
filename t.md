@@ -1,18 +1,18 @@
 # WIP
 [ ] observation
+[ ] units can be observed
 
 # BACKLOG
 [ ] commands description for each parameter
 [ ] ss update action
-[ ] units can be observed
 [ ] unit documentations
 [ ] command auto completion
 [ ] welcome information
 [ ] ss.yaml validation
 [ ] ss.yaml helper, used in website
 [ ] local shared store
-[ ] support services, like database, redis, thrid party services, inside
-    docker
+[ ] support services, like database, redis, thrid party services, inside docker
+[ ] reload configs with env
 
 # ARCHIVE
 [x] action chain

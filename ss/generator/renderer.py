@@ -154,7 +154,7 @@ class Renderer:
         if value == None:
             return "null"
         elif isinstance(value, list):
-            return f"""[{LINE_BREAK.join(map(lambda x: f'{self.render_value(name, x, blueprint, params)}', value))}]"""
+            return f"""[{LINE_BREAK.join(map(lambda x: f'{self.render_value(f'{name}[{x[0]}]', x[1], blueprint, params)}', enumerate(value)))}]"""
         elif isinstance(value, dict):
             return self.render_map(
                 name=name, data=value, params=params, blueprint=blueprint

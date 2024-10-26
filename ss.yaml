@@ -41,23 +41,23 @@ actions:
     action>: python_units.actions.build
 
 onstart:
-  - sh>:
-      welcome: echo "welcome to ss, a development environment with 1 command"
-  - sh>:
-      help: echo "type 'ss actions' to see available commands"
+    - sh>: echo "welcome to ss, a development environment with 1 command"
+    - sh>: echo "type 'ss actions' to see available commands"
 
 action-flows:
-  test-flow:
-    - sh>:
-        step1: echo $1
-    - sh>:
-        step2: |
-          echo "result form step1: $step1"
-    - sh>:
-        step3: |
-          echo "result form step2: $step2"
-    - sh>:
-        step4: |
-          echo "result form step3: $step3"
+  test-flow2:
+    - sh>: echo "now we are in test-flow2"
+    - action>: python_units.actions.list
+
+  test-flow1:
+    - sh>: echo $1
+    - sh>: |
+          echo "result form step1: $1"
+    - sh>: |
+          echo "result form step2: $1"
+    # - step4:
+    #     action-flow>: ss.actions-flows.test-flow2
+    - sh>: |
+          echo "result form step4: $1"
 
 subscriptions:

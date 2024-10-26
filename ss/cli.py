@@ -101,18 +101,13 @@ class Cli:
         else:
             files = match[0].value
 
-            steps = {
-                file: os.path.basename(file).split("-")[-1].split(".")[0]
-                for file in files
-            }
-
             if len(files) == 0:
                 raise ValueError(
                     f"action flow {action_flow_name} does not have any steps"
                 )
             else:
                 return self._execute_scripts(
-                    steps=steps, name=action_flow_name, other_args=other_args, env=env
+                    steps=files, name=action_flow_name, other_args=other_args, env=env
                 )
 
     def _run_script_file(self, script_file: str, other_args: List[str], env: dict = {}):
@@ -121,14 +116,6 @@ class Cli:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             env={**os.environ, **env},
-        )
-
-        print(
-            f"""
-running {script_file}
-args: {other_args}
-env: {env}
-"""
         )
 
         for line in process.stdout:
@@ -141,19 +128,17 @@ env: {env}
             raise subprocess.CalledProcessError(process.returncode, script_file)
 
     def _execute_scripts(
-        self, steps: dict, name: str, other_args: List[str] = [], env: dict = {}
+        self, steps: list, name: str, other_args: List[str] = [], env: dict = {}
     ):
         last_output = []
-        env = env
-        last_name = None
-        for step, name in steps.items():
+        for step in steps:
             index = 0
-            if last_name is not None:
-                env = {**env, **{last_name: "\n".join(last_output)}}
 
             for line in self._run_script_file(
                 script_file=step,
-                other_args=other_args,
+                other_args=(
+                    ["\n".join(last_output)] if len(last_output) > 0 else other_args
+                ),
                 env=env,
             ):
 
@@ -161,8 +146,6 @@ env: {env}
                     last_output = [line]
                 else:
                     last_output.apend(line)
-
-                last_name = name
 
                 index += 1
 
