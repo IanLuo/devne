@@ -1,18 +1,16 @@
+import json
 import typer
 from typing_extensions import Annotated
 import os
-from ss.configure.blueprint import Blueprint
-from ss.generator.files_creator import FilesCreator
+from ss.cli import Cli
 from ss.run_command import run
 from ss.folder import Folder
-from typing import Optional
-from os.path import dirname
+from typing import Dict, Optional, Set
 import logging
-import json
-from jsonpath_ng import parse
 from .run_command import run
 from rich.console import Console
 from rich.theme import Theme
+from typing import List
 
 app = typer.Typer()
 default_config = f"{os.getcwd()}/ss.yaml"
@@ -34,7 +32,14 @@ def version(value: bool):
             raise typer.Exit()
 
 
-@app.callback()
+def parse_key_value_pairs(value: str) -> Dict[str, str]:
+    if len(value) == 0:
+        return {}
+    """Parse a comma-separated list of key=value pairs into a dictionary."""
+    return dict(item.split("=") for item in value.split(","))
+
+
+@app.callback(no_args_is_help=True)
 def main(
     version: Annotated[
         Optional[bool], typer.Option("--version", "-v", callback=version)
@@ -96,116 +101,37 @@ def units(config: str = default_config):
 @app.command()
 def exec(
     name: str,
-    source: Annotated[Optional[bool], typer.Option("--source", "-s")] = None,
+    other_args: List[str] = typer.Argument(None),
+    env: str = typer.Option(
+        "",
+        "--env",
+        "-e",
+        callback=parse_key_value_pairs,
+        help="Environment variables, e.g. --env key1=value1,key2=value2",
+    ),
     config: str = default_config,
 ):
     """Execute an action with the given name"""
-    if source != None:
-        show_source = True
-    else:
-        show_source = False
-
-    Cli(config).run_action(name, show_source=show_source)
+    for line in Cli(config).run_action(name, other_args=other_args, env=env):
+        console.print(line)
 
 
 @app.command()
 def exec_flow(
     name: str,
+    other_args: List[str] = typer.Argument(None),
     config: str = default_config,
+    env: str = typer.Option(
+        "",
+        "--env",
+        "-e",
+        callback=parse_key_value_pairs,
+        help="Environment variables, e.g. --env key1=value1,key2=value2",
+    ),
 ):
     """Execute an action flow with the given name"""
-    Cli(config).run_action_flow(name)
-
-
-class Cli:
-    def __init__(self, config_path: str):
-        self.root = dirname(config_path)
-        self.blueprint = Blueprint(root=self.root)
-        self.folder = Folder(self.root)
-
-    @property
-    def _profile(self) -> dict:
-        json_str = run("load_profile")
-        return json.loads(json_str)
-
-    def reload(self):
-        creator = FilesCreator(self.blueprint, self.root)
-        creator.create_all()
-
-        run(f"nixfmt .ss/ {' '.join(self.folder.all_files('.nix'))}")
-        run(f"jsonfmt -w {self.folder.lock_path}")
-
-    @property
-    def _all_units(self) -> dict:
-        return self._profile
-
-    @property
-    def all_units(self) -> list:
-        return list(self._all_units.keys())
-
-    def store_path(self, unit: str) -> Optional[str]:
-        return self._all_units.get(unit)
-
-    def list_actions(self, unit_name: Optional[str] = None):
-        if unit_name == None:
-            return [
-                f"{unit_name}.actions.{action_name}"
-                for unit_name in self._all_units.keys()
-                for action_name in self._all_units.get(unit_name, {})
-                .get("actions", {})
-                .keys()
-            ]
-        else:
-            return [
-                f"{unit_name}.actions.{action_name}"
-                for action_name in self._all_units.get(unit_name, {})
-                .get("actions", {})
-                .keys()
-            ]
-
-    def list_action_flows(self, unit_name: Optional[str] = None):
-        if unit_name == None:
-            return [
-                f"{unit_name}.actionFlows.{action_flow_name}"
-                for unit_name in self._all_units.keys()
-                for action_flow_name in self._all_units.get(unit_name, {})
-                .get("actionFlows", {})
-                .keys()
-            ]
-        else:
-            return [
-                f"{unit_name}.actionFlows.{action_flow_name}"
-                for action_flow_name in self._all_units.get(unit_name, {})
-                .get("actionFlows", {})
-                .keys()
-            ]
-
-    def run_action(self, action_name: str, show_source: bool = False):
-        jsonpath_expr = parse(f"$.{action_name}")
-        match = jsonpath_expr.find(self._profile)
-
-        if not match:
-            raise ValueError(f"action {action_name} not found")
-        else:
-            shell_file = match[0].value
-            if show_source:
-                with open(shell_file) as f:
-                    print(f.read())
-            os.system(f"source {shell_file}")
-
-    def run_action_flow(self, action_flow_name: str):
-        jsonpath_expr = parse(f"$.{action_flow_name}")
-        match = jsonpath_expr.find(self._profile)
-
-        if not match:
-            raise ValueError(f"action flow {action_flow_name} not found")
-        else:
-            files = match[0].value
-            output = ""
-            for file in files:
-                command = f"source {file} {output}"
-                output = os.popen(command).read().strip()
-            console.print(output)
+    for line in Cli(config).run_action_flow(name, other_args=other_args, env=env):
+        console.print(line)
 
 
 if __name__ == "__main__":

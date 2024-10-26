@@ -1,5 +1,4 @@
 # WIP
-[ ] action chain
 [ ] observation
 
 # BACKLOG
@@ -16,6 +15,9 @@
     docker
 
 # ARCHIVE
+[x] action chain
+  [x] handle parameter
+  [x] handle env
 [x] generate action shell with nix, and call them in a name patter: unit.action_name
 [x] generate actions from included ss.yaml
 [x] show unit source

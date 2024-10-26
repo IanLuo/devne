@@ -16,6 +16,8 @@ units:
     source: python_units.python
     version: "3.12.0"
 
+  gnumake: nixpkgs.gnumake
+
   poetry: python_units.poetry
 
   pyright: python_units.pyright
@@ -39,16 +41,23 @@ actions:
     action>: python_units.actions.build
 
 onstart:
-  - sh>: echo "welcome to ss, a development environment with 1 command"
-  - sh>: echo "type 'ss actions' to see available commands"
+  - sh>:
+      welcome: echo "welcome to ss, a development environment with 1 command"
+  - sh>:
+      help: echo "type 'ss actions' to see available commands"
 
 action-flows:
-  commit-push-all:
-    - sh>: git add .
-    - sh>: |
-        read -p "Enter commit message: " input && echo "$input"
-    - sh>: git commit -m "$1"
-    - sh>: git pull --rebase
-    - sh>: git push
+  test-flow:
+    - sh>:
+        step1: echo $1
+    - sh>:
+        step2: |
+          echo "result form step1: $step1"
+    - sh>:
+        step3: |
+          echo "result form step2: $step2"
+    - sh>:
+        step4: |
+          echo "result form step3: $step3"
 
 subscriptions:

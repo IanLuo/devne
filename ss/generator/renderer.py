@@ -8,36 +8,39 @@ from ss.generator.functions.git_repo import GitRepo
 from ss.generator.functions.nix_package import NixPackage
 from ss.generator.functions.sh import Sh
 
+
 class Renderer:
     def resolve_all_includes(self, blueprint: Blueprint):
-        return [self.resolve_import(name=item[0], item=item[1]) for item in blueprint.includes.items()]
+        return [
+            self.resolve_import(name=item[0], item=item[1])
+            for item in blueprint.includes.items()
+        ]
 
     def resolve_import(self, name: str, item: dict):
         local_path = item.get("local_path")
         gen_root = item.get("gen_root")
-        ss_nix = f'{gen_root}/ss.nix'
-        ss_yaml = f'{local_path}/ss.yaml'
-        default_nix = f'{local_path}/default.nix'
-        flake_nix = f'{local_path}/flake.nix'
-        shell_nix = f'{local_path}/shell.nix'
+        ss_nix = f"{gen_root}/ss.nix"
+        ss_yaml = f"{local_path}/ss.yaml"
+        default_nix = f"{local_path}/default.nix"
+        flake_nix = f"{local_path}/flake.nix"
+        shell_nix = f"{local_path}/shell.nix"
 
         if exists(ss_yaml):
-            return name, f'{name} = pkgs.callPackage {ss_nix} {{}};'
+            return name, f"{name} = pkgs.callPackage {ss_nix} {{}};"
 
         elif exists(default_nix):
             if item.get(CALLABLE, True) == False:
-                return name, f'{name} = import {default_nix};'
+                return name, f"{name} = import {default_nix};"
             else:
-                return name, f'{name} = pkgs.callPackage {default_nix} {{}};'
+                return name, f"{name} = pkgs.callPackage {default_nix} {{}};"
 
         elif exists(flake_nix):
-            return name, f'{name} = pkgs.getFlake {flake_nix} {{}};'
+            return name, f"{name} = pkgs.getFlake {flake_nix} {{}};"
 
         elif exists(shell_nix):
-            return name, f'{name} = pkgs.callPackage {shell_nix} {{}};'
+            return name, f"{name} = pkgs.callPackage {shell_nix} {{}};"
         else:
             return name, None
-
 
     def _is_path(self, value: str) -> bool:
         return value.startswith("./") or value.startswith("../")
@@ -47,7 +50,7 @@ class Renderer:
 
     def render_let_in(self, vars: dict) -> str:
         if len(vars) == 0:
-            return ''
+            return ""
 
         return f"""
             let
@@ -60,22 +63,27 @@ class Renderer:
 
         father_name = self.father_name(unit=unit, blueprint=blueprint)
 
-        intreface = f'_{name}'
+        intreface = f"_{name}"
 
         if father_name is None:
             result = {}
         else:
             if len(params) == 0:
-                result = { "fatherUnit": f"{father_name}.{intreface} {{}}" }
+                result = {"fatherUnit": f"{father_name}.{intreface} {{}}"}
             else:
-                vars = SPACE.join([f"{key}={self.render_value(key, value, blueprint=blueprint)};" for key, value in params.items()]);
-                result = { "fatherUnit": f"{father_name}.{intreface} {{ { vars } }}" }
+                vars = SPACE.join(
+                    [
+                        f"{key}={self.render_value(key, value, blueprint=blueprint)};"
+                        for key, value in params.items()
+                    ]
+                )
+                result = {"fatherUnit": f"{father_name}.{intreface} {{ { vars } }}"}
 
         return result
 
     def father_name(self, unit: dict, blueprint: Blueprint) -> Optional[str]:
-        source = unit.get(K_SOURCE, '')
-        source_comp = source.split('.')
+        source = unit.get(K_SOURCE, "")
+        source_comp = source.split(".")
 
         if not isinstance(source, str):
             return None
@@ -83,7 +91,11 @@ class Renderer:
         if len(source_comp) < 2:
             return None
 
-        resolvable_includes = [ item for item in blueprint.includes.keys() if blueprint.includes[item].get('blueprint') is not None ]
+        resolvable_includes = [
+            item
+            for item in blueprint.includes.keys()
+            if blueprint.includes[item].get("blueprint") is not None
+        ]
 
         if source_comp[0] not in resolvable_includes:
             return None
@@ -94,13 +106,16 @@ class Renderer:
         father_name = self.father_name(unit=unit, blueprint=blueprint)
 
         if father_name is not None:
-            unit = { key: unit.get(key, f'fatherUnit.{key} or null') for key in PRE_DEFINED_KEYS }
-            unit[K_SOURCE] = f'fatherUnit.{K_SOURCE}'
+            unit = {
+                key: unit.get(key, f"fatherUnit.{key} or null")
+                for key in PRE_DEFINED_KEYS
+            }
+            unit[K_SOURCE] = f"fatherUnit.{K_SOURCE}"
 
         return unit
 
     def extract_params(self, unit: dict) -> dict:
-        return { k: v for k, v in unit.items() if k not in PRE_DEFINED_KEYS }
+        return {k: v for k, v in unit.items() if k not in PRE_DEFINED_KEYS}
 
     def render_unit(self, unit: dict, blueprint: Blueprint) -> str:
         # resolve all fields from includes
@@ -108,12 +123,21 @@ class Renderer:
 
         params = self.extract_params(unit)
 
-        unit = { k: v for k, v in unit.items() if k in PRE_DEFINED_KEYS }
+        unit = {k: v for k, v in unit.items() if k in PRE_DEFINED_KEYS}
 
-        return LINE_BREAK.join([f'{key}={self.render_value(key, value, blueprint=blueprint, params=params)};' for key, value in unit.items()])
+        return LINE_BREAK.join(
+            [
+                f"{key}={self.render_value(key, value, blueprint=blueprint, params=params)};"
+                for key, value in unit.items()
+            ]
+        )
 
-    def render_map(self, name:str, data: dict, blueprint: Blueprint, params: dict={}) -> str:
-        function = self.find_function(name=name, value=data, params=params, blueprint=blueprint)
+    def render_map(
+        self, name: str, data: dict, blueprint: Blueprint, params: dict = {}
+    ) -> str:
+        function = self.find_function(
+            name=name, value=data, params=params, blueprint=blueprint
+        )
 
         if function is not None:
             return function.render()
@@ -123,26 +147,33 @@ class Renderer:
                     { LINE_BREAK.join([f'{key} = {self.render_value(key, value, blueprint=blueprint, params=params)};' for key, value in data.items() ]) }
                 }}
             """
-    def render_value(self, name: str, value: Any, blueprint: Blueprint, params: dict={}) -> str:
+
+    def render_value(
+        self, name: str, value: Any, blueprint: Blueprint, params: dict = {}
+    ) -> str:
         if value == None:
             return "null"
         elif isinstance(value, list):
             return f"""[{LINE_BREAK.join(map(lambda x: f'{self.render_value(name, x, blueprint, params)}', value))}]"""
         elif isinstance(value, dict):
-            return self.render_map(name=name, data=value, params=params, blueprint=blueprint)
+            return self.render_map(
+                name=name, data=value, params=params, blueprint=blueprint
+            )
         elif isinstance(value, bool):
             return "true" if value else "false"
         elif isinstance(value, str) and self._is_path(value):
             return value
         elif isinstance(value, str) and self._is_multiple_lines(value):
             q = "''"
-            return f'''
+            return f"""
                 {q}{value}{q}
-            '''
-        elif name in PRE_DEFINED_KEYS: # in predefined keys, the text by default is supposed to be nix code, don't add quote
-            return f'{str(value)}'
+            """
+        elif (
+            name in PRE_DEFINED_KEYS
+        ):  # in predefined keys, the text by default is supposed to be nix code, don't add quote
+            return f"{str(value)}"
         elif isinstance(value, float):
-            return f'{str(value)}'
+            return f"{str(value)}"
         else:
             return f'"{str(value)}"'
 
@@ -152,8 +183,8 @@ class Renderer:
         git = value.get(GIT)
         action = value.get(ACTION)
 
-        if sh is not None and isinstance(sh, str):
-            return Sh(name=name, command=sh)
+        if sh is not None:
+            return Sh(name=name, content=sh)
         elif action is not None and isinstance(action, str):
             return Action(name=name, value=action, blueprint=blueprint, renderer=self)
         elif name == K_SOURCE:

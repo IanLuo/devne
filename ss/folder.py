@@ -10,7 +10,7 @@ from os import makedirs
 import os
 
 class Folder:
-    def __init__(self, path):
+    def __init__(self, path: str):
         self.path = path 
 
     @staticmethod

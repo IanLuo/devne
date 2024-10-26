@@ -3,6 +3,7 @@ from ss.configure.blueprint import Blueprint
 from ss.configure.schema import LINE_BREAK, SPACE
 from .renderer import Renderer
 
+
 class UnitsTemplate:
     def __init__(self, blueprint: Blueprint):
         self.blueprint = blueprint
@@ -22,7 +23,11 @@ class UnitsTemplate:
                 }});
             """
         else:
-            render_call_father = lambda name, unit, blueprint: self.renderer.render_call_father(name=name, unit=unit, blueprint=self.blueprint)
+            render_call_father = (
+                lambda name, unit, blueprint: self.renderer.render_call_father(
+                    name=name, unit=unit, blueprint=self.blueprint
+                )
+            )
 
             return f"""
             {name} = _{name} {{
@@ -38,21 +43,23 @@ class UnitsTemplate:
            }});"""
 
     def render_actions(self, actions: dict) -> str:
-        return f'''
+        return f"""
         actions = {{
             {LINE_BREAK.join([f"{name} = {self.renderer.render_value(name=name, value=action, blueprint=self.blueprint)};" for name, action in actions.items()])}
         }};
-        '''
+        """
 
     def render_action_flows(self, action_flows: dict) -> str:
-        return f'''
-            actionFlows = { self.renderer.render_value(name='action_flows', value=action_flows, blueprint=self.blueprint) };
-        '''
+        return f"""
+            actionFlows = { self.renderer.render_value(
+            name="action_flows", value=action_flows, blueprint=self.blueprint
+        ) };
+        """
 
     def render_onstart(self, onstart: dict) -> str:
-        return f'''
+        return f"""
             onstart = { self.renderer.render_value(name='onstart', value=onstart, blueprint=self.blueprint) };
-        '''
+        """
 
     def render(self) -> str:
         line_break = "\n"
@@ -61,13 +68,24 @@ class UnitsTemplate:
         names = list(map(lambda x: x.replace(".", "_"), self.blueprint.units.keys()))
 
         render_units_in_sources = line_break.join(
-            [self.render_unit(name, value) for name, value in self.blueprint.units.items()]
+            [
+                self.render_unit(name, value)
+                for name, value in self.blueprint.units.items()
+            ]
         )
 
-        default_imports = ["pkgs", "system", "name", "version", "lib", "sslib" ]
-        included_imports = [ item[0] for item in self.renderer.resolve_all_includes(blueprint=self.blueprint) if item[1] is not None ]
+        default_imports = ["pkgs", "system", "name", "version", "lib", "sslib"]
+        included_imports = [
+            item[0]
+            for item in self.renderer.resolve_all_includes(blueprint=self.blueprint)
+            if item[1] is not None
+        ]
         all_import = included_imports + default_imports
-        all_interfaces = space.join(map(lambda x: f'_{x}' ,names)) if not self.blueprint.is_root_blueprint else ''
+        all_interfaces = (
+            space.join(map(lambda x: f"_{x}", names))
+            if not self.blueprint.is_root_blueprint
+            else ""
+        )
 
         return f"""
 	{{  {','.join(all_import) } }}:

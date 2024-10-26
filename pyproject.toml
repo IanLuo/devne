@@ -12,6 +12,7 @@ pyyaml = "^6.0.1"
 pytest = "^8.2.2"
 jsonpath-ng = "^1.6.1"
 pexpect = "^4.9.0"
+plumbum = "^1.9.0"
 
 [tool.poetry.scripts]
 ss = "ss.main:app"
