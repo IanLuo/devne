@@ -145,7 +145,7 @@ class Cli:
                 if index == 0:
                     last_output = [line]
                 else:
-                    last_output.apend(line)
+                    last_output.append(line)
 
                 index += 1
 

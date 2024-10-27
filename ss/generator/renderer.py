@@ -3,6 +3,7 @@ from ss.configure.blueprint import Blueprint
 from os.path import exists
 from ss.configure.schema import *
 from ss.generator.functions.action import Action
+from ss.generator.functions.action_flow import ActionFlow
 from ss.generator.functions.weblink import Weblink
 from ss.generator.functions.git_repo import GitRepo
 from ss.generator.functions.nix_package import NixPackage
@@ -82,7 +83,11 @@ class Renderer:
         return result
 
     def father_name(self, unit: dict, blueprint: Blueprint) -> Optional[str]:
-        source = unit.get(K_SOURCE, "")
+        source = unit.get(K_SOURCE)
+
+        if source is None:
+            return None
+
         source_comp = source.split(".")
 
         if not isinstance(source, str):
@@ -182,11 +187,16 @@ class Renderer:
         url = value.get(URL)
         git = value.get(GIT)
         action = value.get(ACTION)
+        action_flow = value.get(ACTION_FLOW)
 
         if sh is not None:
             return Sh(name=name, content=sh)
         elif action is not None and isinstance(action, str):
             return Action(name=name, value=action, blueprint=blueprint, renderer=self)
+        elif action is not None and isinstance(action_flow, str):
+            return ActionFlow(
+                name=name, value=action, blueprint=blueprint, renderer=self
+            )
         elif name == K_SOURCE:
             if url is not None and isinstance(url, str):
                 return Weblink(value=url, params=params, blueprint=blueprint)

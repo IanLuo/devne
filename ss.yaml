@@ -16,8 +16,6 @@ units:
     source: python_units.python
     version: "3.12.0"
 
-  gnumake: nixpkgs.gnumake
-
   poetry: python_units.poetry
 
   pyright: python_units.pyright
@@ -48,6 +46,7 @@ action-flows:
   test-flow2:
     - sh>: echo "now we are in test-flow2"
     - action>: python_units.actions.list
+    - sh>: echo $1 | grep install
 
   test-flow1:
     - sh>: echo $1
@@ -55,8 +54,7 @@ action-flows:
           echo "result form step1: $1"
     - sh>: |
           echo "result form step2: $1"
-    # - step4:
-    #     action-flow>: ss.actions-flows.test-flow2
+    # - action-flow>: ss.actions-flows.test-flow2
     - sh>: |
           echo "result form step4: $1"
 

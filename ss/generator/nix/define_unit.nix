@@ -15,10 +15,10 @@ let
     else
       "material";
 
-  installScriptForSource = source:
-    let sourceType = findOutType source;
+  sourceType = findOutType source;
 
-    in if sourceType == "drv" then ''
+  installScriptForSource = source:
+    if sourceType == "drv" then ''
       mkdir -p $out
       ln -s ${source}/* $out
     '' else if sourceType == "path" then ''
@@ -37,7 +37,7 @@ let
 in let
   drv = stdenv.mkDerivation {
     name = name;
-    src = inputs.source;
+    src = if sourceType == "material" then null else inputs.source;
     dontConfigure =
       if (lib.attrsets.hasAttrByPath [ "dontConfigure" ] inputs) then
         inputs.dontConfigure

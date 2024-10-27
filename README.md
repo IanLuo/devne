@@ -50,7 +50,7 @@ by defining a chain of units
 From the name action, is to perform a specific activity, it is compbined with a unit, and can use the resource of that unit.
 For example, we can make use the [git-extras](https://github.com/tj/git-extras), by wrape it as a unit, and provide some actions to it:
 
-```
+```yaml
 units:
   git-helper:
       source: nixpkgs.git-extras
@@ -65,9 +65,38 @@ Actions are not simple a alias to call bash commands, you can write any script a
 
 Actions are bulding blocks for other actions, and actions-flows, once defined, you can refer to it in other actons, or action-flows, and the on-start script, which is realy handle when you want to re-use your handy tools, especially when you have many.
 
+```yaml
+poetry:
+    source: nixpkgs.poetry
+    actions:
+      install:
+        sh>: poetry install
+      add:
+        sh>: poetry add $1
+      list:
+        sh>: poetry list
+      build:
+        sh>: poetry build
+
+```
+
 ## Action-flows
 
 Action-flow is a sequece of actions, it execute each action one by one, with some pretty good features:
-The latter action can access result of the prevouse
-Each action can access parameter of the action-flow
+The latter action with got result of the prevouse as parameter
 Actions in action flow can be an action, or another action flow
+
+```yaml
+
+test-flow1:
+    - sh>: echo $1
+    - sh>: |
+          echo "result form step1: $1"
+    - sh>: |
+          echo "result form step2: $1"
+    - action-flow>: ss.actions-flows.test-flow2
+    - sh>: |
+          echo "result form step4: $1"
+```
+
+Actions and Action-flows can both be defined on unit as well as on project, and they both use the key *Actions* and *Action-flows*, they works in the same way, just for different usage and re-use size, to put them in deferrent level, on units they are more focus on the specific unit, while on project they are more like work across units, or not unit dependented.

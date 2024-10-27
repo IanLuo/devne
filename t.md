@@ -1,6 +1,7 @@
 # WIP
 [ ] observation
 [ ] units can be observed
+[ ] action-flow to support action and other action-flow
 
 # BACKLOG
 [ ] commands description for each parameter

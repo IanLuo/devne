@@ -107,6 +107,7 @@ class UnitsTemplate:
                     {{
                         path = unit;
                         actions = if unit ? actions && unit.actions != null then unit.actions else {{}};
+                        action_flows = if unit ? action_flows && unit.action_flows != null then unit.action_flows else {{}};
                         onstart = if unit ? onstart && unit.actions != null then unit.onstart else {{}};
                     }}
                 ) allAttr;
