@@ -142,10 +142,11 @@ class UnitsTemplate:
                 builtins.toJSON (
                     lib.attrsets.mapAttrs
                     (name: include:
-                        lib.lists.groupBy
+                        lib.lists.groupBy'
+                        (x: y: x // y)
+                        {{}}
                         (x: x.name)
-                        (map (unit: lib.attrsets.removeAttrs unit [ "source" ]) include.all)
-                    )
+                        (map (unit: lib.attrsets.removeAttrs unit [ "source" ]) include.all)                    )
                     actionableImport
                 )
                 }}'
