@@ -1,10 +1,14 @@
-# WIP
+# RECORDS
+
+## WIP
+
 [ ] action-flow to support action and other action-flow
 [ ] method to load actions and action-flows in includes
 [ ] observation
 [ ] units can be observed
 
-# BACKLOG
+## TODO
+
 [ ] commands description for each parameter
 [ ] ss update action
 [ ] unit documentations
@@ -15,8 +19,10 @@
 [ ] local shared store
 [ ] support services, like database, redis, thrid party services, inside docker
 [ ] reload configs with env
+[ ] includes to share the nixpkgs of the current project
 
-# ARCHIVE
+## DONE
+
 [x] action chain
   [x] handle parameter
   [x] handle env

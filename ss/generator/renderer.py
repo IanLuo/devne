@@ -4,6 +4,7 @@ from os.path import exists
 from ss.configure.schema import *
 from ss.generator.functions.action import Action
 from ss.generator.functions.action_flow import ActionFlow
+from ss.generator.functions.doc import Doc
 from ss.generator.functions.weblink import Weblink
 from ss.generator.functions.git_repo import GitRepo
 from ss.generator.functions.nix_package import NixPackage
@@ -130,9 +131,15 @@ class Renderer:
 
         unit = {k: v for k, v in unit.items() if k in PRE_DEFINED_KEYS}
 
+        def process_render(key: str, value: Any):
+            if key == K_DOC and value is not None:
+                return Doc(value).render()
+            else:
+                return self.render_value(key, value, blueprint=blueprint, params=params)
+
         return LINE_BREAK.join(
             [
-                f"{key}={self.render_value(key, value, blueprint=blueprint, params=params)};"
+                f"{key}={process_render(key=key, value=value)};"
                 for key, value in unit.items()
             ]
         )
@@ -183,11 +190,12 @@ class Renderer:
             return f'"{str(value)}"'
 
     def find_function(self, name: str, value: dict, params: dict, blueprint: Blueprint):
-        sh = value.get(SH)
-        url = value.get(URL)
-        git = value.get(GIT)
-        action = value.get(ACTION)
-        action_flow = value.get(ACTION_FLOW)
+        sh = value.get(F_SH)
+        url = value.get(F_URL)
+        git = value.get(F_GIT)
+        action = value.get(F_ACTION)
+        action_flow = value.get(F_ACTION_FLOW)
+        doc = value.get(F_DOC)
 
         if sh is not None:
             return Sh(name=name, content=sh)
@@ -197,6 +205,8 @@ class Renderer:
             return ActionFlow(
                 name=name, value=action, blueprint=blueprint, renderer=self
             )
+        elif doc is not None:
+            return Doc(unit_name=name, content=doc)
         elif name == K_SOURCE:
             if url is not None and isinstance(url, str):
                 return Weblink(value=url, params=params, blueprint=blueprint)

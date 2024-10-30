@@ -59,6 +59,11 @@ def up():
 
 
 @app.command()
+def blueprints(config: str = default_config):
+    console.print(Cli(config).blueprints)
+
+
+@app.command()
 def reload(config: str = default_config):
     """re-create all ss related files based on the ss.yaml"""
     Cli(config).reload()

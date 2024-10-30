@@ -1,7 +1,7 @@
 from ss.configure.blueprint import Blueprint
 import re
 from typing import Any
-from ss.configure.schema import ACTION
+from ss.configure.schema import F_ACTION
 
 
 class Action:

@@ -39,6 +39,8 @@ class UnitsTemplate:
             }}:
             {self.renderer.render_let_in(render_call_father(name, unit, blueprint) or {})}
             {{
+
+              name = "{name}";
               {self.renderer.render_unit(unit=unit, blueprint=self.blueprint)}
            }});"""
 
@@ -108,7 +110,7 @@ class UnitsTemplate:
                         path = unit;
                         actions = if unit ? actions && unit.actions != null then unit.actions else {{}};
                         action_flows = if unit ? action_flows && unit.action_flows != null then unit.action_flows else {{}};
-                        onstart = if unit ? onstart && unit.actions != null then unit.onstart else {{}};
+                        onstart = if unit ? onstart && unit.onstart != null then unit.onstart else {{}};
                     }}
                 ) allAttr;
 
@@ -135,6 +137,20 @@ class UnitsTemplate:
                 echo '${{builtins.toJSON ( unitsProfile // currentProfile // includedProfile)}}'
             '';
 
+            all-units-info = pkgs.writeScriptBin "all_units_info" ''
+                echo '${{
+                builtins.toJSON (
+                    lib.attrsets.mapAttrs
+                    (name: include:
+                        lib.lists.groupBy
+                        (x: x.name)
+                        (map (unit: lib.attrsets.removeAttrs unit [ "source" ]) include.all)
+                    )
+                    actionableImport
+                )
+                }}'
+            '';
+
             onStartScript = lib.strings.concatStringsSep
                 "\n"
                 (lib.flatten
@@ -150,7 +166,7 @@ class UnitsTemplate:
                 export SS_PROJECT_BASE=$PWD
             '';
 
-            funcs = [ load-profile ];
+            funcs = [ load-profile all-units-info ];
 
 
 		in {{
