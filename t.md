@@ -20,6 +20,7 @@
 [ ] support services, like database, redis, thrid party services, inside docker
 [ ] reload configs with env
 [ ] includes to share the nixpkgs of the current project
+[ ] storage manage
 
 ## DONE
 

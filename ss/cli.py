@@ -112,7 +112,7 @@ class Cli:
 
     def _run_script_file(self, script_file: str, other_args: List[str], env: dict = {}):
         process = subprocess.Popen(
-            [script_file, *other_args],
+            [script_file, *(other_args or [])],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             env={**os.environ, **env},
