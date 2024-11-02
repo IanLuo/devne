@@ -2,8 +2,6 @@
 
 ## WIP
 
-[ ] action-flow to support action and other action-flow
-[ ] method to load actions and action-flows in includes
 [ ] observation
 [ ] units can be observed
 
@@ -24,6 +22,8 @@
 
 ## DONE
 
+[x] action-flow to support action and other action-flow
+[x] method to load actions and action-flows in includes
 [x] action chain
   [x] handle parameter
   [x] handle env
