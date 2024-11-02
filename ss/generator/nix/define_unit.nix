@@ -2,8 +2,8 @@
 
 { name
 # the source of the unit, can be a git repo, or a local path
-, source
-# env vars that will be set by this unit
+, source ? null
+  # env vars that will be set by this unit
 , envs ? null, onstart ? null, install ? "", actions ? null, ... }@inputs:
 
 let
@@ -34,10 +34,12 @@ let
     isUnit = true;
   } // (lib.attrsets.removeAttrs inputs [ "source" "install" ]);
 
+  sourceLess = sourceType == "material";
 in let
   drv = stdenv.mkDerivation {
     name = name;
-    src = if sourceType == "material" then null else inputs.source;
+    src = if sourceLess then null else inputs.source;
+    dontUnpack = sourceLess;
     dontConfigure =
       if (lib.attrsets.hasAttrByPath [ "dontConfigure" ] inputs) then
         inputs.dontConfigure

@@ -30,6 +30,12 @@ units:
     source: templates.git-helper
     ignores: ["result", ".direnv", ".ss", ".venv*", ".pytest_cache", ".mypy_cache", "dist", "build", "*.egg-info", ".tox", ".nox", ".coverage", ".eggs", "__pycache__", ".pytest"]
 
+  process-helper:
+    source: templates.process-helper
+
+onstart:
+    - sh>: echo "welcome to ss, a development environment with 1 command"
+    - sh>: echo "type 'ss actions' to see available commands"
 
 actions:
   test:
@@ -38,15 +44,14 @@ actions:
   build:
     action>: python_units.actions.build
 
-onstart:
-    - sh>: echo "welcome to ss, a development environment with 1 command"
-    - sh>: echo "type 'ss actions' to see available commands"
+  is-db-running:
+    - sh>: echo 5432
+    - action>: process-helper.actions.port-available
+    - sh>: echo $1
 
-action-flows:
-  test-flow2:
-    - sh>: echo "now we are in test-flow2"
-    - action>: python_units.actions.list
-    - sh>: echo $1 | grep install
+  kill-if-runing:
+    - action>: actions.is-db-running
+    - action>: process-helper.actions.kill
 
   test-flow1:
     - sh>: echo $1

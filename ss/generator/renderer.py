@@ -3,7 +3,6 @@ from ss.configure.blueprint import Blueprint
 from os.path import exists
 from ss.configure.schema import *
 from ss.generator.functions.action import Action
-from ss.generator.functions.action_flow import ActionFlow
 from ss.generator.functions.doc import Doc
 from ss.generator.functions.weblink import Weblink
 from ss.generator.functions.git_repo import GitRepo
@@ -132,7 +131,7 @@ class Renderer:
         unit = {k: v for k, v in unit.items() if k in PRE_DEFINED_KEYS}
 
         def process_render(key: str, value: Any):
-            if key == K_DOC and value is not None:
+            if key == K_DOC and value is not None and not blueprint.is_root_blueprint:
                 return Doc(value).render()
             else:
                 return self.render_value(key, value, blueprint=blueprint, params=params)
@@ -161,7 +160,12 @@ class Renderer:
             """
 
     def render_value(
-        self, name: str, value: Any, blueprint: Blueprint, params: dict = {}
+        self,
+        name: str,
+        value: Any,
+        blueprint: Blueprint,
+        params: dict = {},
+        string_as_nix_code: bool = False,
     ) -> str:
         if value == None:
             return "null"
@@ -173,6 +177,8 @@ class Renderer:
             )
         elif isinstance(value, bool):
             return "true" if value else "false"
+        elif isinstance(value, str) and string_as_nix_code:
+            return value
         elif isinstance(value, str) and self._is_path(value):
             return value
         elif isinstance(value, str) and self._is_multiple_lines(value):
@@ -194,17 +200,12 @@ class Renderer:
         url = value.get(F_URL)
         git = value.get(F_GIT)
         action = value.get(F_ACTION)
-        action_flow = value.get(F_ACTION_FLOW)
         doc = value.get(F_DOC)
 
         if sh is not None:
             return Sh(name=name, content=sh)
         elif action is not None and isinstance(action, str):
             return Action(name=name, value=action, blueprint=blueprint, renderer=self)
-        elif action is not None and isinstance(action_flow, str):
-            return ActionFlow(
-                name=name, value=action, blueprint=blueprint, renderer=self
-            )
         elif doc is not None:
             return Doc(unit_name=name, content=doc)
         elif name == K_SOURCE:

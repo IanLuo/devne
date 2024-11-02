@@ -59,11 +59,6 @@ def up():
 
 
 @app.command()
-def blueprints(config: str = default_config):
-    console.print(Cli(config).blueprints)
-
-
-@app.command()
 def reload(config: str = default_config):
     """re-create all ss related files based on the ss.yaml"""
     Cli(config).reload()
@@ -81,19 +76,6 @@ def actions(
 
     actions = Cli(config).list_actions(unit_name)
     console.print(actions)
-
-
-@app.command()
-def action_flows(
-    unit_name: Annotated[Optional[str], typer.Argument()] = None,
-    config: str = default_config,
-):
-    """List all action flows or list action flows for a specific unit,
-    if unit_name is provided
-    otherwise show all action flows for ss
-    """
-    action_flows = Cli(config).list_action_flows(unit_name)
-    console.print(action_flows)
 
 
 @app.command()
@@ -118,24 +100,6 @@ def exec(
 ):
     """Execute an action with the given name"""
     for line in Cli(config).run_action(name, other_args=other_args, env=env):
-        console.print(line)
-
-
-@app.command()
-def exec_flow(
-    name: str,
-    other_args: List[str] = typer.Argument(None),
-    config: str = default_config,
-    env: str = typer.Option(
-        "",
-        "--env",
-        "-e",
-        callback=parse_key_value_pairs,
-        help="Environment variables, e.g. --env key1=value1,key2=value2",
-    ),
-):
-    """Execute an action flow with the given name"""
-    for line in Cli(config).run_action_flow(name, other_args=other_args, env=env):
         console.print(line)
 
 

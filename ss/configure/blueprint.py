@@ -50,24 +50,26 @@ class Blueprint:
     units: Dict[str, Any]
     actions: Dict[str, Any]
     onstart: Dict[str, Any]
-    action_flows: Dict[str, Any]
     includes: Dict[str, Any]
     metadata: Dict[str, Any]
     is_root_blueprint: bool
 
-    def __init__(self,
-                 root: str,
-                 include_path: Optional[str] = None,
-                 config_path: Optional[str] = None):
+    def __init__(
+        self,
+        root: str,
+        include_path: Optional[str] = None,
+        config_path: Optional[str] = None,
+    ):
         config_path = config_path or Folder(root).config_path
 
         self.parser = Parser()
         self.is_root_blueprint = include_path is None
         self.root = root
-        self.gen_folder = Folder(join(root, '.ss') or include_path)
+        self.gen_folder = Folder(join(root, ".ss") or include_path)
         self.config_folder = Folder(dirname(config_path))
-        self.resource_manager = ResourceManager(lock_root=root,
-                                                config_folder=self.config_folder)
+        self.resource_manager = ResourceManager(
+            lock_root=root, config_folder=self.config_folder
+        )
 
         self.init_blueprint(config_path)
 
@@ -91,12 +93,14 @@ class Blueprint:
 
         logging.info(f"parsing unit..")
         self.units = {
-            name: self.parser.parse_unit(data) for name, data in json.get(K_1_UNITS, {}).items()
+            name: self.parser.parse_unit(data)
+            for name, data in json.get(K_1_UNITS, {}).items()
         }
 
         logging.info(f"parsing include..")
         self.includes = {
-            name: self.parser.parse_include(data) for name, data in json.get(K_1_INCLUDE, {}).items()
+            name: self.parser.parse_include(data)
+            for name, data in json.get(K_1_INCLUDE, {}).items()
         }
 
         logging.info(f"parsing metadata..")
@@ -108,16 +112,12 @@ class Blueprint:
 
         logging.info(f"parsing actions..")
         self.actions = {
-            name: self.parser.parse_actions(data) for name, data in json.get(K_1_ACTIONS, {}).items()
+            name: self.parser.parse_actions(data)
+            for name, data in json.get(K_1_ACTIONS, {}).items()
         }
 
-        logging.info(f"parsing action flows..")
-        self.action_flows = {
-            name: self.parser.parse_action_flow(data) for name, data in json.get(K_1_ACTION_FLOWS, {}).items()
-        }
-
-        logging.info(f'parsing onstart...')
-        self.onstart = self.parser.parse_onstart(data=json.get(K_1_ON_START, ''))
+        logging.info(f"parsing onstart...")
+        self.onstart = self.parser.parse_onstart(data=json.get(K_1_ON_START, ""))
 
     def resovle_all_includes(self, includes: Dict[str, Any]):
         logging.info(f"start resolving includes..")
@@ -127,19 +127,21 @@ class Blueprint:
 
     def resolve_include(self, name: str, value: dict[str, Any]):
         logging.info(f"collecting include {value}..")
-        resource_name = self.metadata.get("name", '') + "-" + name
+        resource_name = self.metadata.get("name", "") + "-" + name
         include_resource = self.resource_manager.fetch_resource(resource_name, value)
 
-        self.includes[name] = {**self.includes[name],
-                               **include_resource.__dict__,
-                               'gen_root': self.gen_folder.include_path(name),
-                               }
+        self.includes[name] = {
+            **self.includes[name],
+            **include_resource.__dict__,
+            "gen_root": self.gen_folder.include_path(name),
+        }
 
         ss_path = Folder(include_resource.local_path).config_path
 
         if exists(ss_path):
             logging.info(f"found ss.yaml at {ss_path}, using it..")
-            self.includes[name]['blueprint'] = Blueprint(root=self.root,
-                                                         include_path=self.gen_folder.include_path(name),
-                                                         config_path=ss_path)
-
+            self.includes[name]["blueprint"] = Blueprint(
+                root=self.root,
+                include_path=self.gen_folder.include_path(name),
+                config_path=ss_path,
+            )

@@ -1,14 +1,20 @@
 import yaml
 from typing import Any, Dict
 
-from ss.configure.schema import K_ACTIONS, K_LISTNER, K_ON_START, K_SOURCE
+from ss.configure.schema import (
+    K_ACTIONS,
+    K_LISTNER,
+    K_ON_START,
+    K_SOURCE,
+    PRE_DEFINED_KEYS,
+)
+
 
 class Parser:
 
     def parse_yaml(self, yaml_path: str) -> Dict[str, Any]:
         with open(yaml_path, "r") as f:
             return yaml.load(f, Loader=yaml.FullLoader)
-
 
     def parse_unit(self, data: Any) -> Dict[str, Any]:
         def raise_exception(name):
@@ -18,15 +24,15 @@ class Parser:
             return {K_SOURCE: data}
         elif isinstance(data, dict):
             mandatory = lambda x, default: data[x] if x in data else default
-            optionals = [K_ON_START, K_ACTIONS, K_LISTNER, K_SOURCE]
+            optionals = filter(lambda x: x != K_SOURCE, PRE_DEFINED_KEYS)
 
-            return {**data,
-                    **{ K_SOURCE: mandatory(K_SOURCE, 'null') },
-                    ** { key: data.get(key) for key in optionals if key in data.keys() }
-                    }
+            return {
+                **data,
+                **{K_SOURCE: mandatory(K_SOURCE, "null")},
+                **{key: data.get(key) for key in optionals if key in data.keys()},
+            }
         else:
             raise Exception("unit should be a string or a dict")
-
 
     def parse_include(self, data: Any) -> Dict[str, Any]:
         if isinstance(data, str):
@@ -35,7 +41,6 @@ class Parser:
             return data
         else:
             raise Exception("include should be a string or a dict")
-
 
     def parse_actions(self, data: Any):
         return data
@@ -46,9 +51,4 @@ class Parser:
         elif isinstance(data, str):
             return data
         else:
-            raise Exception('onstart needs to be a string or a list of str')
-
-    def parse_action_flow(self, flow: Dict[str, Any]) -> Dict[str, Any]:
-        return flow
-
-
+            raise Exception("onstart needs to be a string or a list of str")

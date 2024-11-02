@@ -1,7 +1,6 @@
 from ss.configure.blueprint import Blueprint
 import re
 from typing import Any
-from ss.configure.schema import F_ACTION
 
 
 class Action:
@@ -18,12 +17,15 @@ class Action:
 
     def resolve_unit_action(self, name: str, value: Any, blueprint: Blueprint):
         if isinstance(value, str):
-            pattern = r"([a-zA-Z_-]+)\.actions\.([a-zA-Z_-]+)"
+            pattern = r"([a-zA-Z_-]*)\.?actions\.([a-zA-Z_-]+)"
             match = re.match(pattern, value)
             if match is None:
                 raise Exception(f"Invalid action value: {value} for action: {name}")
 
             module, action = match.groups()
+
+            if len(module) == 0:
+                module = blueprint.name
 
             if module in [
                 include
@@ -37,16 +39,9 @@ class Action:
                     name=action, value=inner_value, blueprint=inner_blueprint
                 )
             else:
-                if module in blueprint.units.keys():
-                    return self.renderer.render_value(
-                        name=name,
-                        value=blueprint.units[module].get("actions", {}).get(action),
-                        blueprint=blueprint,
-                    )
-                else:
-                    return self.renderer.render_value(
-                        name=name, value=value, blueprint=blueprint
-                    )
+                return self.renderer.render_value(
+                    name=name, value=value, blueprint=blueprint, string_as_nix_code=True
+                )
         else:
             return self.renderer.render_value(
                 name=name, value=value, blueprint=blueprint

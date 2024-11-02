@@ -59,23 +59,6 @@ class Cli:
                 .keys()
             ]
 
-    def list_action_flows(self, unit_name: Optional[str] = None):
-        if unit_name == None:
-            return [
-                f"{unit_name}.actionFlows.{action_flow_name}"
-                for unit_name in self._all_units.keys()
-                for action_flow_name in self._all_units.get(unit_name, {})
-                .get("actionFlows", {})
-                .keys()
-            ]
-        else:
-            return [
-                f"{unit_name}.actionFlows.{action_flow_name}"
-                for action_flow_name in self._all_units.get(unit_name, {})
-                .get("actionFlows", {})
-                .keys()
-            ]
-
     def run_action(
         self, action_name: str, other_args: List[str], env: dict = {}
     ) -> Any:
@@ -85,30 +68,25 @@ class Cli:
         if not match:
             raise ValueError(f"action {action_name} not found")
         else:
-            shell_file = match[0].value
-            return self._run_script_file(
-                script_file=shell_file, other_args=other_args, env=env
+            value = match[0].value
+
+            return self._run_action_value(
+                name=action_name, value=value, other_args=other_args, env=env
             )
 
-    def run_action_flow(
-        self, action_flow_name: str, other_args: List[str], env: dict = {}
+    def _run_action_value(
+        self, name: str, value: Any, other_args: List[str], env: dict = {}
     ):
-        jsonpath_expr = parse(f"$.{action_flow_name}")
-        match = jsonpath_expr.find(self._profile)
-
-        if not match:
-            raise ValueError(f"action flow {action_flow_name} not found")
+        if isinstance(value, str):
+            return self._run_script_file(
+                script_file=value, other_args=other_args, env=env
+            )
+        elif isinstance(value, list):
+            return self._execute_scripts(
+                name=name, steps=value, other_args=other_args, env=env
+            )
         else:
-            files = match[0].value
-
-            if len(files) == 0:
-                raise ValueError(
-                    f"action flow {action_flow_name} does not have any steps"
-                )
-            else:
-                return self._execute_scripts(
-                    steps=files, name=action_flow_name, other_args=other_args, env=env
-                )
+            raise ValueError(f"Invalid action value: {value} for action: {name}")
 
     def _run_script_file(self, script_file: str, other_args: List[str], env: dict = {}):
         process = subprocess.Popen(
@@ -128,14 +106,15 @@ class Cli:
             raise subprocess.CalledProcessError(process.returncode, script_file)
 
     def _execute_scripts(
-        self, steps: list, name: str, other_args: List[str] = [], env: dict = {}
+        self, name: str, steps: list, other_args: List[str] = [], env: dict = {}
     ):
         last_output = []
-        for step in steps:
-            index = 0
 
-            for line in self._run_script_file(
-                script_file=step,
+        for current_step in steps:
+            index = 0
+            for line in self._run_action_value(
+                name=name,
+                value=current_step,
                 other_args=(
                     ["\n".join(last_output)] if len(last_output) > 0 else other_args
                 ),

@@ -51,13 +51,6 @@ class UnitsTemplate:
         }};
         """
 
-    def render_action_flows(self, action_flows: dict) -> str:
-        return f"""
-            actionFlows = { self.renderer.render_value(
-            name="action_flows", value=action_flows, blueprint=self.blueprint
-        ) };
-        """
-
     def render_onstart(self, onstart: dict) -> str:
         return f"""
             onstart = { self.renderer.render_value(name='onstart', value=onstart, blueprint=self.blueprint) };
@@ -97,7 +90,6 @@ class UnitsTemplate:
             {render_units_in_sources}
 
             { self.render_actions(self.blueprint.actions or {}) }
-            { self.render_action_flows(self.blueprint.action_flows or {}) }
             { self.render_onstart(self.blueprint.onstart or {}) }
 
             all = [ {line_break.join(names)}];
@@ -109,7 +101,6 @@ class UnitsTemplate:
                     {{
                         path = unit;
                         actions = if unit ? actions && unit.actions != null then unit.actions else {{}};
-                        action_flows = if unit ? action_flows && unit.action_flows != null then unit.action_flows else {{}};
                         onstart = if unit ? onstart && unit.onstart != null then unit.onstart else {{}};
                     }}
                 ) allAttr;
@@ -117,15 +108,9 @@ class UnitsTemplate:
             currentProfile = {{
                  {self.blueprint.name} = {{
                      inherit actions;
-                     inherit actionFlows;
                      inherit onstart;
                 }};
             }};
-
-            includedProfile = lib.attrsets.mapAttrs (name: include: {{
-                actions = if include ? actions && include.actions != null then include.actions else {{}};
-                actionFlows = if include ? actionFlows && include.actionFlows != null then include.actionFlows else {{}};
-            }}) actionableImport;
 
             mapShs = sh:
                 if builtins.isList sh then
@@ -134,7 +119,7 @@ class UnitsTemplate:
                     ["source ${{sh}}"];
 
             load-profile = pkgs.writeScriptBin "load_profile" ''
-                echo '${{builtins.toJSON ( unitsProfile // currentProfile // includedProfile)}}'
+                echo '${{builtins.toJSON ( unitsProfile // currentProfile)}}'
             '';
 
             all-units-info = pkgs.writeScriptBin "all_units_info" ''
