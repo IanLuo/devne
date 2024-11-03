@@ -30,9 +30,6 @@ units:
     source: templates.git-helper
     ignores: ["result", ".direnv", ".ss", ".venv*", ".pytest_cache", ".mypy_cache", "dist", "build", "*.egg-info", ".tox", ".nox", ".coverage", ".eggs", "__pycache__", ".pytest"]
 
-  process-helper:
-    source: templates.process-helper
-
 onstart:
     - sh>: echo "welcome to ss, a development environment with 1 command"
     - sh>: echo "type 'ss actions' to see available commands"
@@ -46,12 +43,12 @@ actions:
 
   is-db-running:
     - sh>: echo 5432
-    - action>: process-helper.actions.port-available
+    - action>: templates.process-helper.actions.port-available
     - sh>: echo $1
 
   kill-if-runing:
     - action>: actions.is-db-running
-    - action>: process-helper.actions.kill
+    - action>: templates.process-helper.actions.kill
 
   test-flow1:
     - sh>: echo $1
@@ -59,7 +56,6 @@ actions:
           echo "result form step1: $1"
     - sh>: |
           echo "result form step2: $1"
-    # - action-flow>: ss.actions-flows.test-flow2
     - sh>: |
           echo "result form step4: $1"
 

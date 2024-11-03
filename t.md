@@ -3,8 +3,10 @@
 ## WIP
 
 - [ ] observation
-- [ ] units can be observed
-  - trigger point for a unit
+
+  observable types:
+  - scheduled tasked: repeated, timed
+  - action completion
 
 ## TODO
 
@@ -20,6 +22,7 @@
 - [ ] reload configs with env
 - [ ] includes to share the nixpkgs of the current project
 - [ ] storage manage
+- [ ] reference for unit folder, so script can access what they want
 
 ## DONE
 
@@ -35,8 +38,9 @@
 - [x] import other ss.yaml and generate files for them
 - [x] replace flake to normal .nix
 - [x] to make unit runnable
-    add doc for each unit, by adding a special parameter 'doc', by default null
-    to specify input/output type for each unit
+
+  add doc for each unit, by adding a special parameter 'doc', by default null
+  to specify input/output type for each unit
 - [x] add sha-256 for ss.yaml include so download could be cached
 - [x] units have executable interface
 - [x] yaml file will extend other yaml files to 'inherit' the existing tools and packgage setups
@@ -46,6 +50,7 @@
 - [x] ref from outside repo on github
 - [x] resolve vars
 - [x] resolve funcitons
+
   git repo
 - [x] collect units
 - [x] !! versioning for packages in yaml
