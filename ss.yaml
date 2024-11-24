@@ -3,8 +3,11 @@ metadata:
   version: 0.0.1
   description: devlopment environment with 1 command
 
-include:
+includes:
   templates: path:///Users/ianluo/Documents/apps/templates
+  # FIXME: use below format to replace above
+  # templates:
+  #   path:///Users/ianluo/Documents/apps/templates
   # python_units: https://github.com/IanLuo/python_units
   python_units: path:///Users/ianluo/Documents/apps/python_units
   nixpkgs:
@@ -15,6 +18,12 @@ units:
   python:
     source: python_units.python
     version: "3.12.0"
+
+  service-manager:
+    source: nixpkgs.process-compose
+    actions:
+      ps:
+        sh>: process-compose
 
   poetry: python_units.poetry
 
@@ -35,6 +44,8 @@ onstart:
     - sh>: echo "type 'ss actions' to see available commands"
 
 actions:
+  generate-constants:
+    sh>: python ss/configure/constants_generator.py
   test:
     action>: python_units.actions.test
 
@@ -58,5 +69,17 @@ actions:
           echo "result form step2: $1"
     - sh>: |
           echo "result form step4: $1"
+services:
+  db:
+    depended-on: another-service
+    # sh>:
+    #   env:
+    #     POSTGRES_USER: postgres
+    #     DATABASE: postgres
+    #     LANG: en_US.UTF-8
+    #     DATA_PATH: /var/lib/postgresql/data
 
-subscriptions:
+    #   script: |
+    #     postgres run --initdb \
+    #       --locale $LANG \
+    #       --data-path $DATA_PATH

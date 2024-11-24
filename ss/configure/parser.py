@@ -1,13 +1,7 @@
 import yaml
 from typing import Any, Dict
 
-from ss.configure.schema import (
-    K_ACTIONS,
-    K_LISTNER,
-    K_ON_START,
-    K_SOURCE,
-    PRE_DEFINED_KEYS,
-)
+from ss.configure.schema_gen import schema
 
 
 class Parser:
@@ -21,14 +15,20 @@ class Parser:
             raise Exception(f"{name} is mandatory")
 
         if isinstance(data, str):
-            return {K_SOURCE: data}
+            return {schema.units.source.__str__: data}
         elif isinstance(data, dict):
             mandatory = lambda x, default: data[x] if x in data else default
-            optionals = filter(lambda x: x != K_SOURCE, PRE_DEFINED_KEYS)
+            optionals = filter(
+                lambda x: x != schema.units.source.__str__, schema.pre_defined
+            )
 
             return {
                 **data,
-                **{K_SOURCE: mandatory(K_SOURCE, "null")},
+                **{
+                    schema.units.source.__str__: mandatory(
+                        schema.units.source.__str__, "null"
+                    )
+                },
                 **{key: data.get(key) for key in optionals if key in data.keys()},
             }
         else:

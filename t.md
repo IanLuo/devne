@@ -7,6 +7,8 @@
   observable types:
   - scheduled tasked: repeated, timed
   - action completion
+- [ ] services
+- [ ] ss.yaml editor
 
 ## TODO
 

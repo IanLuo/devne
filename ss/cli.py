@@ -103,7 +103,9 @@ class Cli:
         process.wait()
 
         if process.returncode != 0:
-            raise subprocess.CalledProcessError(process.returncode, script_file)
+            raise subprocess.CalledProcessError(
+                process.returncode, script_file, stderr=process.stderr
+            )
 
     def _execute_scripts(
         self, name: str, steps: list, other_args: List[str] = [], env: dict = {}

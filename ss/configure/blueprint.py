@@ -42,7 +42,7 @@ import logging
 from ..resources.resource_manager import ResourceManager
 from ..folder import Folder
 from os.path import dirname, join
-from .schema import *
+from .schema_gen import schema
 
 
 @dataclass
@@ -94,13 +94,13 @@ class Blueprint:
         logging.info(f"parsing unit..")
         self.units = {
             name: self.parser.parse_unit(data)
-            for name, data in json.get(K_1_UNITS, {}).items()
+            for name, data in json.get(schema.units.__str__, {}).items()
         }
 
         logging.info(f"parsing include..")
         self.includes = {
             name: self.parser.parse_include(data)
-            for name, data in json.get(K_1_INCLUDE, {}).items()
+            for name, data in json.get(schema.includes.__str__, {}).items()
         }
 
         logging.info(f"parsing metadata..")
@@ -113,11 +113,13 @@ class Blueprint:
         logging.info(f"parsing actions..")
         self.actions = {
             name: self.parser.parse_actions(data)
-            for name, data in json.get(K_1_ACTIONS, {}).items()
+            for name, data in json.get(schema.actions.__str__, {}).items()
         }
 
         logging.info(f"parsing onstart...")
-        self.onstart = self.parser.parse_onstart(data=json.get(K_1_ON_START, ""))
+        self.onstart = self.parser.parse_onstart(
+            data=json.get(schema.onstart.__str__, "")
+        )
 
     def resovle_all_includes(self, includes: Dict[str, Any]):
         logging.info(f"start resolving includes..")

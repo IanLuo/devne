@@ -135,6 +135,10 @@ git-helper:
     ignores: ["result", ".direnv", ".ss", ".venv*", ".pytest_cache", ".mypy_cache", "dist", "build", "*.egg-info", ".tox", ".nox", ".coverage", ".eggs", "__pycache__", ".pytest"]
 ```
 
-## Routine
+## Services
 
-TBD
+Services only live in the project level, not under any unit, the difference of service is that, a service is keep running in the background, action is executed when triggered.
+
+## Trigger
+
+Trigger can be time schedule, or callback of other action

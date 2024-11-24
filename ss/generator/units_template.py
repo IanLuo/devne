@@ -1,6 +1,6 @@
 from ss.configure import blueprint
 from ss.configure.blueprint import Blueprint
-from ss.configure.schema import LINE_BREAK, SPACE
+from ss.configure.schema_gen import schema, LINE_BREAK, SPACE
 from .renderer import Renderer
 
 

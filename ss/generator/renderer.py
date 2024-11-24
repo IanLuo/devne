@@ -1,7 +1,7 @@
 from typing import Any, Optional
 from ss.configure.blueprint import Blueprint
 from os.path import exists
-from ss.configure.schema import *
+from ss.configure.schema_gen import schema, LINE_BREAK, SPACE
 from ss.generator.functions.action import Action
 from ss.generator.functions.doc import Doc
 from ss.generator.functions.weblink import Weblink
@@ -30,7 +30,7 @@ class Renderer:
             return name, f"{name} = pkgs.callPackage {ss_nix} {{}};"
 
         elif exists(default_nix):
-            if item.get(CALLABLE, True) == False:
+            if item.get(schema.includes.callable.__str__, True) == False:
                 return name, f"{name} = import {default_nix};"
             else:
                 return name, f"{name} = pkgs.callPackage {default_nix} {{}};"
@@ -83,7 +83,7 @@ class Renderer:
         return result
 
     def father_name(self, unit: dict, blueprint: Blueprint) -> Optional[str]:
-        source = unit.get(K_SOURCE)
+        source = unit.get(schema.units.source.__str__)
 
         if source is None:
             return None
@@ -113,14 +113,16 @@ class Renderer:
         if father_name is not None:
             unit = {
                 key: unit.get(key, f"fatherUnit.{key} or null")
-                for key in PRE_DEFINED_KEYS
+                for key in schema.pre_defined
             }
-            unit[K_SOURCE] = f"fatherUnit.{K_SOURCE}"
+            unit[schema.units.source.__str__] = (
+                f"fatherUnit.{schema.units.source.__str__}"
+            )
 
         return unit
 
     def extract_params(self, unit: dict) -> dict:
-        return {k: v for k, v in unit.items() if k not in PRE_DEFINED_KEYS}
+        return {k: v for k, v in unit.items() if k not in schema.pre_defined}
 
     def render_unit(self, unit: dict, blueprint: Blueprint) -> str:
         # resolve all fields from includes
@@ -128,10 +130,14 @@ class Renderer:
 
         params = self.extract_params(unit)
 
-        unit = {k: v for k, v in unit.items() if k in PRE_DEFINED_KEYS}
+        unit = {k: v for k, v in unit.items() if k in schema.pre_defined}
 
         def process_render(key: str, value: Any):
-            if key == K_DOC and value is not None and not blueprint.is_root_blueprint:
+            if (
+                key == schema.units.doc.__str__
+                and value is not None
+                and not blueprint.is_root_blueprint
+            ):
                 return Doc(value).render()
             else:
                 return self.render_value(key, value, blueprint=blueprint, params=params)
@@ -187,7 +193,7 @@ class Renderer:
                 {q}{value}{q}
             """
         elif (
-            name in PRE_DEFINED_KEYS
+            name in schema.pre_defined
         ):  # in predefined keys, the text by default is supposed to be nix code, don't add quote
             return f"{str(value)}"
         elif isinstance(value, float):
@@ -196,11 +202,11 @@ class Renderer:
             return f'"{str(value)}"'
 
     def find_function(self, name: str, value: dict, params: dict, blueprint: Blueprint):
-        sh = value.get(F_SH)
-        url = value.get(F_URL)
-        git = value.get(F_GIT)
-        action = value.get(F_ACTION)
-        doc = value.get(F_DOC)
+        sh = value.get(schema.functions.sh_f.__str__)
+        url = value.get(schema.functions.url_f.__str__)
+        git = value.get(schema.functions.git_f.__str__)
+        action = value.get(schema.functions.action_f.__str__)
+        doc = value.get(schema.functions.doc_f.__str__)
 
         if sh is not None:
             return Sh(name=name, content=sh)
@@ -208,7 +214,7 @@ class Renderer:
             return Action(name=name, value=action, blueprint=blueprint, renderer=self)
         elif doc is not None:
             return Doc(unit_name=name, content=doc)
-        elif name == K_SOURCE:
+        elif name == schema.units.source.__str__:
             if url is not None and isinstance(url, str):
                 return Weblink(value=url, params=params, blueprint=blueprint)
             elif git is not None and isinstance(git, dict):

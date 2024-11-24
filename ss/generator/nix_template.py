@@ -1,6 +1,7 @@
-from ss.configure.schema import *
+from ss.configure.schema_gen import schema, LINE_BREAK, SPACE
 from .renderer import Renderer
 from typing import List, Dict
+
 
 class NixTemplate:
     def __init__(self, blueprint):
@@ -47,5 +48,8 @@ class NixTemplate:
         return list(self._nix_includes().keys())
 
     def _nix_includes(self) -> Dict[str, str]:
-        return { item[0]:item[1] for item in self.renderer.resolve_all_includes(blueprint=self.blueprint) if item[1] is not None }
-
+        return {
+            item[0]: item[1]
+            for item in self.renderer.resolve_all_includes(blueprint=self.blueprint)
+            if item[1] is not None
+        }

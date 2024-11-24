@@ -1,26 +1,92 @@
-F_SH = "sh>"
-F_DOC = "doc>"
-F_ACTION = "action>"
-F_URL = "url>"
-F_GIT = "git>"
-F_READFILE = "read_file>"
-K_SOURCE = "source"
-K_ON_START = "onstart"
-K_ACTIONS = "actions"
-K_LISTNER = "listener"
-K_DOC = "doc"
+from enum import Enum
 
-K_1_UNITS = "units"
-K_1_INCLUDE = "include"
-K_1_METADATA = "metadata"
-K_1_OBSERVER = "observer"
-K_1_ACTIONS = "actions"
-K_1_ON_START = "onstart"
+K_IS_OPTIONAL = "_is_optional"
+K_VALUE_TYPE = "_value_type"
 
-LINE_BREAK = "\n"
-SPACE = " "
-CALLABLE = "callable"
-
-# thoses keys are used for each unit, will be bydefault be set to null if not provided, and other values
-# will be treat as parameters in unit defintion
-PRE_DEFINED_KEYS = [K_SOURCE, K_ON_START, K_ACTIONS, K_LISTNER, K_DOC]
+raw_keys = {
+    "pre-defined": ["source", "onstart", "actions", "listner", "doc"],
+    "functions": {
+        "sh>": {},
+        "action>": {},
+        "url>": {},
+        "doc>": {},
+        "read_file>": {},
+        "git>": {},
+    },
+    "units": {
+        K_VALUE_TYPE: "dict",
+        K_IS_OPTIONAL: True,
+        "source": {
+            K_VALUE_TYPE: "str | url> | git> | read_file>",
+            K_IS_OPTIONAL: False,
+        },
+        "onstart": {
+            K_VALUE_TYPE: "list(sh> | action>)",
+            K_IS_OPTIONAL: True,
+        },
+        "actions": {
+            K_VALUE_TYPE: "str",
+            K_IS_OPTIONAL: True,
+        },
+        "doc": {
+            K_VALUE_TYPE: "str",
+            K_IS_OPTIONAL: True,
+        },
+    },
+    "includes": {
+        K_VALUE_TYPE: "dict",
+        K_IS_OPTIONAL: True,
+        "path": {
+            K_VALUE_TYPE: "str",
+            K_IS_OPTIONAL: True,
+        },
+        "url": {
+            K_VALUE_TYPE: "str",
+            K_IS_OPTIONAL: True,
+        },
+        "ref": {
+            K_VALUE_TYPE: "str",
+            K_IS_OPTIONAL: True,
+        },
+        "callable": {
+            K_VALUE_TYPE: "bool",
+            K_IS_OPTIONAL: True,
+        },
+    },
+    "metadata": {
+        K_IS_OPTIONAL: True,
+        K_VALUE_TYPE: "dict",
+        "name": {
+            K_VALUE_TYPE: "str",
+            K_IS_OPTIONAL: False,
+        },
+        "version": {
+            K_VALUE_TYPE: "str",
+            K_IS_OPTIONAL: False,
+        },
+        "description": {
+            K_VALUE_TYPE: "str",
+            K_IS_OPTIONAL: False,
+        },
+    },
+    "actions": {
+        K_VALUE_TYPE: "list(sh> | action>)",
+        K_IS_OPTIONAL: True,
+    },
+    "onstart": {
+        K_VALUE_TYPE: "list(sh> | action>)",
+        K_IS_OPTIONAL: True,
+    },
+    "services": {
+        K_VALUE_TYPE: "dict",
+        K_IS_OPTIONAL: True,
+        "env": {
+            K_IS_OPTIONAL: True,
+            K_VALUE_TYPE: "dict",
+        },
+        "depended-on": {
+            K_IS_OPTIONAL: True,
+            K_VALUE_TYPE: "service",
+        },
+    },
+}

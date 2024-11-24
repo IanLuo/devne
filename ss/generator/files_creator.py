@@ -3,6 +3,7 @@ from .units_template import UnitsTemplate
 from ..configure.blueprint import Blueprint
 from ..folder import Folder
 from os.path import join
+from .service_template import ServiceTemplate
 import os
 
 
@@ -43,6 +44,14 @@ class FilesCreator:
 
         # create unit.nix
         self._write_to_file(units_template.render(), folder.init_unit_file())
+
+        return True
+
+    def generate_services(self, blueprint: Blueprint) -> bool:
+
+        content = ServiceTemplate(blueprint).render()
+
+        self._write_to_file(content, folder.init_unit_file())
 
         return True
 
