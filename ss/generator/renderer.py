@@ -8,6 +8,7 @@ from ss.generator.functions.weblink import Weblink
 from ss.generator.functions.git_repo import GitRepo
 from ss.generator.functions.nix_package import NixPackage
 from ss.generator.functions.sh import Sh
+from ss.generator.functions.service import Service
 
 
 class Renderer:
@@ -132,19 +133,9 @@ class Renderer:
 
         unit = {k: v for k, v in unit.items() if k in schema.pre_defined}
 
-        def process_render(key: str, value: Any):
-            if (
-                key == schema.units.doc.__str__
-                and value is not None
-                and not blueprint.is_root_blueprint
-            ):
-                return Doc(value).render()
-            else:
-                return self.render_value(key, value, blueprint=blueprint, params=params)
-
         return LINE_BREAK.join(
             [
-                f"{key}={process_render(key=key, value=value)};"
+                f"{key}={self.render_value(key, value, blueprint=blueprint, params=params)};"
                 for key, value in unit.items()
             ]
         )
@@ -212,21 +203,20 @@ class Renderer:
         url = value.get(schema.functions.url_f.__str__)
         git = value.get(schema.functions.git_f.__str__)
         action = value.get(schema.functions.action_f.__str__)
-        doc = value.get(schema.functions.doc_f.__str__)
+        service = value.get(schema.functions.service_f.__str__)
+        file = value.get(schema.functions.file_f.__str__)
 
         if sh is not None:
             return Sh(name=name, content=sh)
         elif action is not None and isinstance(action, str):
             return Action(name=name, value=action, blueprint=blueprint, renderer=self)
-        elif doc is not None:
-            return Doc(unit_name=name, content=doc)
-        elif name == schema.units.source.__str__:
-            if url is not None and isinstance(url, str):
-                return Weblink(value=url, params=params, blueprint=blueprint)
-            elif git is not None and isinstance(git, dict):
-                return GitRepo(value=git, params=params)
-            else:
-                return NixPackage(value=name, params=params)
-
+        elif url is not None and isinstance(url, str):
+            return Weblink(value=url, params=params, blueprint=blueprint)
+        elif git is not None and isinstance(git, dict):
+            return GitRepo(value=git, params=params)
+        elif service is not None and isinstance(service, str):
+            return Service(name=name, value=service)
+        elif file is not None and isinstance(file, str):
+            return Doc(content=file)
         else:
             return None

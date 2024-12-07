@@ -5,12 +5,34 @@ from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
+class Script:
+
+    @property
+    def __str__(self):
+        return 'script'
+        
+    _value_type: str = 'str'
+    _is_optional: bool = True
+
+@dataclass(frozen=True)
+class Env:
+
+    @property
+    def __str__(self):
+        return 'env'
+        
+    _value_type: str = 'dict'
+    _is_optional: bool = True
+
+@dataclass(frozen=True)
 class Sh_f:
 
     @property
     def __str__(self):
         return 'sh>'
         
+    script: Script = Script()
+    env: Env = Env()
 
 @dataclass(frozen=True)
 class Action_f:
@@ -29,11 +51,11 @@ class Url_f:
         
 
 @dataclass(frozen=True)
-class Doc_f:
+class File_f:
 
     @property
     def __str__(self):
-        return 'doc>'
+        return 'file>'
         
 
 @dataclass(frozen=True)
@@ -53,6 +75,14 @@ class Git_f:
         
 
 @dataclass(frozen=True)
+class Service_f:
+
+    @property
+    def __str__(self):
+        return 'service>'
+        
+
+@dataclass(frozen=True)
 class Functions:
 
     @property
@@ -62,9 +92,10 @@ class Functions:
     sh_f: Sh_f = Sh_f()
     action_f: Action_f = Action_f()
     url_f: Url_f = Url_f()
-    doc_f: Doc_f = Doc_f()
+    file_f: File_f = File_f()
     read_file_f: Read_file_f = Read_file_f()
     git_f: Git_f = Git_f()
+    service_f: Service_f = Service_f()
 
 @dataclass(frozen=True)
 class Source:
@@ -248,11 +279,11 @@ class Env:
     _value_type: str = 'dict'
 
 @dataclass(frozen=True)
-class Depended_on:
+class Depends_on:
 
     @property
     def __str__(self):
-        return 'depended_on'
+        return 'depends_on'
         
     _is_optional: bool = True
     _value_type: str = 'service'
@@ -267,7 +298,7 @@ class Services:
     _value_type: str = 'dict'
     _is_optional: bool = True
     env: Env = Env()
-    depended_on: Depended_on = Depended_on()
+    depends_on: Depends_on = Depends_on()
 
 @dataclass(frozen=True)
 class Config:

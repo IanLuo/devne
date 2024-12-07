@@ -56,6 +56,11 @@ class UnitsTemplate:
             onstart = { self.renderer.render_value(name='onstart', value=onstart, blueprint=self.blueprint) };
         """
 
+    def render_services(self, services: dict) -> str:
+        return f"""
+            services = { self.renderer.render_value(name='services', value=services, blueprint=self.blueprint) };
+        """
+
     def render(self) -> str:
         line_break = "\n"
         space = " "
@@ -91,6 +96,7 @@ class UnitsTemplate:
 
             { self.render_actions(self.blueprint.actions or {}) }
             { self.render_onstart(self.blueprint.onstart or {}) }
+            { self.render_services(self.blueprint.services or {}) }
 
             all = [ {line_break.join(names)}];
             allAttr = {{ inherit { space.join(names) }; }};
@@ -100,8 +106,12 @@ class UnitsTemplate:
                 (name: unit:
                     {{
                         path = unit;
-                        actions = if unit ? actions && unit.actions != null then unit.actions else {{}};
-                        onstart = if unit ? onstart && unit.onstart != null then unit.onstart else {{}};
+                        {LINE_BREAK.join(
+                            [
+                                f'{key} = if unit ? {key} && unit.{key} != null then unit.{key} else {{}};'
+                                for key in list(filter(lambda x: x.__str__ != 'source' and not x.startswith('_'), schema.units.__dict__.keys()))
+                            ]
+                        )}
                     }}
                 ) allAttr;
 
@@ -109,6 +119,7 @@ class UnitsTemplate:
                  {self.blueprint.name} = {{
                      inherit actions;
                      inherit onstart;
+                     inherit services;
                 }};
             }};
 
@@ -156,8 +167,9 @@ class UnitsTemplate:
 
 
 		in {{
-		inherit all allAttr funcs actions;
+		inherit all allAttr funcs actions onstart services;
 		scripts = builtins.concatStringsSep "\\n" [ onStartScript ];
         dependencies = all;
-		}} // {{ inherit {all_interfaces}; }}
+		}}
+        { f'// {{ inherit {all_interfaces}; }}' if not self.blueprint.is_root_blueprint else '' }
 	"""

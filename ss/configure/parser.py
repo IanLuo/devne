@@ -52,3 +52,6 @@ class Parser:
             return data
         else:
             raise Exception("onstart needs to be a string or a list of str")
+
+    def parse_services(self, data: Any):
+        return data

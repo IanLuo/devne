@@ -25,36 +25,58 @@ class Cli:
         return json.loads(json_str)
 
     def reload(self):
-        creator = FilesCreator(self.blueprint, self.root)
+        creator = FilesCreator(
+            blueprint=self.blueprint, root=self.root, profile=self.profile
+        )
         creator.create_all()
 
         run(f"nixfmt .ss/ {' '.join(self.folder.all_files('.nix'))}")
         run(f"jsonfmt -w {self.folder.lock_path}")
 
     @property
-    def _all_units(self) -> dict:
+    def profile(self) -> dict:
         return self._profile
 
     @property
     def all_units(self) -> list:
-        return list(self._all_units.keys())
+        return list(self.profile.keys())
 
     def store_path(self, unit: str) -> Optional[str]:
-        return self._all_units.get(unit)
+        return self.profile.get(unit)
+
+    def list_services(self):
+        return [
+            f"{unit_name}.service.{service_name}"
+            for unit_name in self.profile.keys()
+            for service_name in self.profile.get(unit_name, {})
+            .get("services", {})
+            .keys()
+        ]
+
+    def run_service(self, service_name: str, other_args: List[str]):
+        jsonpath_expr = parse(f"$.{service_name}")
+        match = jsonpath_expr.find(self._profile)
+
+        if not match:
+            raise ValueError(f"service {service_name} not found")
+        else:
+            value = match[0].value
+
+            return
 
     def list_actions(self, unit_name: Optional[str] = None):
         if unit_name == None:
             return [
                 f"{unit_name}.actions.{action_name}"
-                for unit_name in self._all_units.keys()
-                for action_name in self._all_units.get(unit_name, {})
+                for unit_name in self.profile.keys()
+                for action_name in self.profile.get(unit_name, {})
                 .get("actions", {})
                 .keys()
             ]
         else:
             return [
                 f"{unit_name}.actions.{action_name}"
-                for action_name in self._all_units.get(unit_name, {})
+                for action_name in self.profile.get(unit_name, {})
                 .get("actions", {})
                 .keys()
             ]

@@ -37,11 +37,28 @@ units:
 
   git-helper:
     source: templates.git-helper
-    ignores: ["result", ".direnv", ".ss", ".venv*", ".pytest_cache", ".mypy_cache", "dist", "build", "*.egg-info", ".tox", ".nox", ".coverage", ".eggs", "__pycache__", ".pytest"]
+    ignores:
+      [
+        "result",
+        ".direnv",
+        ".ss",
+        ".venv*",
+        ".pytest_cache",
+        ".mypy_cache",
+        "dist",
+        "build",
+        "*.egg-info",
+        ".tox",
+        ".nox",
+        ".coverage",
+        ".eggs",
+        "__pycache__",
+        ".pytest",
+      ]
 
 onstart:
-    - sh>: echo "welcome to ss, a development environment with 1 command"
-    - sh>: echo "type 'ss actions' to see available commands"
+  - sh>: echo "welcome to ss, a development environment with 1 command"
+  - sh>: echo "type 'ss actions' to see available commands"
 
 actions:
   generate-constants:
@@ -64,22 +81,24 @@ actions:
   test-flow1:
     - sh>: echo $1
     - sh>: |
-          echo "result form step1: $1"
+        echo "result form step1: $1"
     - sh>: |
-          echo "result form step2: $1"
+        echo "result form step2: $1"
     - sh>: |
-          echo "result form step4: $1"
+        echo "result form step4: $1"
 services:
   db:
-    depended-on: another-service
-    # sh>:
-    #   env:
-    #     POSTGRES_USER: postgres
-    #     DATABASE: postgres
-    #     LANG: en_US.UTF-8
-    #     DATA_PATH: /var/lib/postgresql/data
+    depends-on:
+      service>: templates.services.nginx
+    command:
+      sh>:
+        env:
+          POSTGRES_USER: postgres
+          DATABASE: postgres
+          LANG: en_US.UTF-8
+          DATA_PATH: /var/lib/postgresql/data
 
-    #   script: |
-    #     postgres run --initdb \
-    #       --locale $LANG \
-    #       --data-path $DATA_PATH
+        script: |
+          postgres run --initdb \
+            --locale $LANG \
+            --data-path $DATA_PATH

@@ -79,6 +79,13 @@ def actions(
 
 
 @app.command()
+def services(config: str = default_config):
+    """List all services"""
+    services = Cli(config).list_services()
+    console.print(services)
+
+
+@app.command()
 def units(config: str = default_config):
     """List all units"""
     units = Cli(config).all_units

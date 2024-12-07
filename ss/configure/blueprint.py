@@ -51,6 +51,7 @@ class Blueprint:
     actions: Dict[str, Any]
     onstart: Dict[str, Any]
     includes: Dict[str, Any]
+    services: Dict[str, Any]
     metadata: Dict[str, Any]
     is_root_blueprint: bool
 
@@ -118,7 +119,12 @@ class Blueprint:
 
         logging.info(f"parsing onstart...")
         self.onstart = self.parser.parse_onstart(
-            data=json.get(schema.onstart.__str__, "")
+            data=json.get(schema.onstart.__str__, [])
+        )
+
+        logging.info(f"parsing services...")
+        self.services = self.parser.parse_services(
+            data=json.get(schema.services.__str__, {})
         )
 
     def resovle_all_includes(self, includes: Dict[str, Any]):

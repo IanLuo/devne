@@ -6,12 +6,22 @@ K_VALUE_TYPE = "_value_type"
 raw_keys = {
     "pre-defined": ["source", "onstart", "actions", "listner", "doc"],
     "functions": {
-        "sh>": {},
+        "sh>": {
+            "script": {
+                K_VALUE_TYPE: "str",
+                K_IS_OPTIONAL: True,
+            },
+            "env": {
+                K_VALUE_TYPE: "dict",
+                K_IS_OPTIONAL: True,
+            },
+        },
         "action>": {},
         "url>": {},
-        "doc>": {},
+        "file>": {},
         "read_file>": {},
         "git>": {},
+        "service>": {},
     },
     "units": {
         K_VALUE_TYPE: "dict",
@@ -84,7 +94,7 @@ raw_keys = {
             K_IS_OPTIONAL: True,
             K_VALUE_TYPE: "dict",
         },
-        "depended-on": {
+        "depends-on": {
             K_IS_OPTIONAL: True,
             K_VALUE_TYPE: "service",
         },

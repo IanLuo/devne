@@ -1,4 +1,3 @@
-from .nix_template import NixTemplate
 from .units_template import UnitsTemplate
 from ..configure.blueprint import Blueprint
 from ..folder import Folder
@@ -7,10 +6,12 @@ from .service_template import ServiceTemplate
 import os
 
 
+
 class FilesCreator:
-    def __init__(self, blueprint: Blueprint, root: str):
+    def __init__(self, blueprint: Blueprint, root: str, profile: dict):
         self.blueprint = blueprint
         self.folder = Folder(join(root, ".ss"))
+        self.profile = profile
 
     def create_all(self):
         self.blueprint.resovle_all_includes(self.blueprint.includes)
@@ -36,22 +37,22 @@ class FilesCreator:
 
     def create(self, root: str, blueprint: Blueprint) -> bool:
         folder = Folder(root)
-        flake_template = NixTemplate(blueprint)
         units_template = UnitsTemplate(blueprint)
-
-        # creat flake.nix
-        self._write_to_file(flake_template.render(), folder.init_flake_file())
 
         # create unit.nix
         self._write_to_file(units_template.render(), folder.init_unit_file())
 
+        if blueprint.services is not None and blueprint.is_root_blueprint:
+            self._generate_services(blueprint=blueprint, root=root)
+
         return True
 
-    def generate_services(self, blueprint: Blueprint) -> bool:
+    def _generate_services(self, blueprint: Blueprint, root: str) -> bool:
+        folder = Folder(root)
 
-        content = ServiceTemplate(blueprint).render()
+        content = ServiceTemplate(blueprint, self.profile).render()
 
-        self._write_to_file(content, folder.init_unit_file())
+        self._write_to_file(content, folder.init_services_file())
 
         return True
 
