@@ -6,7 +6,6 @@
   observable types:
   - scheduled tasked: repeated, timed
   - action completion
-- [ ] services
 - [ ] ss.yaml editor
 
 ## TODO
@@ -27,6 +26,7 @@
 
 ## DONE
 
+- [x] services
 - [x] action-flow to support action and other action-flow
 - [x] method to load actions and action-flows in includes
 - [x] action chain

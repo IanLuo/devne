@@ -9,7 +9,7 @@ from ss.configure.blueprint import Blueprint
 from ss.folder import Folder
 from ss.generator.files_creator import FilesCreator
 from ss.run_command import run
-from os.path import dirname
+from os.path import dirname, exists
 from jsonpath_ng import parse
 
 
@@ -60,16 +60,14 @@ class Cli:
         ]
 
     def run_service(self, service_name: str, other_args: List[str], env: dict = {}):
-        jsonpath_expr = parse(f"$.ss.services.{service_name}.command")
-        match = jsonpath_expr.find(self._profile)
+        self.folder.services_path
 
-        if not match:
-            raise ValueError(f"service {service_name} not found")
+        if not exists(self.folder.services_path):
+            console.print("No services found")
+            return
+
         else:
-            value = match[0].value
-            return self._run_script_file(
-                script_file=value, other_args=other_args, env=env
-            )
+            run(f"process-compose -f {self.folder.services_path}")
 
     def list_actions(self, unit_name: Optional[str] = None):
         if unit_name == None:

@@ -3,7 +3,7 @@ LOCK_FILE = "ss.lock"
 SS_FILE = "ss.nix"
 UNIT_FILE = "units.nix"
 SERVICES_FILE = "services.yaml"
-DATA_FOLDER = "data"
+DATA_FOLDER = ".ss"
 INCLUDES_FOLDER = "includes"
 
 from os.path import exists, dirname, join, abspath
@@ -41,7 +41,7 @@ class Folder:
 
     @property
     def services_path(self):
-        return join(self.path, SERVICES_FILE)
+        return join(self.path, self.data_folder_path, SERVICES_FILE)
 
     def init_data_path(self) -> str:
         return self.create_folder(self.data_folder_path)
