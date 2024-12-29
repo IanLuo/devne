@@ -1,6 +1,6 @@
 CONFIG_FILE = "ss.yaml"
 LOCK_FILE = "ss.lock"
-FLAKE_FILE = "ss.nix"
+SS_FILE = "ss.nix"
 UNIT_FILE = "units.nix"
 SERVICES_FILE = "services.yaml"
 DATA_FOLDER = "data"
@@ -20,8 +20,8 @@ class Folder:
         return join(dirname(abspath(__file__)), path)
 
     @property
-    def flake_path(self):
-        return join(self.path, FLAKE_FILE)
+    def ss_path(self):
+        return join(self.path, SS_FILE)
 
     @property
     def unit_path(self):
@@ -46,8 +46,8 @@ class Folder:
     def init_data_path(self) -> str:
         return self.create_folder(self.data_folder_path)
 
-    def init_flake_file(self):
-        return self.make_file(self.flake_path)
+    def init_ss_file(self):
+        return self.make_file(self.ss_path)
 
     def init_unit_file(self):
         return self.make_file(self.unit_path)

@@ -62,8 +62,8 @@ class UnitsTemplate:
         """
 
     def render(self) -> str:
-        line_break = "\n"
-        space = " "
+        line_break = LINE_BREAK
+        space = SPACE
 
         names = list(map(lambda x: x.replace(".", "_"), self.blueprint.units.keys()))
 

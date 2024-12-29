@@ -3,7 +3,6 @@
 ## WIP
 
 - [ ] observation
-
   observable types:
   - scheduled tasked: repeated, timed
   - action completion

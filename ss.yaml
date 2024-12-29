@@ -59,6 +59,7 @@ units:
 onstart:
   - sh>: echo "welcome to ss, a development environment with 1 command"
   - sh>: echo "type 'ss actions' to see available commands"
+  - action>: poetry.actions.install
 
 actions:
   generate-constants:
@@ -102,3 +103,5 @@ services:
           postgres run --initdb \
             --locale $LANG \
             --data-path $DATA_PATH
+
+          echo "postgres started"

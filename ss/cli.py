@@ -54,15 +54,13 @@ class Cli:
         ]
 
     def run_service(self, service_name: str, other_args: List[str]):
-        jsonpath_expr = parse(f"$.{service_name}")
+        jsonpath_expr = parse(f"$.services.{service_name}.command")
         match = jsonpath_expr.find(self._profile)
 
         if not match:
             raise ValueError(f"service {service_name} not found")
         else:
             value = match[0].value
-
-            return
 
     def list_actions(self, unit_name: Optional[str] = None):
         if unit_name == None:

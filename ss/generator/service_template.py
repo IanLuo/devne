@@ -1,3 +1,4 @@
+import logging
 from ss.generator.renderer import Renderer
 from ss.configure.blueprint import Blueprint
 from ss.configure.schema_gen import schema, LINE_BREAK
@@ -22,6 +23,11 @@ class ServiceTemplate:
 
             jsonpath_expr = parse(f"$.{command_path}")
             match = jsonpath_expr.find(self.profile)
+
+            if len(match) == 0:
+                logging.info(f"no command found for {command_path}")
+                return ""
+
             command = match[0].value
 
             return f"""

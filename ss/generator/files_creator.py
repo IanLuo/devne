@@ -1,10 +1,10 @@
 from .units_template import UnitsTemplate
+from .ss_nix_template import SSNixTemplate
 from ..configure.blueprint import Blueprint
 from ..folder import Folder
 from os.path import join
 from .service_template import ServiceTemplate
 import os
-
 
 
 class FilesCreator:
@@ -38,6 +38,10 @@ class FilesCreator:
     def create(self, root: str, blueprint: Blueprint) -> bool:
         folder = Folder(root)
         units_template = UnitsTemplate(blueprint)
+        ss_template = SSNixTemplate(blueprint)
+
+        # create unit.nix
+        self._write_to_file(ss_template.render(), folder.init_ss_file())
 
         # create unit.nix
         self._write_to_file(units_template.render(), folder.init_unit_file())

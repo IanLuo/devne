@@ -86,6 +86,16 @@ def services(config: str = default_config):
 
 
 @app.command()
+def start_service(
+    service_name: str,
+    config: str = default_config,
+    other_args: List[str] = typer.Argument(None),
+):
+    """Start a service"""
+    Cli(config).run_service(service_name, other_args=other_args)
+
+
+@app.command()
 def units(config: str = default_config):
     """List all units"""
     units = Cli(config).all_units
