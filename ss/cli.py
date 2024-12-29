@@ -28,7 +28,7 @@ class Cli:
         creator = FilesCreator(
             blueprint=self.blueprint, root=self.root, profile=self.profile
         )
-        creator.create_all()
+        creator.create_files()
 
         run(f"nixfmt .ss/ {' '.join(self.folder.all_files('.nix'))}")
         run(f"jsonfmt -w {self.folder.lock_path}")
@@ -44,23 +44,32 @@ class Cli:
     def store_path(self, unit: str) -> Optional[str]:
         return self.profile.get(unit)
 
+    def generate_services(self):
+        creator = FilesCreator(
+            blueprint=self.blueprint, root=self.root, profile=self.profile
+        )
+        creator.generate_services(blueprint=self.blueprint)
+
     def list_services(self):
         return [
-            f"{unit_name}.service.{service_name}"
+            service_name
             for unit_name in self.profile.keys()
             for service_name in self.profile.get(unit_name, {})
             .get("services", {})
             .keys()
         ]
 
-    def run_service(self, service_name: str, other_args: List[str]):
-        jsonpath_expr = parse(f"$.services.{service_name}.command")
+    def run_service(self, service_name: str, other_args: List[str], env: dict = {}):
+        jsonpath_expr = parse(f"$.ss.services.{service_name}.command")
         match = jsonpath_expr.find(self._profile)
 
         if not match:
             raise ValueError(f"service {service_name} not found")
         else:
             value = match[0].value
+            return self._run_script_file(
+                script_file=value, other_args=other_args, env=env
+            )
 
     def list_actions(self, unit_name: Optional[str] = None):
         if unit_name == None:

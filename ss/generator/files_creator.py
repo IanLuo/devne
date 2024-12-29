@@ -13,7 +13,7 @@ class FilesCreator:
         self.folder = Folder(join(root, ".ss"))
         self.profile = profile
 
-    def create_all(self):
+    def create_files(self):
         self.blueprint.resovle_all_includes(self.blueprint.includes)
         for name, include in self.blueprint.includes.items():
             blueprint = include.get("blueprint")
@@ -40,23 +40,18 @@ class FilesCreator:
         units_template = UnitsTemplate(blueprint)
         ss_template = SSNixTemplate(blueprint)
 
-        # create unit.nix
+        # create ss.nix
         self._write_to_file(ss_template.render(), folder.init_ss_file())
 
         # create unit.nix
         self._write_to_file(units_template.render(), folder.init_unit_file())
 
-        if blueprint.services is not None and blueprint.is_root_blueprint:
-            self._generate_services(blueprint=blueprint, root=root)
-
         return True
 
-    def _generate_services(self, blueprint: Blueprint, root: str) -> bool:
-        folder = Folder(root)
-
+    def generate_services(self, blueprint: Blueprint) -> bool:
         content = ServiceTemplate(blueprint, self.profile).render()
 
-        self._write_to_file(content, folder.init_services_file())
+        self._write_to_file(content, self.folder.init_services_file())
 
         return True
 

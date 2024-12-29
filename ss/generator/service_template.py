@@ -16,7 +16,6 @@ class ServiceTemplate:
         services = self.blueprint.services
 
         def generate_service(name: str, service: dict):
-            key_path = f'{self.blueprint.metadata.get("name")}.services.{name}'
             command_path = (
                 f'{self.blueprint.metadata.get("name")}.services.{name}.command'
             )

@@ -90,9 +90,25 @@ def start_service(
     service_name: str,
     config: str = default_config,
     other_args: List[str] = typer.Argument(None),
+    env: str = typer.Option(
+        "",
+        "--env",
+        "-e",
+        callback=parse_key_value_pairs,
+        help="Environment variables, e.g. --env key1=value1,key2=value2",
+    ),
 ):
     """Start a service"""
-    Cli(config).run_service(service_name, other_args=other_args)
+    for line in Cli(config).run_service(
+        service_name=service_name, other_args=other_args, env=env
+    ):
+        console.print(line)
+
+
+@app.command()
+def reload_services(config: str = default_config):
+    """re-create all ss related files based on the ss.yaml"""
+    Cli(config).generate_services()
 
 
 @app.command()

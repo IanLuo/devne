@@ -37,8 +37,14 @@ class SSNixTemplate:
 
             shellHook = ''
                 ${{units.scripts}}
+                {self._render_service_generator()}
             '';
         }}
+        """
+
+    def _render_service_generator(self):
+        return f"""
+          ss reload-services
         """
 
     def _nix_icludes_value(self) -> List[str]:
