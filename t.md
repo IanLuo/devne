@@ -7,6 +7,7 @@
   - scheduled tasked: repeated, timed
   - action completion
 - [ ] ss.yaml editor
+- [ ] support services, like database, redis, thrid party services, inside docker
 
 ## TODO
 
@@ -18,7 +19,6 @@
 - [ ] ss.yaml validation
 - [ ] ss.yaml helper, used in website
 - [ ] local shared store
-- [ ] support services, like database, redis, thrid party services, inside docker
 - [ ] reload configs with env
 - [ ] includes to share the nixpkgs of the current project
 - [ ] storage manage

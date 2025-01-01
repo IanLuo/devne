@@ -123,47 +123,44 @@ class UnitsTemplate:
                 }};
             }};
 
-            mapShs = sh:
-                if builtins.isList sh then
-                    map (x: mapShs x) sh
-                else
-                    ["source ${{sh}}"];
-
-            load-profile = pkgs.writeScriptBin "load_profile" ''
+            # get a json from the current configuration, units are all units defined in current ss.yaml, and
+            # other configuration including onStart, actions, services
+            loadProfile = pkgs.writeScriptBin "load_profile" ''
                 echo '${{builtins.toJSON ( unitsProfile // currentProfile)}}'
             '';
 
-            all-units-info = pkgs.writeScriptBin "all_units_info" ''
+            # get a json for all imported configurations, show their units
+            loadImportUnits = pkgs.writeScriptBin "load_import_units" ''
                 echo '${{
-                builtins.toJSON (
-                    lib.attrsets.mapAttrs
-                    (name: include:
-                        lib.lists.groupBy'
-                        (x: y: x // y)
-                        {{}}
-                        (x: x.name)
-                        (map (unit: lib.attrsets.removeAttrs unit [ "source" ]) include.all)                    )
-                    actionableImport
-                )
+                builtins.toJSON (sslib.getUnitsFromImportedConfigures actionableImport)
                 }}'
             '';
 
-            onStartScript = lib.strings.concatStringsSep
-                "\n"
-                (lib.flatten
-                  (
-                    (map
-                      (x: mapShs x.onstart)
-                      (lib.filter (unit: unit ? onstart && unit.onstart != null) all) ++ (mapShs onstart)
-                    )
-                  )
-                );
+            loadImportActions = pkgs.writeScriptBin "load_import_actions" ''
+                echo '${{
+                builtins.toJSON (sslib.getActionsFromImportedConfigures actionableImport)
+                }}'
+            '';
+
+            loadImportOnstarts = pkgs.writeScriptBin "load_import_onstarts" ''
+                echo '${{
+                builtins.toJSON (sslib.getOnstartFromImportedConfigures actionableImport)
+                }}'
+            '';
+
+            loadImportServices = pkgs.writeScriptBin "load_import_services" ''
+                echo '${{
+                builtins.toJSON (sslib.getServicesFromImportedConfigures actionableImport)
+                }}'
+            '';
+
+            onStartScript = sslib.onStartScript all onstart;
 
             startScript = ''
                 export SS_PROJECT_BASE=$PWD
             '';
 
-            funcs = [ load-profile all-units-info ];
+            funcs = [ loadProfile loadImportUnits loadImportActions loadImportOnstarts loadImportServices ];
 
 
 		in {{
