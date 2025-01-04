@@ -1,6 +1,5 @@
 import subprocess
 import logging
-import os
 
 
 def run(command: str) -> str:

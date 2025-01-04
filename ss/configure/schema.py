@@ -96,7 +96,7 @@ raw_keys = {
         },
         "depends-on": {
             K_IS_OPTIONAL: True,
-            K_VALUE_TYPE: "service",
+            K_VALUE_TYPE: "service>",
         },
     },
 }

@@ -99,7 +99,7 @@ def start_service(
     ),
 ):
     """Start a service"""
-    Cli(config).run_service(service_name, other_args, env)
+    console.print(Cli(config).run_service(service_name, other_args, env))
 
 
 @app.command()

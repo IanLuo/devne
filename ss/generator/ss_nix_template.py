@@ -37,6 +37,8 @@ class SSNixTemplate:
 
             shellHook = ''
                 ${{units.scripts}}
+
+                # generate services configuration
                 {self._render_service_generator()}
             '';
         }}

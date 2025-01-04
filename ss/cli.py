@@ -63,11 +63,12 @@ class Cli:
         self.folder.services_path
 
         if not exists(self.folder.services_path):
-            console.print("No services found")
-            return
+            return "No services found"
 
         else:
-            run(f"process-compose -f {self.folder.services_path}")
+            return run(
+                f"process-compose -f {self.folder.services_path} run {service_name}"
+            )
 
     def list_actions(self, unit_name: Optional[str] = None):
         if unit_name == None:

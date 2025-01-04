@@ -41,7 +41,7 @@ class Folder:
 
     @property
     def services_path(self):
-        return join(self.path, self.data_folder_path, SERVICES_FILE)
+        return join(self.path, SERVICES_FILE)
 
     def init_data_path(self) -> str:
         return self.create_folder(self.data_folder_path)

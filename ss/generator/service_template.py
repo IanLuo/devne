@@ -19,19 +19,25 @@ class ServiceTemplate:
             command_path = (
                 f'{self.blueprint.metadata.get("name")}.services.{name}.command'
             )
+            depends_on_path = (
+                f'{self.blueprint.metadata.get("name")}.services.{name}.depends-on'
+            )
 
-            jsonpath_expr = parse(f"$.{command_path}")
-            match = jsonpath_expr.find(self.profile)
+            def extract(key_path: str, json: dict) -> str:
+                match = parse(f"$.{key_path}").find(json)
 
-            if len(match) == 0:
-                logging.info(f"no command found for {command_path}")
-                return ""
+                if len(match) == 0:
+                    logging.info(f"no command found for {key_path}")
+                    return ""
 
-            command = match[0].value
+                return match[0].value
+
+            command = extract(command_path, self.profile)
+            depends_on = extract(depends_on_path, self.profile)
 
             return f"""
             {name}:
-                depends_on: {service.get("depends_on", '')}
+                depends_on: {depends_on}
                 command: {command}
             """
 
