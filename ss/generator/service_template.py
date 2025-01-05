@@ -45,7 +45,9 @@ class ServiceTemplate:
                         {
                             "name": name,
                             "command": command,
-                            "depends-on": depends_on_name,
+                            "depends-on": {
+                                depends_on_name: "process_completed_successfully",
+                            },
                         }
                     )
 
@@ -66,7 +68,8 @@ class ServiceTemplate:
         def render_service(service: dict):
             return f"""
                 {service.get('name')}:
-                    depends_on: {service.get('depends-on', '')}
+                    depends_on:
+
                     command: {service.get('command')}
 
                 """
