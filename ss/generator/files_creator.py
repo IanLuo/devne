@@ -10,7 +10,7 @@ import os
 class FilesCreator:
     def __init__(self, blueprint: Blueprint, root: str, profile: dict):
         self.blueprint = blueprint
-        self.folder = Folder(join(root, ".ss"))
+        self.folder = Folder(join(root))
         self.profile = profile
 
     def create_files(self):
@@ -32,8 +32,7 @@ class FilesCreator:
 
         import shutil
 
-        nix_folder_path = os.path.join(blueprint.gen_folder.path, "nix")
-        shutil.copytree(folder_path, nix_folder_path, dirs_exist_ok=True)
+        shutil.copytree(folder_path, self.folder.lib_folder, dirs_exist_ok=True)
 
     def create(self, root: str, blueprint: Blueprint) -> bool:
         folder = Folder(root)
@@ -41,10 +40,16 @@ class FilesCreator:
         ss_template = SSNixTemplate(blueprint)
 
         # create ss.nix
-        self._write_to_file(ss_template.render(), folder.init_ss_file())
+        self._write_to_file(
+            ss_template.render(),
+            folder.init_ss_file(is_root=blueprint.is_root_blueprint),
+        )
 
         # create unit.nix
-        self._write_to_file(units_template.render(), folder.init_unit_file())
+        self._write_to_file(
+            units_template.render(),
+            folder.init_unit_file(is_root=blueprint.is_root_blueprint),
+        )
 
         return True
 

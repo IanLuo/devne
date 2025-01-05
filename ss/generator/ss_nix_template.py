@@ -1,19 +1,22 @@
 from ss.configure.schema_gen import schema, LINE_BREAK, SPACE
 from .renderer import Renderer
 from typing import List, Dict
+from ss.configure.blueprint import Blueprint
+from ss.folder import Folder
 
 
 class SSNixTemplate:
-    def __init__(self, blueprint):
+    def __init__(self, blueprint: Blueprint):
         self.blueprint = blueprint
         self.renderer = Renderer()
+        self.folder = Folder(blueprint.root)
 
     def render(self) -> str:
         return f"""
         {{ pkgs ? import <nixpkgs> {{}} }}:
         let
         {LINE_BREAK.join(self._nix_icludes_value())}
-        sslib = pkgs.callPackage {self.blueprint.gen_folder.path}/nix/sslib.nix {{}};
+        sslib = pkgs.callPackage {self.folder.data_folder_path}/nix/sslib.nix {{}};
         name = "{self.blueprint.name}";
         version = "{self.blueprint.version}";
         units = pkgs.callPackage ./units.nix {{ inherit pkgs name version sslib { ' '.join(self._nix_includes_names()) }; }};

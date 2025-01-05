@@ -61,12 +61,13 @@ class Blueprint:
         include_path: Optional[str] = None,
         config_path: Optional[str] = None,
     ):
-        config_path = config_path or Folder(root).config_path
+        self.folder = Folder(root)
+        config_path = config_path or self.folder.config_path
 
         self.parser = Parser()
         self.is_root_blueprint = include_path is None
         self.root = root
-        self.gen_folder = Folder(join(root, ".ss") or include_path)
+        self.gen_folder = Folder(self.folder.data_folder_path or include_path)
         self.config_folder = Folder(dirname(config_path))
         self.resource_manager = ResourceManager(
             lock_root=root, config_folder=self.config_folder

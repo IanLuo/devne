@@ -5,6 +5,7 @@ UNIT_FILE = "units.nix"
 SERVICES_FILE = "services.yaml"
 DATA_FOLDER = ".ss"
 INCLUDES_FOLDER = "includes"
+LIB_FOLDER = "nix"
 
 from os.path import exists, dirname, join, abspath
 from os import makedirs
@@ -19,13 +20,17 @@ class Folder:
     def at_current_location(path: str):
         return join(dirname(abspath(__file__)), path)
 
-    @property
-    def ss_path(self):
-        return join(self.path, SS_FILE)
+    def ss_path(self, is_root: bool):
+        if is_root:
+            return join(self.path, DATA_FOLDER, SS_FILE)
+        else:
+            return join(self.path, SS_FILE)
 
-    @property
-    def unit_path(self):
-        return join(self.path, UNIT_FILE)
+    def unit_path(self, is_root: bool):
+        if is_root:
+            return join(self.path, DATA_FOLDER, UNIT_FILE)
+        else:
+            return join(self.path, UNIT_FILE)
 
     @property
     def data_folder_path(self):
@@ -39,18 +44,25 @@ class Folder:
     def lock_path(self):
         return join(self.path, LOCK_FILE)
 
+    def include_path(self, name: str):
+        return join(self.path, DATA_FOLDER, INCLUDES_FOLDER, name)
+
+    @property
+    def lib_folder(self):
+        return join(self.path, DATA_FOLDER, LIB_FOLDER)
+
     @property
     def services_path(self):
-        return join(self.path, SERVICES_FILE)
+        return join(self.path, DATA_FOLDER, SERVICES_FILE)
 
     def init_data_path(self) -> str:
         return self.create_folder(self.data_folder_path)
 
-    def init_ss_file(self):
-        return self.make_file(self.ss_path)
+    def init_ss_file(self, is_root: bool):
+        return self.make_file(self.ss_path(is_root=is_root))
 
-    def init_unit_file(self):
-        return self.make_file(self.unit_path)
+    def init_unit_file(self, is_root: bool):
+        return self.make_file(self.unit_path(is_root=is_root))
 
     def init_services_file(self):
         return self.make_file(self.services_path)
@@ -60,9 +72,6 @@ class Folder:
             makedirs(path)
 
         return path
-
-    def include_path(self, name: str):
-        return join(self.path, INCLUDES_FOLDER, name)
 
     def create_includes(self, name: str):
         path = self.create_folder(self.include_path(name))
