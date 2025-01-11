@@ -35,13 +35,11 @@ include supports:
 from dataclasses import dataclass
 from typing import Dict, Any, Optional
 from .parser import Parser
-import os
 from os.path import exists
-import re
 import logging
 from ..resources.resource_manager import ResourceManager
 from ..folder import Folder
-from os.path import dirname, join
+from os.path import dirname
 from .schema_gen import schema
 
 

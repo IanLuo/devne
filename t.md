@@ -2,15 +2,21 @@
 
 ## WIP
 
+- [ ] global directories for ss.yaml
+  log, etc.
+- [ ] log directory
+
+- [ ] support services
+  - [ ] nginx
+  - [ ] postgres
+
+## TODO
+
 - [ ] observation
   observable types:
   - scheduled tasked: repeated, timed
   - action completion
 - [ ] ss.yaml editor
-- [ ] support services, like database, redis, thrid party services, inside docker
-
-## TODO
-
 - [ ] commands description for each parameter
 - [ ] ss update action
 - [ ] unit documentations

@@ -1,6 +1,7 @@
 from ss.configure import blueprint
 from ss.configure.blueprint import Blueprint
 from ss.configure.schema_gen import schema, LINE_BREAK, SPACE
+from ss.folder import Folder
 from .renderer import Renderer
 
 
@@ -91,6 +92,11 @@ class UnitsTemplate:
 	{{  {','.join(all_import) } }}:
 		let
             metadata = {{ inherit name version; }};
+
+            system = sslib.env.system;
+            workingFolder = {Folder(self.blueprint.root).data_folder_path};
+            logFolder = "${{workingFolder}}/log";
+            dataFolder = "${{workingFolder}}/dataFolder";
 
             {render_units_in_sources}
 

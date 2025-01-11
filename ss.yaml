@@ -19,41 +19,19 @@ units:
     source: python_units.python
     version: "3.12.0"
 
-  service-manager:
-    source: nixpkgs.process-compose
-    actions:
-      ps:
-        sh>: process-compose
-
+  service-manager: nixpkgs.process-compose
   poetry: python_units.poetry
-
   pyright: python_units.pyright
-
   nixfmt: nixpkgs.nixfmt-classic
-
   jsonfmt: nixpkgs.jsonfmt
-
+  nginx: templates.nginx
   prefetch-git: nixpkgs.nix-prefetch-git
 
   git-helper:
     source: templates.git-helper
     ignores:
-      [
-        "result",
-        ".direnv",
-        ".ss",
-        ".venv*",
-        ".pytest_cache",
-        ".mypy_cache",
-        "dist",
-        "build",
-        "*.egg-info",
-        ".tox",
-        ".nox",
-        ".coverage",
-        ".eggs",
-        "__pycache__",
-        ".pytest",
+      [ "result", ".direnv", ".ss", ".venv*", ".pytest_cache", ".mypy_cache", "dist",
+        "build", "*.egg-info", ".tox", ".nox", ".coverage", ".eggs", "__pycache__", ".pytest",
       ]
 
 onstart:
@@ -70,23 +48,12 @@ actions:
   build:
     action>: python_units.actions.build
 
-  is-db-running:
-    - sh>: echo 5432
-    - action>: templates.process-helper.actions.port-available
-    - sh>: echo $1
-
-  kill-if-runing:
-    - action>: actions.is-db-running
-    - action>: templates.process-helper.actions.kill
-
-  test-flow1:
-    - sh>: echo $1
-    - sh>: |
-        echo "result form step1: $1"
-    - sh>: |
-        echo "result form step2: $1"
-    - sh>: |
-        echo "result form step4: $1"
+  reload-env:
+    - sh>: echo "start reload..."
+    - sh>: ss reload
+    - sh>: echo "done reloading"
+    - sh>: echo "start refresh env"
+    - sh>: direnv allow
 services:
   db:
     depends-on:
@@ -97,7 +64,7 @@ services:
           POSTGRES_USER: postgres
           DATABASE: postgres
           LANG: en_US.UTF-8
-          DATA_PATH: /var/lib/postgresql/data
+          DATA_PATH: ${dataFolder}/postgresql/data
 
         script: |
           postgres run --initdb \

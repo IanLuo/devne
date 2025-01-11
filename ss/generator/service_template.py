@@ -6,6 +6,7 @@ from json import load
 from jsonpath_ng import parse
 import hashlib
 import yaml
+from os.path import join
 
 
 class ServiceTemplate:
@@ -71,6 +72,10 @@ class ServiceTemplate:
 
         return yaml.dump(
             {
+                "log_level": "info",
+                "log_location": join(
+                    self.blueprint.gen_folder.path, "log/service/logfile.log"
+                ),
                 "processes": resolved_services,
             },
             default_flow_style=False,

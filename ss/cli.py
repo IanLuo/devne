@@ -59,8 +59,6 @@ class Cli:
         ]
 
     def run_service(self, service_name: str, other_args: List[str], env: dict = {}):
-        self.folder.services_path
-
         if not exists(self.folder.services_path):
             return "No services found"
 
