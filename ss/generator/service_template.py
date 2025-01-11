@@ -5,6 +5,7 @@ from ss.configure.schema_gen import schema, LINE_BREAK
 from json import load
 from jsonpath_ng import parse
 import hashlib
+import yaml
 
 
 class ServiceTemplate:
@@ -22,7 +23,7 @@ class ServiceTemplate:
 
         services = match[0].value
 
-        def resolve_service(name: str, service: dict, all_services: dict):
+        def render_service(name: str, service: dict, all_services: dict):
             def extract(key_path: str, json: dict) -> str:
                 match = parse(f"$.{key_path}").find(json)
 
@@ -40,49 +41,37 @@ class ServiceTemplate:
 
             if depends_on is not None:
                 depends_on_name = hashlib.md5(str(depends_on).encode()).hexdigest()
-                if depends_on_name is not None:
-                    all_services.append(
-                        {
-                            "name": name,
-                            "command": command,
-                            "depends-on": {
-                                depends_on_name: "process_completed_successfully",
-                            },
-                        }
-                    )
+                all_services[name] = {
+                    "command": command,
+                    "depends_on": {
+                        depends_on_name: {
+                            "condition": "process_completed_successfully"
+                        },
+                    },
+                }
 
-                    return resolve_service(
-                        name=depends_on_name,
-                        service=depends_on,
-                        all_services=all_services,
-                    )
-            else:
-                all_services.append(
-                    {
-                        "name": name,
-                        "command": command,
-                    }
+                return render_service(
+                    name=depends_on_name,
+                    service=depends_on,
+                    all_services=all_services,
                 )
+            else:
+                all_services[name] = {
+                    "command": command,
+                }
                 return all_services
 
-        def render_service(service: dict):
-            return f"""
-                {service.get('name')}:
-                    depends_on:
-
-                    command: {service.get('command')}
-
-                """
-
-        resolved_services = [
-            service
+        resolved_services = {
+            key: value
             for name, service_dict in services.items()
-            for service in resolve_service(
-                name=name, service=service_dict, all_services=[]
-            )
-        ]
+            for key, value in render_service(
+                name=name, service=service_dict, all_services={}
+            ).items()
+        }
 
-        return f"""
-        processes:
-            { LINE_BREAK.join([render_service(service) for service in resolved_services]) }
-        """
+        return yaml.dump(
+            {
+                "processes": resolved_services,
+            },
+            default_flow_style=False,
+        )
