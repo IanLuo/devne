@@ -142,7 +142,7 @@ class Blueprint:
         self.includes[name] = {
             **self.includes[name],
             **include_resource.__dict__,
-            "gen_root": self.gen_folder.include_path(name),
+            "gen_root": self.gen_folder.include_path(name=name),
         }
 
         ss_path = Folder(include_resource.local_path).config_path

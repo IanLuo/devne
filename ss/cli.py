@@ -26,7 +26,8 @@ class Cli:
 
     def reload(self):
         creator = FilesCreator(
-            blueprint=self.blueprint, root=self.root, profile=self.profile
+            blueprint=self.blueprint,
+            root=self.root,
         )
         creator.create_files()
 
@@ -45,10 +46,8 @@ class Cli:
         return self.profile.get(unit)
 
     def generate_services(self):
-        creator = FilesCreator(
-            blueprint=self.blueprint, root=self.root, profile=self.profile
-        )
-        creator.generate_services(blueprint=self.blueprint)
+        creator = FilesCreator(blueprint=self.blueprint, root=self.root)
+        creator.generate_services(profile=self.profile, blueprint=self.blueprint)
 
     def list_services(self):
         return [

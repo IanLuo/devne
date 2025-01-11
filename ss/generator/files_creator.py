@@ -8,10 +8,9 @@ import os
 
 
 class FilesCreator:
-    def __init__(self, blueprint: Blueprint, root: str, profile: dict):
+    def __init__(self, blueprint: Blueprint, root: str):
         self.blueprint = blueprint
         self.folder = Folder(join(root))
-        self.profile = profile
 
     def create_files(self):
         self.blueprint.resovle_all_includes(self.blueprint.includes)
@@ -19,7 +18,10 @@ class FilesCreator:
             blueprint = include.get("blueprint")
             if blueprint is not None:
                 blueprint.resovle_all_includes(blueprint.includes)
-                self.create(blueprint=blueprint, root=self.folder.include_path(name))
+                self.create(
+                    blueprint=blueprint,
+                    root=Folder(path=blueprint.gen_folder.path).include_path(name),
+                )
 
         self.create(root=self.folder.path, blueprint=self.blueprint)
         self.copy_resource(blueprint=self.blueprint)
@@ -53,8 +55,8 @@ class FilesCreator:
 
         return True
 
-    def generate_services(self, blueprint: Blueprint) -> bool:
-        content = ServiceTemplate(blueprint, self.profile).render()
+    def generate_services(self, profile: dict, blueprint: Blueprint) -> bool:
+        content = ServiceTemplate(blueprint, profile).render()
 
         self._write_to_file(content, self.folder.init_services_file())
 

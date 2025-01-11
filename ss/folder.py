@@ -45,7 +45,7 @@ class Folder:
         return join(self.path, LOCK_FILE)
 
     def include_path(self, name: str):
-        return join(self.path, DATA_FOLDER, INCLUDES_FOLDER, name)
+        return join(self.path, INCLUDES_FOLDER, name)
 
     @property
     def lib_folder(self):
@@ -72,10 +72,6 @@ class Folder:
             makedirs(path)
 
         return path
-
-    def create_includes(self, name: str):
-        path = self.create_folder(self.include_path(name))
-        self.create_folder(path)
 
     def all_files(self, ext):
         matching_files = []
