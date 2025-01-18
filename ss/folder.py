@@ -3,38 +3,69 @@ LOCK_FILE = "ss.lock"
 SS_FILE = "ss.nix"
 UNIT_FILE = "units.nix"
 SERVICES_FILE = "services.yaml"
-DATA_FOLDER = ".ss"
+GEN_FOLDER = ".ss"
 INCLUDES_FOLDER = "includes"
 LIB_FOLDER = "nix"
+LOG_FOLDER = "logs"
+DATA_FOLDER = "data"
 
 from os.path import exists, dirname, join, abspath
 from os import makedirs
 import os
 
 
+class Global:
+    _instance = None
+    _project_root = None
+
+    @property
+    def project_root(self):
+        if self._project_root is None:
+            raise ValueError("Project root not set")
+        return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        self._project_root = value
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(Global, cls).__new__(cls)
+            cls._instance._data = {}
+        return cls._instance
+
+
 class Folder:
     def __init__(self, path: str):
         self.path = path
+
+    @property
+    def is_root(self):
+        return self.path == Global().project_root
+
+    @staticmethod
+    def set_root(root):
+        Global().project_root = root
 
     @staticmethod
     def at_current_location(path: str):
         return join(dirname(abspath(__file__)), path)
 
-    def ss_path(self, is_root: bool):
-        if is_root:
-            return join(self.path, DATA_FOLDER, SS_FILE)
+    def ss_path(self):
+        if self.is_root:
+            return join(self.path, GEN_FOLDER, SS_FILE)
         else:
             return join(self.path, SS_FILE)
 
-    def unit_path(self, is_root: bool):
-        if is_root:
-            return join(self.path, DATA_FOLDER, UNIT_FILE)
+    def unit_path(self):
+        if self.is_root:
+            return join(self.path, GEN_FOLDER, UNIT_FILE)
         else:
             return join(self.path, UNIT_FILE)
 
     @property
-    def data_folder_path(self):
-        return join(self.path, DATA_FOLDER)
+    def gen_folder_path(self):
+        return join(self.path, GEN_FOLDER)
 
     @property
     def config_path(self):
@@ -49,20 +80,20 @@ class Folder:
 
     @property
     def lib_folder(self):
-        return join(self.path, DATA_FOLDER, LIB_FOLDER)
+        return join(self.path, GEN_FOLDER, LIB_FOLDER)
 
     @property
     def services_path(self):
-        return join(self.path, DATA_FOLDER, SERVICES_FILE)
+        return join(self.path, GEN_FOLDER, SERVICES_FILE)
 
     def init_data_path(self) -> str:
-        return self.create_folder(self.data_folder_path)
+        return self.create_folder(self.gen_folder_path)
 
-    def init_ss_file(self, is_root: bool):
-        return self.make_file(self.ss_path(is_root=is_root))
+    def init_ss_file(self):
+        return self.make_file(self.ss_path())
 
-    def init_unit_file(self, is_root: bool):
-        return self.make_file(self.unit_path(is_root=is_root))
+    def init_unit_file(self):
+        return self.make_file(self.unit_path())
 
     def init_services_file(self):
         return self.make_file(self.services_path)

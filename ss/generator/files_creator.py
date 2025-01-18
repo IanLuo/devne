@@ -44,13 +44,13 @@ class FilesCreator:
         # create ss.nix
         self._write_to_file(
             ss_template.render(),
-            folder.init_ss_file(is_root=blueprint.is_root_blueprint),
+            folder.init_ss_file(),
         )
 
         # create unit.nix
         self._write_to_file(
             units_template.render(),
-            folder.init_unit_file(is_root=blueprint.is_root_blueprint),
+            folder.init_unit_file(),
         )
 
         return True

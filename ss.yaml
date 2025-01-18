@@ -65,7 +65,6 @@ services:
           DATABASE: postgres
           LANG: en_US.UTF-8
           DATA_PATH: ${dataFolder}/postgresql/data
-
         script: |
           postgres run --initdb \
             --locale $LANG \

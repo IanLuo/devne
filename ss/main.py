@@ -12,6 +12,7 @@ from rich.console import Console
 from rich.theme import Theme
 from typing import List
 
+Folder.set_root(os.getcwd())
 app = typer.Typer()
 default_config = f"{os.getcwd()}/ss.yaml"
 console = Console(theme=Theme({"info": "cyan", "warning": "yellow", "error": "red"}))

@@ -94,7 +94,7 @@ class UnitsTemplate:
             metadata = {{ inherit name version; }};
 
             system = sslib.env.system;
-            workingFolder = {Folder(self.blueprint.root).data_folder_path};
+            workingFolder = {Folder(self.blueprint.root).gen_folder_path};
             logFolder = "${{workingFolder}}/log";
             dataFolder = "${{workingFolder}}/dataFolder";
 

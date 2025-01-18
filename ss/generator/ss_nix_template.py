@@ -16,7 +16,7 @@ class SSNixTemplate:
         {{ pkgs ? import <nixpkgs> {{}} }}:
         let
         {LINE_BREAK.join(self._nix_icludes_value())}
-        sslib = pkgs.callPackage {self.folder.data_folder_path}/nix/sslib.nix {{}};
+        sslib = pkgs.callPackage {self.folder.gen_folder_path}/nix/sslib.nix {{}};
         name = "{self.blueprint.name}";
         version = "{self.blueprint.version}";
         units = pkgs.callPackage ./units.nix {{ inherit pkgs name version sslib { ' '.join(self._nix_includes_names()) }; }};
