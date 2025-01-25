@@ -89,7 +89,7 @@ class Blueprint:
         logging.info("initializing blueprint..")
 
         logging.info(f"parsing blueprint..")
-        json = self.parser.parse_yaml(yaml_path)
+        json = self.parser.parse_ss(yaml_path)
 
         logging.info(f"parsing unit..")
         self.units = {
