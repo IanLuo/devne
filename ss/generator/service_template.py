@@ -1,5 +1,4 @@
 import logging
-from ss.generator.renderer import Renderer
 from ss.configure.blueprint import Blueprint
 from ss.configure.schema_gen import schema, LINE_BREAK
 from json import load
@@ -11,7 +10,6 @@ from os.path import join
 
 class ServiceTemplate:
     def __init__(self, blueprint: Blueprint, profile: dict):
-        self.renderer = Renderer()
         self.blueprint = blueprint
         self.profile = profile
 
@@ -40,27 +38,20 @@ class ServiceTemplate:
             command = extract(command_path, service)
             depends_on = extract(depends_on_path, service)
 
-            if depends_on is not None:
-                depends_on_name = hashlib.md5(str(depends_on).encode()).hexdigest()
-                all_services[name] = {
-                    "command": command,
-                    "depends_on": {
-                        depends_on_name: {
-                            "condition": "process_completed_successfully"
-                        },
-                    },
-                }
-
-                return render_service(
-                    name=depends_on_name,
-                    service=depends_on,
-                    all_services=all_services,
-                )
+            if isinstance(depends_on, list):
+                depends_on = depends_on
+            elif depends_on == None:
+                depends_on = []
             else:
-                all_services[name] = {
-                    "command": command,
-                }
-                return all_services
+                depends_on = [depends_on]
+
+            all_services[name] = {
+                "command": command,
+                "depends_on": None if len(depends_on) == 0 else
+                    { name: { "condition": "process_completed_successfully" } for name in depends_on },
+            }
+
+            return all_services
 
         resolved_services = {
             key: value
@@ -77,6 +68,5 @@ class ServiceTemplate:
                     self.blueprint.gen_folder.path, "log/service/logfile.log"
                 ),
                 "processes": resolved_services,
-            },
-            default_flow_style=False,
+            }
         )

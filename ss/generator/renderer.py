@@ -8,7 +8,6 @@ from ss.generator.functions.weblink import Weblink
 from ss.generator.functions.git_repo import GitRepo
 from ss.generator.functions.nix_package import NixPackage
 from ss.generator.functions.sh import Sh
-from ss.generator.functions.service import Service
 
 
 class Renderer:
@@ -203,7 +202,6 @@ class Renderer:
         url = value.get(schema.functions.url_f.__str__)
         git = value.get(schema.functions.git_f.__str__)
         action = value.get(schema.functions.action_f.__str__)
-        service = value.get(schema.functions.service_f.__str__)
         file = value.get(schema.functions.file_f.__str__)
 
         if sh is not None:
@@ -214,8 +212,6 @@ class Renderer:
             return Weblink(value=url, params=params, blueprint=blueprint)
         elif git is not None and isinstance(git, dict):
             return GitRepo(value=git, params=params)
-        elif service is not None and isinstance(service, str):
-            return Service(name=name, value=service)
         elif file is not None and isinstance(file, str):
             return Doc(content=file)
         else:

@@ -24,7 +24,6 @@ units:
   pyright: python_units.pyright
   nixfmt: nixpkgs.nixfmt-classic
   jsonfmt: nixpkgs.jsonfmt
-  nginx: templates.nginx
   prefetch-git: nixpkgs.nix-prefetch-git
 
   git-helper:
@@ -55,19 +54,13 @@ actions:
     - sh>: echo "start refresh env"
     - sh>: direnv allow
 services:
+  nginx:
+    command:
+      sh>: ""
   db:
     depends-on:
-      service>: templates.services.nginx
+      - nginx
+      - nginx2
     command:
-      sh>:
-        env:
-          POSTGRES_USER: postgres
-          DATABASE: postgres
-          LANG: en_US.UTF-8
-          DATA_PATH: ${dataFolder}/postgresql/data
-        script: |
-          postgres run --initdb \
-            --locale $LANG \
-            --data-path $DATA_PATH
+      sh>: ""
 
-          echo "postgres started"
