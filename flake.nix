@@ -3,59 +3,70 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachSystem ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"] (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-        version = "0.1.0";
-      in {
-        packages.default = pkgs.stdenv.mkDerivation {
-          pname = "ss";
-          inherit version;
-          src = ./.;
+  outputs = { self, nixpkgs }:
+    let
+      # Helper function to create package for each system
+      forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
 
-          nativeBuildInputs = with pkgs; [
-            python312
-            python312Packages.poetry
-          ];
+      # Package builder for each system
+      makePkgs = system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+          python = pkgs.python312;
+          pythonPackages = python.pkgs;
+        in {
+          default = pythonPackages.buildPythonApplication {
+            pname = "ss";
+            version = "0.1.0";
+            src = ./.;
 
-          buildInputs = with pkgs; [
-            nixfmt
-            jsonfmt
-          ];
+            format = "pyproject";
 
-          # Don't run the build phase as we just need to install the Python package
-          dontBuild = true;
+            nativeBuildInputs = with pythonPackages; [
+              poetry-core
+            ];
 
-          installPhase = ''
-            mkdir -p $out/bin
-            mkdir -p $out/lib
+            propagatedBuildInputs = with pythonPackages; [
+              typer
+              pyyaml
+              pytest
+              jsonpath-ng
+              pexpect
+              plumbum
+            ];
 
-            # Copy the source files to lib directory
-            cp -r ss $out/lib/
+            doCheck = false;
 
-            # Create a wrapper script
-            cat > $out/bin/ss << EOF
-            #!${pkgs.bash}/bin/bash
-            export PYTHONPATH=$out/lib:\$PYTHONPATH
-            exec ${pkgs.python312}/bin/python -m ss "\$@"
-            EOF
+            postInstall = ''
+              mkdir -p $out/bin
+              cat > $out/bin/ss << EOF
+              #!${pkgs.bash}/bin/bash
+              export PYTHONPATH=$out/lib/python${python.pythonVersion}/site-packages:\$PYTHONPATH
+              exec ${python}/bin/python -m ss "\$@"
+              EOF
+              chmod +x $out/bin/ss
+            '';
 
-            # Make the wrapper executable
-            chmod +x $out/bin/ss
-          '';
-
-          meta = with pkgs.lib; {
-            description = "SS installation package";
-            homepage = "https://github.com/yourusername/ss";  # Replace with actual homepage
-            license = licenses.mit;  # Replace with actual license
-            platforms = platforms.all;
+            meta = with pkgs.lib; {
+              description = "super start";
+              homepage = "https://github.com/ianluo/ss";
+              license = licenses.mit;
+              platforms = platforms.all;
+            };
           };
         };
 
-        defaultPackage = self.packages.${system}.default;
-      });
+      # Apps builder for each system
+      makeApps = system: {
+        default = {
+          type = "app";
+          program = "${self.packages.${system}.default}/bin/ss";
+        };
+      };
+    in {
+      packages = forAllSystems makePkgs;
+      apps = forAllSystems makeApps;
+    };
 }
