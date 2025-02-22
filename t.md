@@ -2,10 +2,10 @@
 
 ## WIP
 
+- [ ] package for ss
 - [ ] global directories for ss.yaml
   log, etc.
-- [ ] log directory
-
+  [ ] log directory
 - [ ] support services
   - [ ] nginx
   - [ ] postgres
