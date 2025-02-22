@@ -44,7 +44,7 @@
               cat > $out/bin/ss << EOF
               #!${pkgs.bash}/bin/bash
               export PYTHONPATH=$out/lib/python${python.pythonVersion}/site-packages:\$PYTHONPATH
-              exec ${python}/bin/python -m ss "\$@"
+              exec ${python}/bin/python -m ss.main "\$@"
               EOF
               chmod +x $out/bin/ss
             '';
