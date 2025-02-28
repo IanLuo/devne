@@ -40,16 +40,11 @@
 
             doCheck = false;
 
-            postFixup = ''
-              wrapProgram $out/lib/python${python.pythonVersion}/site-packages/ss/main.py \
-                --prefix PYTHONPATH : "$PYTHONPATH:$out/lib/python${python.pythonVersion}/site-packages"
-            '';
-
             postInstall = ''
               mkdir -p $out/bin
               makeWrapper ${python}/bin/python $out/bin/ss \
                 --add-flags "-m ss.main" \
-                --prefix PYTHONPATH : "$PYTHONPATH:$out/lib/python${python.pythonVersion}/site-packages"
+                --set PYTHONPATH "$out/lib/python${python.pythonVersion}/site-packages:$PYTHONPATH"
             '';
 
             meta = with pkgs.lib; {
